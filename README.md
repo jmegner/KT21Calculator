@@ -1,5 +1,5 @@
 # KT21 Calculator
-Calculator for helping analyze shooting and fighting in Kill Team (2021 edition).
+Calculator for helping analyze shooting and fighting in Kill Team (2021 edition). Heavily inspired by [kt2.doit-cms.ru](http://kt2.doit-cms.ru/) and hoping to improve on it.
 
 Live at [jmegner.github.io/KT21Calculator](https://jmegner.github.io/KT21Calculator/).
 
