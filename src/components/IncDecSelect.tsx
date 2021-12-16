@@ -10,12 +10,11 @@ interface Props {
   max?: number,
   suffix?: string,
   values?: string[],
+  selectedValue: number | string,
   valueChangeHandler: (newValue: string) => void,
 }
 
 const IncDecSelect: React.FC<Props> = (props: Props) => {
-  const [selectedIdx, setSelectedIdx] = React.useState(0);
-
   if((props.min === undefined) !== (props.max === undefined)) {
     throw new Error('either use both {min, max} or use neither {min, max}');
   }
@@ -23,22 +22,35 @@ const IncDecSelect: React.FC<Props> = (props: Props) => {
     throw new Error('either use {min, max} or {values}, not both/neither');
   }
 
+  let blah = 0;
+
+  let selectedText = props.selectedValue.toString();
   const values = props.values ?? _.range(props.min!, props.max! + 1).map(x => x.toString());
-  const options = values.map(x => <option value={x}>{x}{props.suffix ?? ''}</option>);
+  const options = values.map(x => <option key={x} value={x}>{x}{props.suffix ?? ''}</option>);
   const centerClasses = 'd-flex justify-content-center align-items-center';
 
+  function getSelectedIdx() {
+    // look for prefix, not exact match so that '5' matches '5+' or whatever display-suffix was used
+    for(let i = 0; i < values.length; i++) {
+      if(values[i].indexOf(selectedText) === 0) {
+        return i;
+      }
+    }
+
+    return 0;
+  }
+
   function handleIncDec(delta: number) {
-    const newIdx = selectedIdx + delta;
+    const newIdx = Math.max(0, values.indexOf(selectedText)) + delta;
     if(newIdx >= 0 && newIdx < options.length) {
-      setSelectedIdx(newIdx);
-      props.valueChangeHandler(values[selectedIdx]);
+      props.valueChangeHandler(values[newIdx]);
     }
   }
 
+  // TODO: why does Lethal increment not work
+
   function handleUserSelect(event: React.ChangeEvent<HTMLSelectElement>) {
-    const newVal = event.target.value;
-    setSelectedIdx(values.indexOf(newVal));
-    props.valueChangeHandler(newVal);
+    props.valueChangeHandler(event.target.value);
   }
 
   return (
@@ -51,7 +63,13 @@ const IncDecSelect: React.FC<Props> = (props: Props) => {
       </label>
       <InputGroup className='mb-1'>
         <Button variant='danger' onClick={() => handleIncDec(-1)}>-</Button>
-        <select name={props.id} id={props.id} value={values[selectedIdx]} onChange={handleUserSelect}>
+        <select
+          name={props.id}
+          id={props.id}
+          value={selectedText}
+          onChange={handleUserSelect}
+          style={{maxWidth: '70px'}}
+        >
           {options}
         </select>
         <Button variant='danger' onClick={() => handleIncDec(1)}>+</Button>
