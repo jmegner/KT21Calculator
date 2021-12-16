@@ -22,12 +22,9 @@ const IncDecSelect: React.FC<Props> = (props: Props) => {
     throw new Error('either use {min, max} or {values}, not both/neither');
   }
 
-  let blah = 0;
-
   let selectedText = props.selectedValue.toString();
   const values = props.values ?? _.range(props.min!, props.max! + 1).map(x => x.toString());
   const options = values.map(x => <option key={x} value={x}>{x}{props.suffix ?? ''}</option>);
-  const centerClasses = 'd-flex justify-content-center align-items-center';
 
   function getSelectedIdx() {
     // look for prefix, not exact match so that '5' matches '5+' or whatever display-suffix was used
