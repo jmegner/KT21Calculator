@@ -1,44 +1,97 @@
 import _ from 'lodash';
 
-export default class Util {
-  public static readonly thickX = '✖';
-  public static readonly thickCheck = '✔';
+export type Accepter<T> = (arg: T) => void;
 
-  public static acceptNumToAcceptString(setter: (val: number) => void) : (text: string) => void {
-    return function stringAccepter(text: string): void {
-      const intAttempt = parseInt(text);
-      setter(isNaN(intAttempt) ? 0 : intAttempt);
-    }
+export const thickX = 'X'; //'✖';
+export const thickCheck = '✔';
+export const xAndCheck = [thickX, thickCheck];
+export const centerHoriz = 'd-flex justify-content-center';
+export const centerHorizVert = centerHoriz + ' align-items-center';
+
+export function nameOf(obj: any) : string {
+  return Object.keys(obj)[0];
+}
+
+export function parseIntZero(text: string) : number {
+    const intAttempt = parseInt(text);
+    return isNaN(intAttempt) ? 0 : intAttempt;
+}
+
+export function acceptNumToAcceptString(setter: Accepter<number>) : Accepter<string> {
+  return function stringAccepter(text: string): void {
+    setter(parseIntZero(text));
   }
+}
 
-  public static acceptBoolToAcceptString(setter: (val: boolean) => void) : (text: string) => void {
-    return function stringAccepter(text: string): void {
-      setter(text === Util.thickCheck);
-    }
+export function acceptBoolToAcceptString(setter: Accepter<boolean>) : Accepter<string> {
+  return function stringAccepter(text: string): void {
+    setter(text === thickCheck);
   }
+}
 
-  public static boolToCheckX(val: boolean) : string {
-    return val ? Util.thickCheck : Util.thickX;
-  }
+export function boolToCheckX(val: boolean) : string {
+  return val ? thickCheck : thickX;
+}
 
-  public static span(min: number, max: number, suffix?: string) : string[] {
-    return _.range(min, max + 1).map(x => x.toString() + (suffix ? suffix : ''));
-  }
+export function span(min: number, max: number, suffix?: string) : string[] {
+  return _.range(min, max + 1).map(x => x.toString() + (suffix ? suffix : ''));
+}
 
-  public static xspan(min: number, max: number, suffix?: string) : string[] {
-    return _.concat([Util.thickX], Util.span(min, max, suffix));
-  }
+export function xspan(min: number, max: number, suffix?: string) : string[] {
+  return _.concat([thickX], span(min, max, suffix));
+}
 
-  public static readonly rollSpan = Util.span(2, 6, '+');
-  public static readonly xrollSpan = Util.preX(Util.rollSpan);
+export const rollSpan = span(2, 6, '+');
+export const xrollSpan = preX(rollSpan);
 
-  public static preX(vals: string[]) : string[] {
-    return _.concat([Util.thickX], vals);
-  }
+export function preX(vals: string[]) : string[] {
+  return _.concat([thickX], vals);
+}
 
-  public static readonly xAndCheck = [Util.thickX, Util.thickCheck];
+export function makePropChangeHandler<T>(
+  obj: T,
+  objChangeHandler: (t: T) => void,
+  transformer?: (s: string) => any,
+) : (propName: keyof T) => Accepter<string>
+{
+  return (propName: keyof T) => function handler(text: string) {
+    let newObj = _.clone(obj);
+    (newObj as any)[propName] = transformer === undefined ? text : transformer(text);
+    objChangeHandler(newObj);
+  };
+}
 
-  public static readonly centerHoriz = 'd-flex justify-content-center';
-  public static readonly centerHorizVert = 'd-flex justify-content-center align-items-center';
+export function makePropChangeHandlers<T>(
+  obj: T,
+  objChangeHandler: (t: T) => void,
+) : ((propName: keyof T) => Accepter<string>)[]
+{
+  return [
+    makePropChangeHandler(obj, objChangeHandler),
+    makeNumChangeHandler(obj, objChangeHandler),
+    makeBoolChangeHandler(obj, objChangeHandler),
+  ];
+}
 
+export function makeNumChangeHandler<T>(
+  obj: T,
+  objChangeHandler: (t: T) => void,
+) : (propName: keyof T) => Accepter<string>
+{
+  return makePropChangeHandler(obj, objChangeHandler, parseIntZero);
+}
+
+
+export function makeBoolChangeHandler<T>(
+  obj: T,
+  objChangeHandler: (t: T) => void,
+) : (propName: keyof T) => Accepter<string>
+{
+  return makePropChangeHandler(obj, objChangeHandler, t => t === thickCheck);
+}
+
+export function nameof<TObject>(obj: TObject, key: keyof TObject): string;
+export function nameof<TObject>(key: keyof TObject): string;
+export function nameof(key1: any, key2?: any): any {
+  return key2 ?? key1;
 }
