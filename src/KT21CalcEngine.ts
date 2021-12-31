@@ -58,167 +58,178 @@ class DieOutcomeProbs {
   }
 }
 
-class DamageOutcome {
-  public damage: number;
+class FinalDiceProb {
   public prob: number;
+  public crits: number;
+  public norms: number;
 
-  public constructor(damage: number, prob: number) {
-    this.damage = damage;
+  public constructor(
+    prob: number,
+    crits: number,
+    norms: number,
+  )
+  {
     this.prob = prob;
+    this.crits = crits;
+    this.norms = norms;
   }
 }
 
-export function analyzeScenario(attacker: Attacker, defender: Defender) {
-    // phase1: loop over all possible outcomes of all die and print the propabilities
-    // we are not looping over die roll of {1,3,3,4,6}; we are looping over {2 normal hits, 1 crit hit, 2 normal saves}
-    // phase2: group results by final outcome {2 normal damaging hits}
+export function calcDamageProbabilities(
+  attacker: Attacker,
+  defender: Defender,
+) : Map<number, number> // damage to prob
+{
+  const attackerDieOutcomeProbs = DieOutcomeProbs.FromAttacker(attacker);
+  let attackerFinalDiceProbs: FinalDiceProb[] = [];
 
-    // TODO: attacker and defender are independent, so it'd be nice to generate attacker possibilities,
-    // then separately generate defender possibilities, then do loop that combines them
-    // attackerFunc returns overall probability and revised critHits & normHits
+  for (let crits = 0; crits <= attacker.attacks; crits++) {
+    for (let norms = 0; norms <= attacker.attacks - crits; norms++) {
+      const fails = attacker.attacks - crits - norms;
 
-    // TODO: make SingleDieOutcomeProbs with {crit, norm, fail} because that is reused
+      const finalDiceProb = calcFinalDiceProb(
+        attackerDieOutcomeProbs,
+        crits,
+        norms,
+        fails,
+        attacker.reroll === Ability.Balanced,
+        attacker.rending,
+        attacker.starfire,
+      );
 
-    let damageToProb = new Map<number,number>();
-
-    for(let critHits = 0; critHits <= attacker.attacks; critHits++) {
-        for (let normHits = 0; normHits <= attacker.attacks - critHits; normHits++) {
-            let numDefDice = defender.defense;
-
-            if(!Die.Valid(defender.invulnSave)) {
-                const numDefDiceAfterAp = defender.defense - attacker.apx;
-                const numDefDiceAfterP = (critHits > 0
-                    ? defender.defense - attacker.px
-                    : defender.defense);
-                numDefDice = Math.min(numDefDiceAfterAp, numDefDiceAfterP);
-            }
-
-            let coverSaves = (numDefDice > 0 && defender.cover) ? 1 : 0;
-
-            for(let critSaves = 0; critSaves <= numDefDice - coverSaves; critSaves++) {
-                for (let normSaves = 0; normSaves <= numDefDice - coverSaves - critSaves; normSaves++) {
-                    const missedSaves = numDefDice - coverSaves - critSaves - normSaves;
-                    const outcome = calcOutcome(attacker, defender, critHits, normHits, critSaves, normSaves, coverSaves, missedSaves);
-                    let prob = damageToProb.get(outcome.damage);
-
-                    if(prob === undefined) {
-                      prob = 0;
-                    }
-
-                    prob += outcome.prob;
-                    damageToProb.set(outcome.damage, prob);
-                }
-            }
-
-        }
+      if (finalDiceProb.prob > 0) {
+        attackerFinalDiceProbs.push(finalDiceProb);
+      }
     }
-
-    return damageToProb;
-}
-
-function calcAttackerProbabilityAndFinalDice(
-    attacker: Attacker,
-    probs: DieOutcomeProbs,
-    critHits: number,
-    normHits: number,
-)
-{
-  // TODO
-
-}
-
-function calcOutcome(
-    attacker: Attacker,
-    defender: Defender,
-    critHits: number,
-    normHits: number,
-    critSaves: number,
-    normSaves: number,
-    coverSaves: number,
-    failSaves: number,
-): DamageOutcome
-{
-  // inputs are interpreted as BEFORE Rending/Starfire (die outcome transformers)
-  // and AFTER all reroll abilities (Balanced, Ceaseless, Relentless)
-
-  // BEFORE taking ceaseless and relentless into account
-  let failHitProb = (attacker.bs - 1) / 6;
-  const critSkill = Die.Valid(attacker.lethalx) ? attacker.lethalx : 6;
-  let critHitProb = (7 - critSkill) / 6;
-  let normHitProb = (critSkill - attacker.bs) / 6;
-
-  // now to take ceaseless and relentless into account...
-  if(attacker.reroll === Ability.Ceaseless || attacker.reroll === Ability.Relentless) {
-    const hitMultiplier = (attacker.reroll === Ability.Ceaseless)
-      ? 7 / 6
-      : (attacker.bs + 5) / 6;
-    critHitProb *= hitMultiplier;
-    normHitProb *= hitMultiplier;
-    failHitProb = 1 - critHitProb - normHitProb;
   }
 
-  let failHits = attacker.attacks - critHits - normHits;
+  const defenderDieOutcomeProbs = DieOutcomeProbs.FromDefender(defender);
+  const defenderFinalDiceProbs: FinalDiceProb[] = [];
+  const defenderFinalDiceProbsWithPx: FinalDiceProb[] = [];
 
-  // defender stuff...
-  // TODO: chitin/defender-balanced
-  const critSaveProb = 1/6;
-  const normSaveProb = (6 - defender.save) / 6;
-  const failSaveProb = 1 - critSaveProb - normSaveProb;
+  const numDefDiceWithoutPx = defender.usesInvulnSave() ? defender.defense : defender.defense - attacker.apx;
+  const coverSaves = (numDefDiceWithoutPx > 0 && defender.cover) ? 1 : 0;
+  const numDefRollsWithoutPx = numDefDiceWithoutPx - coverSaves;
 
-  let attackProb = multirollProbability(critHits, critHitProb, normHits, normHitProb, failHits, failHitProb);
+  // for Px not triggered/relevant
+  for (let crits = 0; crits <= numDefRollsWithoutPx; crits++) {
+    for (let norms = 0; norms <= numDefRollsWithoutPx - crits; norms++) {
+      const fails = numDefRollsWithoutPx - crits - norms;
+      const finalDiceProb = calcFinalDiceProb(
+        defenderDieOutcomeProbs,
+        crits,
+        norms,
+        fails,
+        defender.chitin,
+      );
+
+      if (finalDiceProb.prob > 0) {
+        defenderFinalDiceProbs.push(finalDiceProb);
+      }
+    }
+  }
+
+  // if APx > Px, then ignore Px
+  const effectivePx = attacker.apx >= attacker.px ? 0 : attacker.px;
+  let coverSavesWithPx = 0;
+
+  // for Px triggered and relevant
+  if (effectivePx > 0 && !defender.usesInvulnSave()) {
+    const numDefDiceWithPx = defender.defense - effectivePx;
+    coverSavesWithPx = (numDefDiceWithPx > 0 && defender.cover) ? 1 : 0;
+    const numDefRollsWithPx = numDefDiceWithPx - coverSavesWithPx;
+
+    for (let crits = 0; crits <= numDefRollsWithPx; crits++) {
+      for (let norms = 0; norms <= numDefRollsWithPx - crits; norms++) {
+        const fails = numDefRollsWithPx - crits - norms;
+        const finalDiceProb = calcFinalDiceProb(
+          defenderDieOutcomeProbs,
+          crits,
+          norms,
+          fails,
+          defender.chitin,
+        );
+
+        if (finalDiceProb.prob > 0) {
+          defenderFinalDiceProbsWithPx.push(finalDiceProb);
+        }
+      }
+    }
+  }
+
+  let damageToProb = new Map<number, number>();
+
+  function addAtkDefScenario(atk: FinalDiceProb, def: FinalDiceProb, extraSaves: number): void {
+      const currProb = atk.prob * def.prob;
+      const damage = calcDamage(attacker, atk.crits, atk.norms, def.crits, def.norms + extraSaves);
+
+      let probSum = damageToProb.get(damage);
+
+      if(probSum === undefined) {
+        probSum = 0;
+      }
+
+      probSum += currProb;
+      damageToProb.set(damage, probSum);
+  }
+
+  for (const atk of attackerFinalDiceProbs) {
+    for (const def of defenderFinalDiceProbs) {
+      addAtkDefScenario(atk, def, coverSaves);
+    }
+    for (const def of defenderFinalDiceProbsWithPx) {
+      addAtkDefScenario(atk, def, coverSavesWithPx);
+    }
+  }
+
+  return damageToProb;
+}
+
+function calcFinalDiceProb(
+  dieProbs: DieOutcomeProbs,
+  crits: number,
+  norms: number,
+  fails: number,
+  balancedOrChitin: boolean,
+  rending: boolean = false,
+  starfire: boolean = false,
+) : FinalDiceProb
+{
+  let prob = multirollProbability(crits, dieProbs.crit, norms, dieProbs.norm, fails, dieProbs.fail);
 
   // there are multiple ways to get to this {crits,norms,fails} via OriginalRoll + BalancedRoll
-  if(attacker.reroll === Ability.Balanced) {
+  if(balancedOrChitin) {
     // if have {c,n,f}, then could be because...
     //    was {c,n,f>0} then balanced-rolled f
     //    was {c-1,n,f+1} then balanced-rolled c
     //    was {c,n-1,f+1} then balanced-rolled n
 
-    attackProb = failHits > 0 ? attackProb * failHitProb : 0;
+    prob = fails > 0 ? prob * dieProbs.fail : 0;
 
-    if(critHits > 0) {
-      attackProb += critHitProb * multirollProbability(critHits - 1, critHitProb, normHits, normHitProb, failHits + 1, failHitProb)
+    if(crits > 0) {
+      prob += dieProbs.crit * multirollProbability(crits - 1, dieProbs.crit, norms, dieProbs.norm, fails + 1, dieProbs.fail)
     }
 
-    if(normHits > 0) {
-      attackProb += normHitProb * multirollProbability(critHits, critHitProb, normHits - 1, normHitProb, failHits + 1, failHitProb)
-    }
-  }
-
-  let defenseProb = multirollProbability(critSaves, critSaveProb, normSaves, normSaveProb, failSaves, failSaveProb);
-
-  // chitin is Balanced for defender, so same logic here
-  if(defender.chitin) {
-    defenseProb = failSaves > 0 ? defenseProb * failSaveProb : 0;
-
-    if(critSaves > 0) {
-      defenseProb += critSaveProb * multirollProbability(critSaves - 1, critSaveProb, normSaves, normSaveProb, failSaves + 1, failSaveProb)
-    }
-
-    if(normSaves > 0) {
-      defenseProb += normSaveProb * multirollProbability(critSaves, critSaveProb, normSaves - 1, normSaveProb, failSaves + 1, failSaveProb)
+    if(norms > 0) {
+      prob += dieProbs.norm * multirollProbability(crits, dieProbs.crit, norms - 1, dieProbs.norm, fails + 1, dieProbs.fail)
     }
   }
 
-  const overallProb = attackProb * defenseProb;
-
-  if(attacker.rending) {
-    if(critHits > 0 && normHits > 0) {
-      critHits++;
-      normHits--;
+  if(rending) {
+    if(crits > 0 && norms > 0) {
+      crits++;
+      norms--;
     }
   }
 
-  if(attacker.starfire) {
-    if(critHits > 0 && failHits > 0) {
-      critHits++;
-      failHits--;
+  if(starfire) {
+    if(crits > 0 && fails > 0) {
+      crits++;
+      fails--;
     }
   }
 
-  const damage = calcDamage(attacker, critHits, normHits, critSaves, normSaves + coverSaves);
-  const outcome = new DamageOutcome(damage, overallProb);
-  return outcome;
+  return new FinalDiceProb(prob, crits, norms);
 }
 
 function calcDamage(

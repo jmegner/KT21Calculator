@@ -9,11 +9,17 @@ import DefenderControls from "./components/DefenderControls";
 import CalcControls from './components/CalcControls';
 import ResultsDisplay from './components/ResultsDisplay';
 import * as Util from "./Util";
+import { calcDamageProbabilities } from './KT21CalcEngine';
 
 const App: React.FC = () => {
   const [attacker, setAttacker] = React.useState(new Attacker());
   const [defender, setDefender] = React.useState(new Defender());
   const [rounds, setRounds] = React.useState(1);
+
+  const damageToProb = calcDamageProbabilities(attacker, defender);
+
+  let averageDamage = 0;
+  damageToProb.forEach((prob, damage) => { averageDamage += damage * prob; });
 
   return (
     <Container style={{width: '800px'}}>
@@ -33,7 +39,7 @@ const App: React.FC = () => {
         </Col>
       </Row>
       <Row className='border'>
-        <ResultsDisplay avgDamage={1.23} avgDamageUnbounded={4.56} killChance={7.89} />
+        <ResultsDisplay avgDamage={NaN} avgDamageUnbounded={averageDamage} killChance={7.89} />
       </Row>
     </Container>
   );

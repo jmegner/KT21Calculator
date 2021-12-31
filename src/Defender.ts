@@ -1,3 +1,5 @@
+import Die from "./Die";
+
 export default class Attacker {
   public save: number;
   public defense: number;
@@ -26,5 +28,9 @@ export default class Attacker {
     this.useInvulnSave = useInvulnSave;
     this.cover = cover;
     this.chitin = chitin;
+  }
+
+  public usesInvulnSave(): boolean {
+    return Die.Valid(this.invulnSave);
   }
 }
