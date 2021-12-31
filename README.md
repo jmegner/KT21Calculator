@@ -11,3 +11,9 @@ Notable technologies/libs/whatever used...
 * [Testing Library](https://testing-library.com/docs/react-testing-library/intro)
 * [GitHub Actions](https://docs.github.com/en/actions)
 * [Visual Studio Code](https://code.visualstudio.com/)
+
+My thanks to Redux maintainer
+[Mark Erikson](https://github.com/markerikson)
+for his
+[advice and help](https://www.reddit.com/r/reactjs/comments/ropftw/comment/hpzxqrf/?utm_source=reddit&utm_medium=web2x&context=3).
+I decided not to use Redux just yet, but look forward to using it.

@@ -4,41 +4,38 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import IncDecSelect, {Props as IncProps} from './IncDecSelect';
+import Defender from '../Defender';
 import * as Util from '../Util';
-import {
-  acceptBoolToAcceptString as fromBool,
-  acceptNumToAcceptString as fromNum
-} from '../Util';
+import { boolToCheckX as toCheckX } from '../Util';
 
 export interface Props {
+  defender: Defender;
+  changeHandler: Util.Accepter<Defender>;
 }
 
-const DefenderControls: React.FC<Props> = (props: Props) => {
-  const [save, setSave] = React.useState(3);
-  const [defense, setDefense] = React.useState(3);
-  const [wounds, setWounds] = React.useState(12);
-  const [fnp, setFnp] = React.useState(0);
-  const [invulnSave, setInvulnSave] = React.useState(0);
-  const [cover, setCover] = React.useState(false);
-  const [chitin, setChitin] = React.useState(false);
 
+const DefenderControls: React.FC<Props> = (props: Props) => {
   const saveId = 'Save';
   const defenseId = 'Defense';
   const woundsId = 'Wounds';
-  const fnpId = 'FNP (Feel No Pain)';
-  const invulnSaveId = 'Invulnerable Save';
+  const fnpId = 'FNP (Feel No Pain) (TODO)';
+  const invulnSaveId = 'InvulnSave (used if valid)';
   const coverId = 'Cover (1 autosuccess)';
-  const chitinId = 'Extended Chitin';
+  const chitinId = 'Extended Chitin (TODO)';
+
+  const def = props.defender;
+  const [, numHandler, boolHandler]
+    = Util.makePropChangeHandlers(def, props.changeHandler);
 
   const params: IncProps[] = [
-    //           id,           selectedValue,             values,                valueChangeHandler
-    new IncProps(saveId,       save + '+',                Util.rollSpan,         fromNum(setSave)),
-    new IncProps(defenseId,    defense,                   Util.span(0, 4),       fromNum(setDefense)),
-    new IncProps(woundsId,     wounds,                    Util.span(1, 19),      fromNum(setWounds)),
-    new IncProps(fnpId,        fnp + '+',                 Util.xspan(3, 6, '+'), fromNum(setFnp)),
-    new IncProps(invulnSaveId, invulnSave + '+',          Util.xrollSpan,        fromNum(setInvulnSave)),
-    new IncProps(coverId,      Util.boolToCheckX(cover),  Util.xAndCheck,        fromBool(setCover)),
-    new IncProps(chitinId,     Util.boolToCheckX(chitin), Util.xAndCheck,        fromBool(setChitin)),
+    //           id,           selectedValue,          values,                valueChangeHandler
+    new IncProps(saveId,       def.save + '+',       Util.rollSpan,         numHandler('save')),
+    new IncProps(defenseId,    def.defense,          Util.span(0, 4),       numHandler('defense')),
+    new IncProps(woundsId,     def.wounds,           Util.span(1, 19),      numHandler('wounds')),
+    new IncProps(fnpId,        def.fnp + '+',        Util.xspan(3, 6, '+'), numHandler('fnp')),
+    new IncProps(invulnSaveId, def.invulnSave + '+', Util.xrollSpan,        numHandler('invulnSave')),
+    new IncProps(coverId,      toCheckX(def.cover),  Util.xAndCheck,        boolHandler('cover')),
+    new IncProps(chitinId,     toCheckX(def.chitin), Util.xAndCheck,        boolHandler('chitin')),
   ];
 
   const paramElems = params.map(p =>
