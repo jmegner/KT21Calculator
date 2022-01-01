@@ -4,12 +4,6 @@ import Defender from "./Defender";
 import Die from "./Die";
 import { factorial } from 'mathjs';
 
-export enum DieResult {
-    Fail,
-    Normal,
-    Crit,
-}
-
 class DieOutcomeProbs {
   public crit: number;
   public norm: number;
@@ -232,6 +226,27 @@ function calcFinalDiceProb(
   return new FinalDiceProb(prob, crits, norms);
 }
 
+function multirollProbability(
+  numCrits: number,
+  probCrit: number,
+  numNorms: number,
+  probNorm: number,
+  numFails: number,
+  probFail: number,
+)
+{
+  const prob
+    = Math.pow(probCrit, numCrits)
+    * Math.pow(probNorm, numNorms)
+    * Math.pow(probFail, numFails)
+    * factorial(numCrits + numNorms + numFails)
+    / factorial(numCrits)
+    / factorial(numNorms)
+    / factorial(numFails)
+    ;
+  return prob;
+}
+
 function calcDamage(
   attacker: Attacker,
   critHits: number,
@@ -243,64 +258,65 @@ function calcDamage(
   // possible TODO: memoization of results indexed by [crit > norm][hits and saves]
   let damage = critHits * attacker.mwx;
 
-  // cc, cn, nn, nc
-  if (attacker.criticalDamage >= attacker.normalDamage) {
-    const critSavesCancelingCritHits = Math.min(critSaves, critHits);
-    critSaves -= critSavesCancelingCritHits;
-    critHits -= critSavesCancelingCritHits;
+  const numNormalSavesToCancelCritHit = 2;
 
-    const critSavesCancelingNormHits = Math.min(critSaves, normHits);
-    critSaves -= critSavesCancelingNormHits;
-    normHits -= critSavesCancelingNormHits;
-
-    const normSavesCancelingNormHits = Math.min(normSaves, normHits);
-    normSaves -= normSavesCancelingNormHits;
-    normHits -= normSavesCancelingNormHits;
-
-    const critHitsCanceledByNormSavePairs = Math.min((normSaves / 2) >> 0, critHits);
-    normSaves -= critHitsCanceledByNormSavePairs * 2;
-    critHits -= critHitsCanceledByNormSavePairs;
+  function critSavesCancelCritHits() {
+    const numCancels = Math.min(critSaves, critHits);
+    critSaves -= numCancels;
+    critHits -= numCancels;
   }
-  // nn, cn, cc, nc
+  function critSavesCancelNormHits() {
+    const numCancels = Math.min(critSaves, normHits);
+    critSaves -= numCancels;
+    normHits -= numCancels;
+  }
+  function normSavesCancelNormHits() {
+    const numCancels = Math.min(normSaves, normHits);
+    normSaves -= numCancels;
+    normHits -= numCancels;
+  }
+  function normSavesCancelCritHits() {
+    const numCancels = Math.min((normSaves / numNormalSavesToCancelCritHit) >> 0, critHits);
+    normSaves -= numCancels * numNormalSavesToCancelCritHit;
+    critHits -= numCancels;
+  }
+
+  if (attacker.criticalDamage >= attacker.normalDamage) {
+    critSavesCancelCritHits();
+    critSavesCancelNormHits();
+
+    if (attacker.criticalDamage > 2 * attacker.normalDamage) {
+      normSavesCancelCritHits();
+      normSavesCancelNormHits();
+    }
+    else {
+      // with norm saves, you prefer to cancel norm hits, but you want to avoid
+      // cancelling all norm hits and being left over with >=1 crit hit and 1 normal save;
+      // in that case, you should have cancelled 1 crit hit before cancelling norm hits;
+      if (normSaves > normHits && normSaves >= numNormalSavesToCancelCritHit && critHits > 0) {
+        normSaves -= numNormalSavesToCancelCritHit;
+        critHits--;
+      }
+
+      normSavesCancelNormHits();
+      normSavesCancelCritHits();
+    }
+  }
   else {
-    const normSavesCancelingNormHits = Math.min(normSaves, normHits);
-    normSaves -= normSavesCancelingNormHits;
-    normHits -= normSavesCancelingNormHits;
-
-    const critSavesCancelingNormHits = Math.min(critSaves, normHits);
-    critSaves -= critSavesCancelingNormHits;
-    normHits -= critSavesCancelingNormHits;
-
-    const critSavesCancelingCritHits = Math.min(critSaves, critHits);
-    critSaves -= critSavesCancelingCritHits;
-    critHits -= critSavesCancelingCritHits;
-
-    const critHitsCanceledByNormSavePairs = Math.min((normSaves / 2) >> 0, critHits);
-    normSaves -= critHitsCanceledByNormSavePairs * 2;
-    critHits -= critHitsCanceledByNormSavePairs;
+    normSavesCancelNormHits();
+    critSavesCancelNormHits();
+    critSavesCancelCritHits();
+    normSavesCancelCritHits();
   }
 
   damage += critHits * attacker.criticalDamage + normHits * attacker.normalDamage;
   return damage;
 }
 
-function multirollProbability(
-  numCrits: number,
-  probCrit: number,
-  numNorms: number,
-  probNorm: number,
-  numFail: number,
-  probFail: number,
-)
-{
-  const prob
-    = Math.pow(probCrit, numCrits)
-    * Math.pow(probNorm, numNorms)
-    * Math.pow(probFail, numFail)
-    * factorial(numCrits + numNorms + numFail)
-    / factorial(numCrits)
-    / factorial(numNorms)
-    / factorial(numFail)
-    ;
-  return prob;
-}
+export const exportedForTesting = {
+  DieOutcomeProbs,
+  FinalDiceProb,
+  calcFinalDiceProb,
+  multirollProbability,
+  calcDamage,
+};

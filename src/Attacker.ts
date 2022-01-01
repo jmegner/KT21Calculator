@@ -38,4 +38,13 @@ export default class Attacker {
     this.rending = rending;
     this.starfire = starfire;
   }
+
+  public static justDamage(
+    normalDamage: number,
+    criticalDamage: number = 0,
+    mwx: number = 0
+  ) : Attacker
+  {
+    return new Attacker(0, 0, normalDamage, criticalDamage, mwx);
+  }
 }
