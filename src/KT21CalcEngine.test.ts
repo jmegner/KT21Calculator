@@ -80,7 +80,7 @@ function calcDamageTest() {
 calcDamageTest();
 
 function multirollProbabilityTest() {
-  // using >=1 probabilities so we can have prime divisors and not worry about rounding errors
+  // using >=1 probabilities so we can have prime factors and not worry about rounding errors
   const cp = 7; // crit probability
   const np = 11; // norm probability
   const fp = 13; // fail probability
@@ -90,10 +90,82 @@ function multirollProbabilityTest() {
   it('{0c,3n,0f} => np^3', () => {
     expect(multirollProbability(0, cp, 3, np, 0, fp)).toBe(Math.pow(np, 3));
   });
-  it('{3c,0n,0f} * cp = {2c,1n,0f} * np * 3', () => {
-    expect(multirollProbability(3, cp, 0, np, 0, fp) * cp )
-      .toBe(multirollProbability(2, cp, 1, np, 0, fp) * np * 3);
+  it('{3c,0n,0f} * np * 3 = {2c,1n,0f} * cp', () => {
+    expect(multirollProbability(3, cp, 0, np, 0, fp) * np * 3)
+      .toBe(multirollProbability(2, cp, 1, np, 0, fp) * cp);
   });
-
+  it('{1c,1n,1f} => cp*np*fp*(3!)', () => {
+    expect(multirollProbability(1, cp, 1, np, 1, fp)).toBe(cp * np * fp * 6);
+  });
 }
 multirollProbabilityTest();
+
+function calcFinalDiceProbTest() {
+  // using >=1 probabilities so we can have prime factors and not worry about rounding errors
+  const cp = 7; // crit probability
+  const np = 11; // norm probability
+  const fp = 13; // fail probability
+  const dieProbs = new DieOutcomeProbs(cp, np, fp);
+
+  it('calcFinalDice, basic', () => {
+    const actual = calcFinalDiceProb(dieProbs, 1, 0, 0, false);
+    expect(actual).toStrictEqual(new FinalDiceProb(cp, 1, 0));
+  });
+  it('calcFinalDice, basic balanced 1c', () => {
+    const actual = calcFinalDiceProb(dieProbs, 1, 0, 0, true);
+    expect(actual).toStrictEqual(new FinalDiceProb(cp + fp * cp, 1, 0));
+  });
+  it('calcFinalDice, basic balanced 1f', () => {
+    const actual = calcFinalDiceProb(dieProbs, 0, 0, 1, true);
+    expect(actual).toStrictEqual(new FinalDiceProb(fp * fp, 0, 0));
+  });
+  it('calcFinalDice, rending {0c,1n,1f} => {0c,1n,1f}', () => {
+    const actual = calcFinalDiceProb(dieProbs, 0, 1, 1, false, true);
+    expect(actual).toStrictEqual(new FinalDiceProb(np * fp * 2, 0, 1));
+  });
+  it('calcFinalDice, rending {1c,0n,1f} => {1c,0n,1f}', () => {
+    const actual = calcFinalDiceProb(dieProbs, 1, 0, 1, false, true);
+    expect(actual).toStrictEqual(new FinalDiceProb(cp * fp * 2, 1, 0));
+  });
+  it('calcFinalDice, rending {1c,1n,0f} => {2c,0n,0f}', () => {
+    const actual = calcFinalDiceProb(dieProbs, 1, 1, 0, false, true);
+    expect(actual).toStrictEqual(new FinalDiceProb(cp * np * 2, 2, 0));
+  });
+  it('calcFinalDice, rending {3c,3n,3f} => {4c, 3n, 2f}', () => {
+    const actual = calcFinalDiceProb(dieProbs, 3, 3, 0, false, true);
+    expect(actual.crits).toBe(4);
+    expect(actual.norms).toBe(2);
+  });
+  it('calcFinalDice, starfire {0c,1n,1f} => {0c,1n,1f}', () => {
+    const actual = calcFinalDiceProb(dieProbs, 0, 1, 1, false, false, true);
+    expect(actual).toStrictEqual(new FinalDiceProb(np * fp * 2, 0, 1));
+  });
+  it('calcFinalDice, starfire {1c,0n,1f} => {1c,1n,0f}', () => {
+    const actual = calcFinalDiceProb(dieProbs, 1, 0, 1, false, false, true);
+    expect(actual).toStrictEqual(new FinalDiceProb(cp * fp * 2, 1, 1));
+  });
+  it('calcFinalDice, starfire {1c,1n,0f} => {1c,1n,0f}', () => {
+    const actual = calcFinalDiceProb(dieProbs, 1, 1, 0, false, false, true);
+    expect(actual).toStrictEqual(new FinalDiceProb(cp * np * 2, 1, 1));
+  });
+  it('calcFinalDice, starfire {3c,3n,3f} => {3c,4n,2f}', () => {
+    const actual = calcFinalDiceProb(dieProbs, 3, 3, 3, false, false, true);
+    expect(actual.crits).toBe(3);
+    expect(actual.norms).toBe(4);
+  });
+}
+calcFinalDiceProbTest();
+
+function calcDamageProbabilitiesTest() {
+  const cp = 1/6; // crit probability
+  const np = 1/3; // norm probability
+  const fp = 1/2; // fail probability
+  const dieProbs = new DieOutcomeProbs(cp, np, fp);
+  const atker = new Attacker(1, 4, 11, 13);
+
+  it('calcFinalDice, basic', () => {
+    const actual = calcFinalDiceProb(dieProbs, 1, 0, 0, false);
+    expect(actual).toStrictEqual(new FinalDiceProb(cp, 1, 0));
+  });
+}
+calcDamageProbabilitiesTest();

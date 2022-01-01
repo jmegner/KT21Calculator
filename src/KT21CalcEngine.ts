@@ -194,11 +194,15 @@ function calcFinalDiceProb(
   // there are multiple ways to get to this {crits,norms,fails} via OriginalRoll + BalancedRoll
   if(balancedOrChitin) {
     // if have {c,n,f}, then could be because...
+    //    was {c,n,f=0} and no balance roll
     //    was {c,n,f>0} then balanced-rolled f
     //    was {c-1,n,f+1} then balanced-rolled c
     //    was {c,n-1,f+1} then balanced-rolled n
 
-    prob = fails > 0 ? prob * dieProbs.fail : 0;
+    if(fails > 0) {
+      prob *= dieProbs.fail;
+    }
+    // else "no fails" means start out with probability of original roll
 
     if(crits > 0) {
       prob += dieProbs.crit * multirollProbability(crits - 1, dieProbs.crit, norms, dieProbs.norm, fails + 1, dieProbs.fail)
@@ -218,7 +222,7 @@ function calcFinalDiceProb(
 
   if(starfire) {
     if(crits > 0 && fails > 0) {
-      crits++;
+      norms++;
       fails--;
     }
   }

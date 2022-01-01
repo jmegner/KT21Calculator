@@ -18,8 +18,12 @@ const App: React.FC = () => {
 
   const damageToProb = calcDamageProbabilities(attacker, defender);
 
-  let averageDamage = 0;
-  damageToProb.forEach((prob, damage) => { averageDamage += damage * prob; });
+  let avgDamageUnbounded = 0;
+  let avgDamageBounded = 0;
+  damageToProb.forEach((prob, damage) => {
+     avgDamageUnbounded += damage * prob;
+     avgDamageBounded += Math.min(damage, defender.wounds) * prob;
+  });
 
   return (
     <Container style={{width: '800px'}}>
@@ -39,7 +43,7 @@ const App: React.FC = () => {
         </Col>
       </Row>
       <Row className='border'>
-        <ResultsDisplay avgDamage={NaN} avgDamageUnbounded={averageDamage} killChance={7.89} />
+        <ResultsDisplay avgDamage={avgDamageBounded} avgDamageUnbounded={avgDamageUnbounded} killChance={7.89} />
       </Row>
     </Container>
   );
