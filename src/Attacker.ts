@@ -1,5 +1,6 @@
 import _ from "lodash";
 import Ability from "./Ability";
+import DieProbs from "./DieProbs";
 
 export default class Attacker {
   public attacks: number;
@@ -51,6 +52,26 @@ export default class Attacker {
 
   public critSkill(): number {
     return this.lethalx === 0 ? 6 : this.lethalx;
+  }
+
+  public toDieProbs(): DieProbs {
+    // BEFORE taking ceaseless and relentless into account
+    let failHitProb = (this.bs - 1) / 6;
+    const critSkill = this.critSkill();
+    let critHitProb = (7 - critSkill) / 6;
+    let normHitProb = (critSkill - this.bs) / 6;
+
+    // now to take ceaseless and relentless into account...
+    if (this.reroll === Ability.Ceaseless || this.reroll === Ability.Relentless) {
+      const rerollMultiplier = (this.reroll === Ability.Ceaseless)
+        ? 7 / 6
+        : (this.bs + 5) / 6;
+      critHitProb *= rerollMultiplier;
+      normHitProb *= rerollMultiplier;
+      failHitProb = 1 - critHitProb - normHitProb;
+    }
+
+    return new DieProbs(critHitProb, normHitProb, failHitProb);
   }
 
   public setProp(propName: keyof Attacker, value: number | Ability | boolean) : Attacker {

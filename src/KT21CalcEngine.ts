@@ -2,54 +2,9 @@ import Ability from "./Ability";
 import Attacker from "./Attacker";
 import Defender from "./Defender";
 import Die from "./Die";
-import { factorial } from 'mathjs';
-
-class DieProbs {
-  public crit: number;
-  public norm: number;
-  public fail: number;
-
-  public constructor(
-    crit: number,
-    norm: number,
-    fail: number,
-  ) {
-    this.crit = crit;
-    this.norm = norm;
-    this.fail = fail;
-  }
-
-  public static fromAttacker(attacker: Attacker): DieProbs {
-    // BEFORE taking ceaseless and relentless into account
-    let failHitProb = (attacker.bs - 1) / 6;
-    const critSkill = attacker.critSkill();
-    let critHitProb = (7 - critSkill) / 6;
-    let normHitProb = (critSkill - attacker.bs) / 6;
-
-    // now to take ceaseless and relentless into account...
-    if (attacker.reroll === Ability.Ceaseless || attacker.reroll === Ability.Relentless) {
-      const rerollMultiplier = (attacker.reroll === Ability.Ceaseless)
-        ? 7 / 6
-        : (attacker.bs + 5) / 6;
-      critHitProb *= rerollMultiplier;
-      normHitProb *= rerollMultiplier;
-      failHitProb = 1 - critHitProb - normHitProb;
-    }
-
-    return new DieProbs(critHitProb, normHitProb, failHitProb);
-  }
-
-  public static fromDefender(defender: Defender): DieProbs {
-    const critSaveProb = 1 / 6;
-    const normSaveProb = (6 - defender.relevantSave()) / 6;
-    const failSaveProb = (defender.relevantSave() - 1) / 6;
-    return new DieProbs(
-      critSaveProb,
-      normSaveProb,
-      failSaveProb,
-    );
-  }
-}
+import { factorial, combinations } from 'mathjs';
+import DieProbs from "./DieProbs";
+import * as Util from './Util';
 
 class FinalDiceProb {
   public prob: number;
@@ -72,7 +27,7 @@ export function calcDamageProbabilities(
   defender: Defender,
 ): Map<number, number> // damage to prob
 {
-  const attackerSingleDieProbs = DieProbs.fromAttacker(attacker);
+  const attackerSingleDieProbs = attacker.toDieProbs();
   let attackerFinalDiceProbs: FinalDiceProb[] = [];
 
   for (let crits = 0; crits <= attacker.attacks; crits++) {
@@ -95,7 +50,7 @@ export function calcDamageProbabilities(
     }
   }
 
-  const defenderSingleDieProbs = DieProbs.fromDefender(defender);
+  const defenderSingleDieProbs = defender.toDieProbs();
   const defenderFinalDiceProbs: FinalDiceProb[] = [];
   const defenderFinalDiceProbsWithPx: FinalDiceProb[] = [];
 
@@ -158,12 +113,7 @@ export function calcDamageProbabilities(
     const damage = calcDamage(attacker, atk.crits, atk.norms, def.crits, def.norms + extraSaves);
 
     if (damage > 0) {
-      let cumulativeProb = damageToProb.get(damage);
-
-      if (cumulativeProb === undefined) {
-        cumulativeProb = 0;
-      }
-
+      let cumulativeProb = damageToProb.get(damage) ?? 0;
       cumulativeProb += currProb;
       damageToProb.set(damage, cumulativeProb);
     }
@@ -184,11 +134,39 @@ export function calcDamageProbabilities(
     }
   }
 
+  if(defender.usesFnp()) {
+    damageToProb = withFnpAppliedToDamages(defender.fnp, damageToProb);
+  }
+
   let positiveDamageProbSum = 0;
   damageToProb.forEach(prob => positiveDamageProbSum += prob);
-  damageToProb.set(0, 1 - positiveDamageProbSum);
+
+  if (positiveDamageProbSum < 1) {
+    damageToProb.set(0, 1 - positiveDamageProbSum);
+  }
 
   return damageToProb;
+}
+
+function withFnpAppliedToDamages(
+  fnp: number,
+  preFnpDmgs: Map<number,number>,
+  skipZeroDamage: boolean = true,
+): Map<number,number>
+{
+  const postFnpDmgs = new Map<number,number>();
+  const probDamagePersists = (fnp - 1) / 6;
+
+  preFnpDmgs.forEach((preFnpProb, preFnpDmg) => {
+    for(let postFnpDmg = skipZeroDamage ? 1 : 0; postFnpDmg <= preFnpDmg; postFnpDmg++) {
+      const withinFnpProb = Util.binomialPmf(preFnpDmg, postFnpDmg, probDamagePersists);
+      const oldProb = postFnpDmgs.get(postFnpDmg) ?? 0;
+      const newProb = oldProb + preFnpProb * withinFnpProb;
+      postFnpDmgs.set(postFnpDmg, newProb);
+    }
+  });
+
+  return postFnpDmgs;
 }
 
 function calcFinalDiceProb(
@@ -329,7 +307,8 @@ function calcDamage(
 export const exportedForTesting = {
   DieProbs,
   FinalDiceProb,
+  calcDamage,
   calcFinalDiceProb,
   multirollProbability,
-  calcDamage,
+  withFnpAppliedToDamages,
 };

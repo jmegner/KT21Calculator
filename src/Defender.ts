@@ -1,5 +1,6 @@
 import _ from "lodash";
 import Die from "./Die";
+import DieProbs from "./DieProbs";
 
 export default class Defender {
   public defense: number;
@@ -28,12 +29,27 @@ export default class Defender {
     this.chitin = chitin;
   }
 
+  public usesFnp(): boolean {
+    return Die.Valid(this.fnp);
+  }
+
   public usesInvulnSave(): boolean {
     return Die.Valid(this.invulnSave);
   }
 
   public relevantSave(): number {
     return this.usesInvulnSave() ? this.invulnSave : this.save;
+  }
+
+  public toDieProbs(): DieProbs {
+    const critSaveProb = 1 / 6;
+    const normSaveProb = (6 - this.relevantSave()) / 6;
+    const failSaveProb = (this.relevantSave() - 1) / 6;
+    return new DieProbs(
+      critSaveProb,
+      normSaveProb,
+      failSaveProb,
+    );
   }
 
   public setProp(propName: keyof Defender, value: number | boolean) : Defender {

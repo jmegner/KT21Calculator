@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { combinations } from 'mathjs';
 
 export type Accepter<T> = (arg: T) => void;
 
@@ -99,4 +100,17 @@ export function weightedAverage(valToWeight: Map<number,number>) : number {
   let avg = 0;
   valToWeight.forEach((weight, val) => { avg += val * weight; });
   return avg;
+}
+
+export function binomialPmf(
+  numTrials: number,
+  numSuccesses: number,
+  probSuccess: number,
+): number
+{
+  // often the variables are named numTrials=n, numSuccesses=k, probSuccess=p
+  return combinations(numTrials, numSuccesses)
+    * Math.pow(probSuccess, numSuccesses)
+    * Math.pow(1 - probSuccess, numTrials - numSuccesses)
+    ;
 }

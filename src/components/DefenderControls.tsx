@@ -18,10 +18,10 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
   const saveId = 'Save';
   const defenseId = 'Defense';
   const woundsId = 'Wounds';
-  const fnpId = 'FNP (Feel No Pain) (TODO)';
+  const fnpId = 'FNP (Feel No Pain)';
   const invulnSaveId = 'InvulnSave (used if valid)';
   const coverId = 'Cover (1 autosuccess)';
-  const chitinId = 'Extended Chitin';
+  const chitinId = 'Extended Chitin (only rerolls a fail)';
 
   const def = props.defender;
   const [, numHandler, boolHandler]

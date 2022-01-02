@@ -6,13 +6,15 @@ import { calcDamageProbabilities, exportedForTesting } from './KT21CalcEngine';
 import * as Util from './Util';
 import _ from 'lodash';
 import Ability from './Ability';
+import { combinations, factorial } from 'mathjs';
 
 const {
   DieProbs,
   FinalDiceProb,
+  calcDamage,
   calcFinalDiceProb,
   multirollProbability,
-  calcDamage,
+  withFnpAppliedToDamages,
 } = exportedForTesting;
 
 const requiredPrecision = 10;
@@ -165,6 +167,50 @@ describe('calcFinalDiceProb', () => {
     const actual = calcFinalDiceProb(dieProbs, 3, 3, 3, false, false, true);
     expect(actual.crits).toBe(3);
     expect(actual.norms).toBe(4);
+  });
+});
+
+describe('withFnpAppliedToDamages', () => {
+  it('single prefnp damage of 3', () => {
+    const fnp = 5;
+    const pd = 2 / 3; // probability damage gets through
+    const pa = 1 / 3; // probability avoided the damage
+    const preFnpDmgs = new Map<number,number>([ [3, 1], ]);
+    const postFnpDmgs = withFnpAppliedToDamages(fnp, preFnpDmgs);
+
+    expect(postFnpDmgs.get(1)).toBeCloseTo(Math.pow(pd, 1) * Math.pow(pa, 2) * 3, requiredPrecision);
+    expect(postFnpDmgs.get(2)).toBeCloseTo(Math.pow(pd, 2) * Math.pow(pa, 1) * 3, requiredPrecision);
+    expect(postFnpDmgs.get(3)).toBeCloseTo(Math.pow(pd, 3) * Math.pow(pa, 0) * 1, requiredPrecision);
+    expect(postFnpDmgs.size).toBe(3);
+  });
+  it('single prefnp damage of 4', () => {
+    const fnp = 5;
+    const pd = 2 / 3; // probability damage gets through
+    const pa = 1 / 3; // probability avoided the damage
+    const preFnpDmgs = new Map<number,number>([ [4, 1], ]);
+    const postFnpDmgs = withFnpAppliedToDamages(fnp, preFnpDmgs);
+
+    expect(postFnpDmgs.get(1)).toBeCloseTo(Math.pow(pd, 1) * Math.pow(pa, 3) * 4, requiredPrecision);
+    expect(postFnpDmgs.get(2)).toBeCloseTo(Math.pow(pd, 2) * Math.pow(pa, 2) * 6, requiredPrecision);
+    expect(postFnpDmgs.get(3)).toBeCloseTo(Math.pow(pd, 3) * Math.pow(pa, 1) * 4, requiredPrecision);
+    expect(postFnpDmgs.get(4)).toBeCloseTo(Math.pow(pd, 4) * Math.pow(pa, 0) * 1, requiredPrecision);
+    expect(postFnpDmgs.size).toBe(4);
+  });
+  it('prefnp damages of 1 & 2', () => {
+    const fnp = 5;
+    const pd = 2 / 3; // probability damage gets through
+    const pa = 1 / 3; // probability avoided the damage
+    const p1 = 0.25; // probability of prefnp damage = 1
+    const p2 = 1 - p1; // probability of prefnp damage = 2
+    const preFnpDmgs = new Map<number,number>([
+      [1, p1],
+      [2, p2],
+    ]);
+    const postFnpDmgs = withFnpAppliedToDamages(fnp, preFnpDmgs);
+
+    expect(postFnpDmgs.get(1)).toBeCloseTo(p2 * pd * pa * 2 + p1 * pd, requiredPrecision);
+    expect(postFnpDmgs.get(2)).toBeCloseTo(p2 * pd * pd, requiredPrecision);
+    expect(postFnpDmgs.size).toBe(2);
   });
 });
 
@@ -348,11 +394,11 @@ describe('calcDamageProbabilities, px and lethalx', () => {
   it('0 < apx < px, apx used when no crit', () => {
     const atk = newTestAttacker(1, 1).setProp('apx', 1).setProp('px', 2).setProp('lethalx', 5);
     const def = new Defender(2, 1);
-    const pa = DieProbs.fromAttacker(atk);
+    const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
 
     const dmgs = calcDamageProbabilities(atk, def);
-    expect(dmgs.get(0)).toBeCloseTo(pa.norm, requiredPrecision);
-    expect(dmgs.get(atk.criticalDamage)).toBeCloseTo(pa.crit, requiredPrecision);
+    expect(dmgs.get(0)).toBeCloseTo(pn, requiredPrecision);
+    expect(dmgs.get(atk.criticalDamage)).toBeCloseTo(pc, requiredPrecision);
     expect(dmgs.size).toBe(2);
   });
 });
@@ -360,13 +406,13 @@ describe('calcDamageProbabilities, px and lethalx', () => {
 describe('calcDamageProbabilities, balanced', () => {
   it('balanced with 1 atk die', () => {
     const atk = newTestAttacker(1).setProp('reroll', Ability.Balanced);
-    const pa = DieProbs.fromAttacker(atk);
+    const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
     const def = new Defender(0);
 
     const dmgs = calcDamageProbabilities(atk, def);
-    expect(dmgs.get(0)).toBeCloseTo(pa.fail * pa.fail, requiredPrecision);
-    expect(dmgs.get(atk.normalDamage)).toBeCloseTo(pa.norm + pa.fail * pa.norm, requiredPrecision);
-    expect(dmgs.get(atk.criticalDamage)).toBeCloseTo(pa.crit + pa.fail * pa.crit, requiredPrecision);
+    expect(dmgs.get(0)).toBeCloseTo(pf * pf, requiredPrecision);
+    expect(dmgs.get(atk.normalDamage)).toBeCloseTo(pn + pf * pn, requiredPrecision);
+    expect(dmgs.get(atk.criticalDamage)).toBeCloseTo(pc + pf * pc, requiredPrecision);
     expect(dmgs.size).toBe(3);
   });
 });
@@ -425,32 +471,83 @@ describe('calcDamageProbabilities, relentless', () => {
 describe('calcDamageProbabilities, rending & starfire', () => {
   it('rending, 2 atk dice, probability 2 crits', () => {
     const atk = newTestAttacker(2).setProp('rending', true);
-    const pa = DieProbs.fromAttacker(atk);
+    const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
     const def = new Defender(0);
 
     const dmgs = calcDamageProbabilities(atk, def);
-    expect(dmgs.get(2 * atk.criticalDamage)).toBeCloseTo(pa.crit * pa.crit + 2 * pa.crit * pa.norm, requiredPrecision);
+    expect(dmgs.get(2 * atk.criticalDamage)).toBeCloseTo(pc * pc + 2 * pc * pn, requiredPrecision);
   });
   it('starfire, 2 atk dice, probability 1 crit + 1 norm', () => {
     const atk = newTestAttacker(2).setProp('starfire', true);
-    const pa = DieProbs.fromAttacker(atk);
+    const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
     const def = new Defender(0);
 
     const dmgs = calcDamageProbabilities(atk, def);
     expect(dmgs.get(atk.criticalDamage + atk.normalDamage))
-      .toBeCloseTo(2 * pa.crit * pa.fail + 2 * pa.crit * pa.norm, requiredPrecision);
+      .toBeCloseTo(2 * pc * pf + 2 * pc * pn, requiredPrecision);
   });
 });
 
 describe('calcDamageProbabilities, defender abilities', () => {
-  it('TODO: fnp', () => {
-    expect(0).toBe(0);
+  it('fnp with prefnp damages of 1 and 2', () => {
+    // we already tested fnp at the withFnpAppliedToDamages level, quick redo at higher level
+    const fnp = 5;
+    const pd = 2 / 3; // probability damage gets through
+    const pa = 1 / 3; // probability avoided the damage
+    const p1 = 1 / 2; // probability of prefnp damage = 1
+    const p2 = 1 / 6; // probability of prefnp damage = 2
+    const atk = new Attacker(1, 3, 1, 2);
+    const def = new Defender(0).setProp('fnp', fnp);
+
+    const dmgs = calcDamageProbabilities(atk, def);
+    expect(dmgs.get(1)).toBeCloseTo(p2 * pd * pa * 2 + p1 * pd, requiredPrecision);
+    expect(dmgs.get(2)).toBeCloseTo(p2 * pd * pd, requiredPrecision);
+    expect(dmgs.size).toBe(3);
   });
-  it('TODO: cover', () => {
-    expect(0).toBe(0);
+  it('cover, 1 always-norm-hit vs 1 cover save (always cancel)', () => {
+    const atk = newTestAttacker(1).withAlwaysNormHit();
+    const def = new Defender(1, 6).setProp('cover', true);
+
+    const dmgs = calcDamageProbabilities(atk, def);
+    expect(dmgs.get(0)).toBeCloseTo(1, requiredPrecision);
+    expect(dmgs.size).toBe(1);
   });
-  it('TODO: chitin', () => {
-    expect(0).toBe(0);
+  it('cover, 1 always-crit-hit vs 1 cover save (never cancel)', () => {
+    const atk = newTestAttacker(1).withAlwaysCritHit();
+    const def = new Defender(1, 6).setProp('cover', true);
+
+    const dmgs = calcDamageProbabilities(atk, def);
+    expect(dmgs.get(atk.criticalDamage)).toBeCloseTo(1, requiredPrecision);
+    expect(dmgs.size).toBe(1);
+  });
+  it('cover, 2 always-norm-hit vs 1 cover save and 1 def roll (sometimes cancelled)', () => {
+    const atk = newTestAttacker(2).withAlwaysNormHit();
+    const def = new Defender(2, 3).setProp('cover', true);
+    const [pc, pn, pf] = def.toDieProbs().toCritNormFail();
+
+    const dmgs = calcDamageProbabilities(atk, def);
+    expect(dmgs.get(0)).toBeCloseTo(pc + pn, requiredPrecision);
+    expect(dmgs.get(atk.normalDamage)).toBeCloseTo(pf, requiredPrecision);
+    expect(dmgs.size).toBe(2);
+  });
+  it('enough apx means not even a cover success', () => {
+    const atk = newTestAttacker(1).withAlwaysNormHit().setProp('apx', 3);
+    const def = new Defender(3);
+
+    const dmgs = calcDamageProbabilities(atk, def);
+    expect(dmgs.get(atk.normalDamage)).toBeCloseTo(1, requiredPrecision);
+    expect(dmgs.size).toBe(1);
+  });
+  it('chitin, 1 atk die & 1 def die', () => {
+    const atk = newTestAttacker(1, 4);
+    const def = new Defender(1, 4).setProp('chitin', true);
+    const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
+
+    const dmgs = calcDamageProbabilities(atk, def);
+    expect(dmgs.get(atk.criticalDamage)).toBeCloseTo(pc * (pf * (1 - pc) + pn), requiredPrecision);
+    expect(dmgs.get(atk.normalDamage)).toBeCloseTo(pn * pf * pf, requiredPrecision);
+    expect(dmgs.get(0)).toEqual(expect.any(Number)); // prob is just remainder
+    expect(dmgs.size).toBe(3);
   });
 });
 
