@@ -81,7 +81,6 @@ export function makeNumChangeHandler<T>(
   return makePropChangeHandler(obj, objChangeHandler, parseIntZero);
 }
 
-
 export function makeBoolChangeHandler<T>(
   obj: T,
   objChangeHandler: (t: T) => void,
@@ -94,4 +93,10 @@ export function nameof<TObject>(obj: TObject, key: keyof TObject): string;
 export function nameof<TObject>(key: keyof TObject): string;
 export function nameof(key1: any, key2?: any): any {
   return key2 ?? key1;
+}
+
+export function weightedAverage(valToWeight: Map<number,number>) : number {
+  let avg = 0;
+  valToWeight.forEach((weight, val) => { avg += val * weight; });
+  return avg;
 }

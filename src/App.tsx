@@ -20,9 +20,15 @@ const App: React.FC = () => {
 
   let avgDamageUnbounded = 0;
   let avgDamageBounded = 0;
+  let killProb = 0;
+
   damageToProb.forEach((prob, damage) => {
      avgDamageUnbounded += damage * prob;
      avgDamageBounded += Math.min(damage, defender.wounds) * prob;
+
+     if(damage >= defender.wounds) {
+       killProb += prob;
+     }
   });
 
   return (
@@ -43,7 +49,7 @@ const App: React.FC = () => {
         </Col>
       </Row>
       <Row className='border'>
-        <ResultsDisplay avgDamage={avgDamageBounded} avgDamageUnbounded={avgDamageUnbounded} killChance={7.89} />
+        <ResultsDisplay avgDamage={avgDamageBounded} avgDamageUnbounded={avgDamageUnbounded} killProb={killProb} />
       </Row>
     </Container>
   );

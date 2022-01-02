@@ -21,7 +21,7 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
   const fnpId = 'FNP (Feel No Pain) (TODO)';
   const invulnSaveId = 'InvulnSave (used if valid)';
   const coverId = 'Cover (1 autosuccess)';
-  const chitinId = 'Extended Chitin (TODO)';
+  const chitinId = 'Extended Chitin';
 
   const def = props.defender;
   const [, numHandler, boolHandler]

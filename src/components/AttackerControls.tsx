@@ -35,7 +35,7 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     = Util.makePropChangeHandlers(atk, props.changeHandler);
 
   const params: IncProps[] = [
-    //           id/label,         selectedValue,            values,                 valueChangeHandler
+    //           id/label,         selectedValue,            values,               valueChangeHandler
     new IncProps(attacksId,        atk.attacks,            Util.span(1, 8),        numHandler('attacks')),
     new IncProps(bsId,             atk.bs + '+',           Util.rollSpan,          numHandler('bs')),
     new IncProps(normalDamageId,   atk.normalDamage,       Util.span(1, 9),        numHandler('normalDamage')),
@@ -44,7 +44,7 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     new IncProps(apxId,            atk.apx,                Util.xspan(1, 3),       numHandler('apx')),
     new IncProps(pxId,             atk.px,                 Util.xspan(1, 3),       numHandler('px')),
     new IncProps(rerollId,         atk.reroll,             Util.preX(rerollTypes), textHandler('reroll')),
-    new IncProps(lethalxId,        atk.lethalx + '+',      Util.xspan(5, 5, '+'),  textHandler('lethalx')),
+    new IncProps(lethalxId,        atk.lethalx + '+',      Util.xspan(4, 5, '+'),  numHandler('lethalx')),
     new IncProps(rendingId,        toCheckX(atk.rending),  Util.xAndCheck,         boolHandler('rending')),
     new IncProps(starfireId,       toCheckX(atk.starfire), Util.xAndCheck,         boolHandler('starfire')),
   ];

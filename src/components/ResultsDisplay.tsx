@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col';
 export interface Props {
   avgDamage: number;
   avgDamageUnbounded: number;
-  killChance: number;
+  killProb: number;
 }
 
 const ResultsDisplay: React.FC<Props> = (props: Props) => {
@@ -28,6 +28,14 @@ const ResultsDisplay: React.FC<Props> = (props: Props) => {
         </Col>
         <Col>
           {props.avgDamageUnbounded.toFixed(digitsPastDecimal)}
+        </Col>
+      </Row>
+      <Row>
+        <Col style={{fontSize: '11px'}}>
+          KillChance:
+        </Col>
+        <Col>
+          {(props.killProb * 100).toFixed(digitsPastDecimal)}%
         </Col>
       </Row>
     </Container>

@@ -4,7 +4,7 @@ import Defender from "./Defender";
 import Die from "./Die";
 import { factorial } from 'mathjs';
 
-class DieOutcomeProbs {
+class DieProbs {
   public crit: number;
   public norm: number;
   public fail: number;
@@ -13,22 +13,21 @@ class DieOutcomeProbs {
     crit: number,
     norm: number,
     fail: number,
-  )
-  {
+  ) {
     this.crit = crit;
     this.norm = norm;
     this.fail = fail;
   }
 
-  public static FromAttacker(attacker: Attacker) : DieOutcomeProbs {
+  public static fromAttacker(attacker: Attacker): DieProbs {
     // BEFORE taking ceaseless and relentless into account
     let failHitProb = (attacker.bs - 1) / 6;
-    const critSkill = Die.Valid(attacker.lethalx) ? attacker.lethalx : 6;
+    const critSkill = attacker.critSkill();
     let critHitProb = (7 - critSkill) / 6;
     let normHitProb = (critSkill - attacker.bs) / 6;
 
     // now to take ceaseless and relentless into account...
-    if(attacker.reroll === Ability.Ceaseless || attacker.reroll === Ability.Relentless) {
+    if (attacker.reroll === Ability.Ceaseless || attacker.reroll === Ability.Relentless) {
       const rerollMultiplier = (attacker.reroll === Ability.Ceaseless)
         ? 7 / 6
         : (attacker.bs + 5) / 6;
@@ -37,14 +36,14 @@ class DieOutcomeProbs {
       failHitProb = 1 - critHitProb - normHitProb;
     }
 
-    return new DieOutcomeProbs(critHitProb, normHitProb, failHitProb);
+    return new DieProbs(critHitProb, normHitProb, failHitProb);
   }
 
-  public static FromDefender(defender: Defender) : DieOutcomeProbs {
-    const critSaveProb = 1/6;
-    const normSaveProb = (6 - defender.save) / 6;
-    const failSaveProb = (defender.save - 1) / 6;
-    return new DieOutcomeProbs(
+  public static fromDefender(defender: Defender): DieProbs {
+    const critSaveProb = 1 / 6;
+    const normSaveProb = (6 - defender.relevantSave()) / 6;
+    const failSaveProb = (defender.relevantSave() - 1) / 6;
+    return new DieProbs(
       critSaveProb,
       normSaveProb,
       failSaveProb,
@@ -61,8 +60,7 @@ class FinalDiceProb {
     prob: number,
     crits: number,
     norms: number,
-  )
-  {
+  ) {
     this.prob = prob;
     this.crits = crits;
     this.norms = norms;
@@ -72,9 +70,9 @@ class FinalDiceProb {
 export function calcDamageProbabilities(
   attacker: Attacker,
   defender: Defender,
-) : Map<number, number> // damage to prob
+): Map<number, number> // damage to prob
 {
-  const attackerDieOutcomeProbs = DieOutcomeProbs.FromAttacker(attacker);
+  const attackerSingleDieProbs = DieProbs.fromAttacker(attacker);
   let attackerFinalDiceProbs: FinalDiceProb[] = [];
 
   for (let crits = 0; crits <= attacker.attacks; crits++) {
@@ -82,7 +80,7 @@ export function calcDamageProbabilities(
       const fails = attacker.attacks - crits - norms;
 
       const finalDiceProb = calcFinalDiceProb(
-        attackerDieOutcomeProbs,
+        attackerSingleDieProbs,
         crits,
         norms,
         fails,
@@ -97,7 +95,7 @@ export function calcDamageProbabilities(
     }
   }
 
-  const defenderDieOutcomeProbs = DieOutcomeProbs.FromDefender(defender);
+  const defenderSingleDieProbs = DieProbs.fromDefender(defender);
   const defenderFinalDiceProbs: FinalDiceProb[] = [];
   const defenderFinalDiceProbsWithPx: FinalDiceProb[] = [];
 
@@ -110,7 +108,7 @@ export function calcDamageProbabilities(
     for (let norms = 0; norms <= numDefRollsWithoutPx - crits; norms++) {
       const fails = numDefRollsWithoutPx - crits - norms;
       const finalDiceProb = calcFinalDiceProb(
-        defenderDieOutcomeProbs,
+        defenderSingleDieProbs,
         crits,
         norms,
         fails,
@@ -125,10 +123,11 @@ export function calcDamageProbabilities(
 
   // if APx > Px, then ignore Px
   const effectivePx = attacker.apx >= attacker.px ? 0 : attacker.px;
+  const pxIsRelevant = effectivePx > 0 && !defender.usesInvulnSave();
   let coverSavesWithPx = 0;
 
   // for Px triggered and relevant
-  if (effectivePx > 0 && !defender.usesInvulnSave()) {
+  if (pxIsRelevant) {
     const numDefDiceWithPx = defender.defense - effectivePx;
     coverSavesWithPx = (numDefDiceWithPx > 0 && defender.cover) ? 1 : 0;
     const numDefRollsWithPx = numDefDiceWithPx - coverSavesWithPx;
@@ -137,7 +136,7 @@ export function calcDamageProbabilities(
       for (let norms = 0; norms <= numDefRollsWithPx - crits; norms++) {
         const fails = numDefRollsWithPx - crits - norms;
         const finalDiceProb = calcFinalDiceProb(
-          defenderDieOutcomeProbs,
+          defenderSingleDieProbs,
           crits,
           norms,
           fails,
@@ -151,77 +150,89 @@ export function calcDamageProbabilities(
     }
   }
 
+  // don't add damage=0 stuff until very end
   let damageToProb = new Map<number, number>();
 
   function addAtkDefScenario(atk: FinalDiceProb, def: FinalDiceProb, extraSaves: number): void {
-      const currProb = atk.prob * def.prob;
-      const damage = calcDamage(attacker, atk.crits, atk.norms, def.crits, def.norms + extraSaves);
+    const currProb = atk.prob * def.prob;
+    const damage = calcDamage(attacker, atk.crits, atk.norms, def.crits, def.norms + extraSaves);
 
-      let probSum = damageToProb.get(damage);
+    if (damage > 0) {
+      let cumulativeProb = damageToProb.get(damage);
 
-      if(probSum === undefined) {
-        probSum = 0;
+      if (cumulativeProb === undefined) {
+        cumulativeProb = 0;
       }
 
-      probSum += currProb;
-      damageToProb.set(damage, probSum);
+      cumulativeProb += currProb;
+      damageToProb.set(damage, cumulativeProb);
+    }
   }
 
   for (const atk of attackerFinalDiceProbs) {
-    for (const def of defenderFinalDiceProbs) {
-      addAtkDefScenario(atk, def, coverSaves);
-    }
-    for (const def of defenderFinalDiceProbsWithPx) {
-      addAtkDefScenario(atk, def, coverSavesWithPx);
+    if (atk.crits + atk.norms > 0) {
+      if (pxIsRelevant && atk.crits > 0) {
+        for (const def of defenderFinalDiceProbsWithPx) {
+          addAtkDefScenario(atk, def, coverSavesWithPx);
+        }
+      }
+      else {
+        for (const def of defenderFinalDiceProbs) {
+          addAtkDefScenario(atk, def, coverSaves);
+        }
+      }
     }
   }
+
+  let positiveDamageProbSum = 0;
+  damageToProb.forEach(prob => positiveDamageProbSum += prob);
+  damageToProb.set(0, 1 - positiveDamageProbSum);
 
   return damageToProb;
 }
 
 function calcFinalDiceProb(
-  dieProbs: DieOutcomeProbs,
+  dieProbs: DieProbs,
   crits: number,
   norms: number,
   fails: number,
   balancedOrChitin: boolean,
   rending: boolean = false,
   starfire: boolean = false,
-) : FinalDiceProb
-{
+): FinalDiceProb {
   let prob = multirollProbability(crits, dieProbs.crit, norms, dieProbs.norm, fails, dieProbs.fail);
 
   // there are multiple ways to get to this {crits,norms,fails} via OriginalRoll + BalancedRoll
-  if(balancedOrChitin) {
+  if (balancedOrChitin) {
     // if have {c,n,f}, then could be because...
     //    was {c,n,f=0} and no balance roll
     //    was {c,n,f>0} then balanced-rolled f
     //    was {c-1,n,f+1} then balanced-rolled c
     //    was {c,n-1,f+1} then balanced-rolled n
 
-    if(fails > 0) {
+    if (fails > 0) {
       prob *= dieProbs.fail;
     }
     // else "no fails" means start out with probability of original roll
 
-    if(crits > 0) {
+    if (crits > 0) {
       prob += dieProbs.crit * multirollProbability(crits - 1, dieProbs.crit, norms, dieProbs.norm, fails + 1, dieProbs.fail)
     }
 
-    if(norms > 0) {
+    if (norms > 0) {
       prob += dieProbs.norm * multirollProbability(crits, dieProbs.crit, norms - 1, dieProbs.norm, fails + 1, dieProbs.fail)
     }
   }
 
-  if(rending) {
-    if(crits > 0 && norms > 0) {
+  if (rending) {
+    if (crits > 0 && norms > 0) {
       crits++;
       norms--;
     }
   }
 
-  if(starfire) {
-    if(crits > 0 && fails > 0) {
+  if (starfire) {
+    if (crits > 0 && fails > 0) {
       norms++;
       fails--;
     }
@@ -237,8 +248,7 @@ function multirollProbability(
   probNorm: number,
   numFails: number,
   probFail: number,
-)
-{
+) {
   const prob
     = Math.pow(probCrit, numCrits)
     * Math.pow(probNorm, numNorms)
@@ -257,8 +267,7 @@ function calcDamage(
   normHits: number,
   critSaves: number,
   normSaves: number,
-) : number
-{
+): number {
   // possible TODO: memoization of results indexed by [crit > norm][hits and saves]
   let damage = critHits * attacker.mwx;
 
@@ -318,7 +327,7 @@ function calcDamage(
 }
 
 export const exportedForTesting = {
-  DieOutcomeProbs,
+  DieProbs,
   FinalDiceProb,
   calcFinalDiceProb,
   multirollProbability,
