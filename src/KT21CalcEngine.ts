@@ -1,10 +1,10 @@
 import Ability from "./Ability";
 import Attacker from "./Attacker";
 import Defender from "./Defender";
-import Die from "./Die";
-import { factorial, combinations } from 'mathjs';
+import { factorial, } from 'mathjs';
 import DieProbs from "./DieProbs";
 import * as Util from './Util';
+import _ from "lodash";
 
 class FinalDiceProb {
   public prob: number;
@@ -25,6 +25,7 @@ class FinalDiceProb {
 export function calcDamageProbabilities(
   attacker: Attacker,
   defender: Defender,
+  numRounds: number = 1,
 ): Map<number, number> // damage to prob
 {
   const attackerSingleDieProbs = attacker.toDieProbs();
@@ -105,7 +106,7 @@ export function calcDamageProbabilities(
     }
   }
 
-  // don't add damage=0 stuff until very end
+  // don't add damage=0 stuff until just before multi-round handling
   let damageToProb = new Map<number, number>();
 
   function addAtkDefScenario(atk: FinalDiceProb, def: FinalDiceProb, extraSaves: number): void {
@@ -145,6 +146,10 @@ export function calcDamageProbabilities(
     damageToProb.set(0, 1 - positiveDamageProbSum);
   }
 
+  if(numRounds > 1) {
+    damageToProb = calcMultiRoundDamage(damageToProb, numRounds);
+  }
+
   return damageToProb;
 }
 
@@ -169,6 +174,30 @@ function withFnpAppliedToDamages(
   return postFnpDmgs;
 }
 
+function calcMultiRoundDamage(
+  dmgsSingleRound: Map<number,number>,
+  numRounds: number,
+): Map<number, number>
+{
+  let dmgsCumulative = new Map<number,number>(dmgsSingleRound);
+
+  for(let roundIdx of _.range(1, numRounds)) { // eslint-disable-line
+    const dmgsPrevRounds = dmgsCumulative;
+    dmgsCumulative = new Map<number,number>();
+
+    dmgsPrevRounds.forEach((probPrevRounds, dmgPrevRounds) => {
+      dmgsSingleRound.forEach((probSingleRound, dmgSingleRound) => {
+        const dmgCumulative = dmgPrevRounds + dmgSingleRound;
+        const probCumulativeOld = dmgsCumulative.get(dmgCumulative) ?? 0;
+        const probCumulativeNew = probCumulativeOld + probPrevRounds * probSingleRound;
+        dmgsCumulative.set(dmgCumulative, probCumulativeNew);
+      });
+    });
+  }
+
+  return dmgsCumulative;
+}
+
 function calcFinalDiceProb(
   dieProbs: DieProbs,
   crits: number,
@@ -178,7 +207,7 @@ function calcFinalDiceProb(
   rending: boolean = false,
   starfire: boolean = false,
 ): FinalDiceProb {
-  let prob = multirollProbability(crits, dieProbs.crit, norms, dieProbs.norm, fails, dieProbs.fail);
+  let prob = calcMultiRollProb(crits, dieProbs.crit, norms, dieProbs.norm, fails, dieProbs.fail);
 
   // there are multiple ways to get to this {crits,norms,fails} via OriginalRoll + BalancedRoll
   if (balancedOrChitin) {
@@ -194,11 +223,11 @@ function calcFinalDiceProb(
     // else "no fails" means start out with probability of original roll
 
     if (crits > 0) {
-      prob += dieProbs.crit * multirollProbability(crits - 1, dieProbs.crit, norms, dieProbs.norm, fails + 1, dieProbs.fail)
+      prob += dieProbs.crit * calcMultiRollProb(crits - 1, dieProbs.crit, norms, dieProbs.norm, fails + 1, dieProbs.fail)
     }
 
     if (norms > 0) {
-      prob += dieProbs.norm * multirollProbability(crits, dieProbs.crit, norms - 1, dieProbs.norm, fails + 1, dieProbs.fail)
+      prob += dieProbs.norm * calcMultiRollProb(crits, dieProbs.crit, norms - 1, dieProbs.norm, fails + 1, dieProbs.fail)
     }
   }
 
@@ -219,7 +248,7 @@ function calcFinalDiceProb(
   return new FinalDiceProb(prob, crits, norms);
 }
 
-function multirollProbability(
+function calcMultiRollProb(
   numCrits: number,
   probCrit: number,
   numNorms: number,
@@ -309,6 +338,8 @@ export const exportedForTesting = {
   FinalDiceProb,
   calcDamage,
   calcFinalDiceProb,
-  multirollProbability,
+  calcMultiRoundDamage,
+  calcMultiRollProb,
   withFnpAppliedToDamages,
 };
+

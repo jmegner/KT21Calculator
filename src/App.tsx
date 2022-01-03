@@ -16,20 +16,7 @@ const App: React.FC = () => {
   const [defender, setDefender] = React.useState(new Defender());
   const [rounds, setRounds] = React.useState(1);
 
-  const damageToProb = calcDamageProbabilities(attacker, defender);
-
-  let avgDamageUnbounded = 0;
-  let avgDamageBounded = 0;
-  let killProb = 0;
-
-  damageToProb.forEach((prob, damage) => {
-     avgDamageUnbounded += damage * prob;
-     avgDamageBounded += Math.min(damage, defender.wounds) * prob;
-
-     if(damage >= defender.wounds) {
-       killProb += prob;
-     }
-  });
+  const damageToProb = calcDamageProbabilities(attacker, defender, rounds);
 
   return (
     <Container style={{width: '800px'}}>
@@ -49,7 +36,7 @@ const App: React.FC = () => {
         </Col>
       </Row>
       <Row className='border'>
-        <ResultsDisplay avgDamage={avgDamageBounded} avgDamageUnbounded={avgDamageUnbounded} killProb={killProb} />
+        <ResultsDisplay damageToProb={damageToProb} defender={defender} />
       </Row>
     </Container>
   );

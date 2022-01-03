@@ -15,7 +15,7 @@ export interface Props {
 }
 
 const CalcControls: React.FC<Props> = (props: Props) => {
-  const roundsId = 'Rounds (TODO)';
+  const roundsId = 'Rounds';
 
   const params: IncProps[] = [
     //           id,       selectedValue,values,          valueChangeHandler

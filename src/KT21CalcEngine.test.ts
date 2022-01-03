@@ -13,7 +13,8 @@ const {
   FinalDiceProb,
   calcDamage,
   calcFinalDiceProb,
-  multirollProbability,
+  calcMultiRollProb,
+  calcMultiRoundDamage,
   withFnpAppliedToDamages,
 } = exportedForTesting;
 
@@ -23,11 +24,11 @@ function newTestAttacker(attacks: number = 1, bs: number = 4) : Attacker {
   return new Attacker(attacks, bs, 11, 13);
 }
 
-function avgDmg(attacker: Attacker, defender: Defender): number {
-  return Util.weightedAverage(calcDamageProbabilities(attacker, defender));
+function avgDmg(attacker: Attacker, defender: Defender, numRounds: number = 1): number {
+  return Util.weightedAverage(calcDamageProbabilities(attacker, defender, numRounds));
 }
 
-describe('calcDamage', () => {
+describe(calcDamage.name, () => {
   let dn = 5; // normal damage
   let dc = 7; // critical damage
   let dmw = 100; // mortal wound damage
@@ -95,27 +96,27 @@ describe('calcDamage', () => {
   });
 });
 
-describe('multirollProbability', () => {
+describe(calcMultiRollProb.name, () => {
   // using >=1 probabilities so we can have prime factors and not worry about rounding errors
   const pc = 7; // crit probability
   const pn = 11; // norm probability
   const pf = 13; // fail probability
   it('{0c,0n,1f} => pf^1', () => {
-    expect(multirollProbability(0, pc, 0, pn, 1, pf)).toBe(pf);
+    expect(calcMultiRollProb(0, pc, 0, pn, 1, pf)).toBe(pf);
   });
   it('{0c,3n,0f} => pn^3', () => {
-    expect(multirollProbability(0, pc, 3, pn, 0, pf)).toBe(Math.pow(pn, 3));
+    expect(calcMultiRollProb(0, pc, 3, pn, 0, pf)).toBe(Math.pow(pn, 3));
   });
   it('{3c,0n,0f} * pn * 3 = {2c,1n,0f} * pc', () => {
-    expect(multirollProbability(3, pc, 0, pn, 0, pf) * pn * 3)
-      .toBe(multirollProbability(2, pc, 1, pn, 0, pf) * pc);
+    expect(calcMultiRollProb(3, pc, 0, pn, 0, pf) * pn * 3)
+      .toBe(calcMultiRollProb(2, pc, 1, pn, 0, pf) * pc);
   });
   it('{1c,1n,1f} => pc*pn*pf*(3!)', () => {
-    expect(multirollProbability(1, pc, 1, pn, 1, pf)).toBe(pc * pn * pf * 6);
+    expect(calcMultiRollProb(1, pc, 1, pn, 1, pf)).toBe(pc * pn * pf * 6);
   });
 });
 
-describe('calcFinalDiceProb', () => {
+describe(calcFinalDiceProb.name, () => {
   // using >=1 probabilities so we can have prime factors and not worry about rounding errors
   const pc = 7; // crit probability
   const pn = 11; // norm probability
@@ -170,7 +171,7 @@ describe('calcFinalDiceProb', () => {
   });
 });
 
-describe('withFnpAppliedToDamages', () => {
+describe(withFnpAppliedToDamages.name, () => {
   it('single prefnp damage of 3', () => {
     const fnp = 5;
     const pd = 2 / 3; // probability damage gets through
@@ -214,7 +215,63 @@ describe('withFnpAppliedToDamages', () => {
   });
 });
 
-describe('calcDamageProbabilities, few dice, no abilities', () => {
+describe(calcMultiRoundDamage.name, () => {
+  it('rounds=1 means no change', () => {
+    const dmgsSingleRound = new Map<number, number>([
+      [0, 0.5],
+      [10, 0.375],
+      [100, 0.125],
+    ]);
+    const dmgsMultiRound = calcMultiRoundDamage(dmgsSingleRound, 1);
+    expect(dmgsMultiRound).toStrictEqual(dmgsSingleRound);
+  });
+  it('rounds=2', () => {
+    const [d0, d3, d6] = [0,   3,   6];
+    const [p0, p3, p6] = [0.5, 0.25, 0.25];
+    const dmgsSingleRound = new Map<number, number>([
+      [d0, p0],
+      [d3, p3],
+      [d6, p6],
+    ]);
+    const numRounds = 2;
+    const dmgsMultiRound = calcMultiRoundDamage(dmgsSingleRound, numRounds);
+
+    expect(dmgsMultiRound.get(d0)).toBeCloseTo(p0 * p0, requiredPrecision);
+    expect(dmgsMultiRound.get(d3)).toBeCloseTo(p0 * p3 * 2, requiredPrecision);
+    expect(dmgsMultiRound.get(d6)).toBeCloseTo(p0 * p6 * 2 + p3 * p3, requiredPrecision);
+    expect(dmgsMultiRound.get(d3 + d6)).toBeCloseTo(p3 * p6 * 2, requiredPrecision);
+    expect(dmgsMultiRound.get(d6 + d6)).toBeCloseTo(p6 * p6, requiredPrecision);
+    expect(dmgsMultiRound.size).toBe(5);
+
+    expect(Util.weightedAverage(dmgsMultiRound))
+      .toBeCloseTo(Util.weightedAverage(dmgsSingleRound) * numRounds, requiredPrecision);
+  });
+  it('rounds=3', () => {
+    const [d0, d3, d6] = [0,   3,   6];
+    const [p0, p3, p6] = [0.5, 0.25, 0.25];
+    const dmgsSingleRound = new Map<number, number>([
+      [d0, p0],
+      [d3, p3],
+      [d6, p6],
+    ]);
+    const numRounds = 3;
+    const dmgsMultiRound = calcMultiRoundDamage(dmgsSingleRound, numRounds);
+
+    expect(dmgsMultiRound.get(d0)).toBeCloseTo(p0 * p0 * p0, requiredPrecision);
+    expect(dmgsMultiRound.get(d3)).toBeCloseTo(p0 * p0 * p3 * 3, requiredPrecision);
+    expect(dmgsMultiRound.get(d6)).toBeCloseTo(p0 * p3 * p3 * 3 + p0 * p0 * p6 * 3, requiredPrecision);
+    expect(dmgsMultiRound.get(d3 + d6)).toBeCloseTo(p0 * p3 * p6 * 6 + p3 * p3 * p3, requiredPrecision);
+    expect(dmgsMultiRound.get(d6 + d6)).toBeCloseTo(p0 * p6 * p6 * 3 + p3 * p3 * p6 * 3, requiredPrecision);
+    expect(dmgsMultiRound.get(d6 + d6 + d3)).toBeCloseTo(p3 * p6 * p6 * 3, requiredPrecision);
+    expect(dmgsMultiRound.get(d6 + d6 + d6)).toBeCloseTo(p6 * p6 * p6, requiredPrecision);
+    expect(dmgsMultiRound.size).toBe(7);
+
+    expect(Util.weightedAverage(dmgsMultiRound))
+      .toBeCloseTo(Util.weightedAverage(dmgsSingleRound) * numRounds, requiredPrecision);
+  });
+});
+
+describe(calcDamageProbabilities.name + ', few dice, no abilities', () => {
   const bs = 4;
   const pc = 1/6; // crit probability
   const pn = 1/3; // norm probability
@@ -304,7 +361,7 @@ describe('calcDamageProbabilities, few dice, no abilities', () => {
   });
 });
 
-describe('calcDamageProbabilities, mwx', () => {
+describe(calcDamageProbabilities.name + ', mwx', () => {
   // we tested mwx for calcDamage; quick test to make sure calcDamageProbabilities respects mwx too
   it('basic', () => {
     const dmw = 1000; // mw damage
@@ -321,7 +378,7 @@ describe('calcDamageProbabilities, mwx', () => {
   });
 });
 
-describe('calcDamageProbabilities, APx & invuln', () => {
+describe(calcDamageProbabilities.name + ', APx & invuln', () => {
   it('APx vs fewer defense dice', () => {
     const atkApx0 = new Attacker().setProp('apx', 0);
     const atkApx1 = new Attacker().setProp('apx', 1);
@@ -380,7 +437,7 @@ describe('calcDamageProbabilities, APx & invuln', () => {
   });
 });
 
-describe('calcDamageProbabilities, px and lethalx', () => {
+describe(calcDamageProbabilities.name + ', px and lethalx', () => {
   it('px gets rid of def dice on crit', () => {
     const atk = newTestAttacker(1, 1).setProp('px', 4).setProp('lethalx', 5);
     const pc = (7 - atk.critSkill()) / 6;
@@ -403,7 +460,7 @@ describe('calcDamageProbabilities, px and lethalx', () => {
   });
 });
 
-describe('calcDamageProbabilities, balanced', () => {
+describe(calcDamageProbabilities.name + ', balanced', () => {
   it('balanced with 1 atk die', () => {
     const atk = newTestAttacker(1).setProp('reroll', Ability.Balanced);
     const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
@@ -417,7 +474,7 @@ describe('calcDamageProbabilities, balanced', () => {
   });
 });
 
-describe('calcDamageProbabilities, ceaseless', () => {
+describe(calcDamageProbabilities.name + ', ceaseless', () => {
   it('ceaseless with 1 atk die', () => {
     const atk = newTestAttacker(1).setProp('reroll', Ability.Ceaseless);
     const pc = 1 / 6;
@@ -443,7 +500,7 @@ describe('calcDamageProbabilities, ceaseless', () => {
   });
 });
 
-describe('calcDamageProbabilities, relentless', () => {
+describe(calcDamageProbabilities.name + ', relentless', () => {
   it('relentless with 1 atk die', () => {
     const atk = newTestAttacker(1).setProp('reroll', Ability.Relentless);
     const pc = 1 / 6;
@@ -468,7 +525,7 @@ describe('calcDamageProbabilities, relentless', () => {
   });
 });
 
-describe('calcDamageProbabilities, rending & starfire', () => {
+describe(calcDamageProbabilities.name + ', rending & starfire', () => {
   it('rending, 2 atk dice, probability 2 crits', () => {
     const atk = newTestAttacker(2).setProp('rending', true);
     const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
@@ -488,7 +545,7 @@ describe('calcDamageProbabilities, rending & starfire', () => {
   });
 });
 
-describe('calcDamageProbabilities, defender abilities', () => {
+describe(calcDamageProbabilities.name + ', defender abilities', () => {
   it('fnp with prefnp damages of 1 and 2', () => {
     // we already tested fnp at the withFnpAppliedToDamages level, quick redo at higher level
     const fnp = 5;
@@ -551,10 +608,24 @@ describe('calcDamageProbabilities, defender abilities', () => {
   });
 });
 
+describe(calcDamageProbabilities.name + ', multiple rounds', () => {
+  it('damage should scale linearly', () => {
+    const atk = newTestAttacker(3);
+    const def = new Defender();
+    const dmgHist = [];
+
+    for(const numRounds of _.range(1, 6)) {
+      dmgHist.push(avgDmg(atk, def, numRounds));
+      expect(dmgHist[dmgHist.length - 1]).toBeCloseTo(dmgHist[0] * numRounds, requiredPrecision);
+    }
+  });
+});
+
 /*
 describe('q', () => {
   it('x', () => {
     expect(0).toBe(0);
   });
 });
+
 */
