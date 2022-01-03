@@ -43,18 +43,18 @@ const ResultsDisplay: React.FC<Props> = (props: Props) => {
       <Row>Results</Row>
       <Row>
         <Col style={{fontSize: '11px'}}>
-          AvgDmg:
-        </Col>
-        <Col>
-          {avgDmgBounded.toFixed(digitsPastDecimal)}
-        </Col>
-      </Row>
-      <Row>
-        <Col style={{fontSize: '11px'}}>
           AvgDmgUnbounded:
         </Col>
         <Col>
           {avgDmgUnbounded.toFixed(digitsPastDecimal)}
+        </Col>
+      </Row>
+      <Row>
+        <Col style={{fontSize: '11px'}}>
+          AvgDmgBounded:
+        </Col>
+        <Col>
+          {avgDmgBounded.toFixed(digitsPastDecimal)}
         </Col>
       </Row>
       <Row>
