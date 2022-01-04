@@ -23,9 +23,9 @@ const ShootSection: React.FC = () => {
   const damageToProb = calcDamageProbabilities(attacker, defender, rounds);
 
   return (
-    <Container style={{width: '800px'}}>
+    <Container style={{width: '520px'}}>
       <Row>
-        <Col className={Util.centerHoriz + ' p-0'}>
+        <Col className={Util.centerHoriz + ' p-0'} xs='8'>
           <Container>
             <Row className='border'>
               <AttackerControls attacker={attacker} changeHandler={setAttacker} />
@@ -35,7 +35,7 @@ const ShootSection: React.FC = () => {
             </Row>
           </Container>
         </Col>
-        <Col className={Util.centerHoriz + ' border'}>
+        <Col className={Util.centerHoriz + ' border' } xs='4'>
           <DefenderControls defender={defender} changeHandler={setDefender} />
         </Col>
       </Row>
@@ -54,7 +54,7 @@ const ShootSection: React.FC = () => {
             <ul>
               <li>AvgDamageBounded is the average of damage bounded by the number of the defender's wounds.</li>
               <li>AvgDamageUnbounded is the average of damage without regard to defender's wounds.</li>
-              <li>Use MWx for Splash X</li>
+              <li>InvulnSave is always used if valid.</li>
               <li>
                 Feel No Pain (FNP) refers to the category of abilities where just before damage is actually resolved,
                 you roll a die for each potential wound, and each rolled success prevents a wound from being lost.

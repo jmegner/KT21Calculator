@@ -3,19 +3,10 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import Attacker from '../Attacker';
-import Defender from '../Defender';
 import Credits from './Credits';
 import * as Util from "../Util";
-import { calcDamageProbabilities } from '../KT21CalcEngine';
 
 const MeleeSection: React.FC = () => {
-  const [attacker, setAttacker] = React.useState(new Attacker());
-  const [defender, setDefender] = React.useState(new Defender());
-  const [rounds, setRounds] = React.useState(1);
-
-  const damageToProb = calcDamageProbabilities(attacker, defender, rounds);
-
   return (
     <Container style={{width: '800px'}}>
       <Row><Col>WORK IN PROGRESS</Col></Row>

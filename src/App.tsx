@@ -25,7 +25,12 @@ const App: React.FC = () => {
       </Row>
       <Row>
         <Col>
-          {isShootVisible ? <ShootSection/> : <MeleeSection/>}
+          <span style={{display: isShootVisible ? 'initial' : 'none'}}>
+            <ShootSection/>
+          </span>
+          <span style={{display: isShootVisible ? 'none' : 'initial'}}>
+            <MeleeSection />
+          </span>
         </Col>
       </Row>
     </Container>
