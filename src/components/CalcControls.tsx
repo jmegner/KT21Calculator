@@ -3,11 +3,11 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import IncDecSelect, {Props as IncProps} from './IncDecSelect';
-import * as Util from '../Util';
+import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
+import * as Util from 'src/Util';
 import {
   acceptNumToAcceptString as fromNum
-} from '../Util';
+} from 'src/Util';
 
 export interface Props {
   rounds: number;

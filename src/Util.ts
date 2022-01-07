@@ -3,7 +3,7 @@ import { combinations } from 'mathjs';
 
 export type Accepter<T> = (arg: T) => void;
 
-export const thickX = 'X'; //'✖';
+export const thickX = 'X'; //'✖'; // the unicode ✖ shows up like a '+' in some fonts
 export const thickCheck = '✔';
 export const xAndCheck = [thickX, thickCheck];
 export const centerHoriz = 'd-flex justify-content-center';

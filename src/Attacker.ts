@@ -1,25 +1,28 @@
 import _ from "lodash";
-import Ability from "./Ability";
-import DieProbs from "./DieProbs";
+import Ability from "src/Ability";
+import DieProbs from "src/DieProbs";
 
 export default class Attacker {
   public attacks: number;
   public bs: number;
-  public normalDamage: number;
-  public criticalDamage: number;
-  public mwx: number;
-  public apx: number;
-  public px: number;
+  public normDmg: number;
+  public critDmg: number;
+  public mwx: number; // shoot only
+  public apx: number; // shoot only
+  public px: number; // shoot only
   public reroll: Ability;
   public lethalx: number; // 0 means default of crit on 6+; can be 7 to force never-crit
   public rending: boolean; // a crit promotes a normal hit to a crit;
-  public starfire: boolean; // a crit promotes a fail to a normal hit;
+  public starfire: boolean; // a crit promotes a fail to a normal hit; shoot only
+  public wounds: number; // fight only
+  public fnp: number; // fight only
+  public brutal: boolean; // fight only
 
   public constructor(
     attacks: number = 4,
     bs: number = 3,
-    normalDamage: number = 3,
-    criticalDamage: number = 4,
+    normDmg: number = 3,
+    critDmg: number = 4,
     mwx: number = 0,
     apx: number = 0,
     px: number = 0,
@@ -27,11 +30,14 @@ export default class Attacker {
     lethalx: number = 0,
     rending: boolean = false,
     starfire: boolean = false,
+    wounds: number = 0,
+    fnp: number = 0,
+    brutal: boolean = false,
   ) {
     this.attacks = attacks;
     this.bs = bs;
-    this.normalDamage = normalDamage;
-    this.criticalDamage = criticalDamage;
+    this.normDmg = normDmg;
+    this.critDmg = critDmg;
     this.mwx = mwx;
     this.apx = apx;
     this.px = px;
@@ -39,6 +45,9 @@ export default class Attacker {
     this.lethalx = lethalx;
     this.rending = rending;
     this.starfire = starfire;
+    this.wounds = wounds;
+    this.fnp = fnp;
+    this.brutal = brutal;
   }
 
   public static justDamage(

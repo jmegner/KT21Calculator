@@ -1,18 +1,19 @@
 import React from 'react';
-import ShootSection from './components/ShootSection';
-import MeleeSection from './components/MeleeSection';
 import {
   Button,
   Col,
   Container,
   Row,
 } from 'react-bootstrap';
-import * as Util from "./Util";
+
+import ShootSection from 'src/components/ShootSection';
+import FightSection from 'src/components/FightSection';
+import * as Util from "src/Util";
 
 const App: React.FC = () => {
   const [isShootVisible, setIsShootVisible] = React.useState(true);
-  const currMode = () => isShootVisible ? 'Shoot' : 'Melee';
-  const otherMode = () => !isShootVisible ? 'Shoot' : 'Melee';
+  const currMode = () => isShootVisible ? 'Shoot' : 'Fight';
+  const otherMode = () => !isShootVisible ? 'Shoot' : 'Fight';
 
   return (
     <Container className="m-0 p-0">
@@ -29,7 +30,7 @@ const App: React.FC = () => {
             <ShootSection/>
           </span>
           <span style={{display: isShootVisible ? 'none' : 'initial'}}>
-            <MeleeSection />
+            <FightSection />
           </span>
         </Col>
       </Row>

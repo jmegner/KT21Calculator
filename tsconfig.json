@@ -21,7 +21,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "sourceMap": true,
-    "outDir": "out"
+    "outDir": "out",
+    "baseUrl": "."
   },
   "include": [
     "src"

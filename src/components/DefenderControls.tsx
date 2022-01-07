@@ -3,10 +3,10 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import IncDecSelect, {Props as IncProps} from './IncDecSelect';
-import Defender from '../Defender';
-import * as Util from '../Util';
-import { boolToCheckX as toCheckX } from '../Util';
+import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
+import Defender from 'src/Defender';
+import * as Util from 'src/Util';
+import { boolToCheckX as toCheckX } from 'src/Util';
 
 export interface Props {
   defender: Defender;
@@ -18,10 +18,10 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
   const saveId = 'Save';
   const defenseId = 'Defense';
   const woundsId = 'Wounds';
-  const fnpId = 'FNP (Feel No Pain)';
-  const invulnSaveId = 'InvulnSave (used if valid)';
-  const coverId = 'Cover (1 autosuccess)';
-  const chitinId = 'Extended Chitin';
+  const fnpId = 'FeelNoPain';
+  const invulnSaveId = 'InvulnSave';
+  const coverId = 'Cover';
+  const chitinId = 'ExtendedChitin';
 
   const def = props.defender;
   const [, numHandler, boolHandler]
@@ -42,7 +42,7 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
     <Row key={p.id}><Col className='pr-0'><IncDecSelect {...p}/></Col></Row>);
 
   return (
-    <Container style={{width: '320px'}}>
+    <Container style={{width: '150px'}}>
       <Row>Defender</Row>
       <Row>
         <Col>

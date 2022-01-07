@@ -3,7 +3,8 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
-import Defender from '../Defender';
+
+import Defender from 'src/Defender';
 
 export interface Props {
   defender: Defender;
@@ -18,10 +19,12 @@ const ResultsDisplay: React.FC<Props> = (props: Props) => {
   let killProb = 0;
   const tableBody: JSX.Element[] = [];
 
-  let descendingDmgToProb = new Map<number,number>([...props.damageToProb.entries()].sort((a, b) => a[0] - b[0]).reverse());
-  let probAtLeastThisMuchDmg = 0;
+  let ascendingDmgToProb = new Map<number,number>([...props.damageToProb.entries()].sort((a, b) => a[0] - b[0]));
+  let probCumulative = 0;
 
-  descendingDmgToProb.forEach((prob, dmg) => {
+  const toPercentString = (val: number) => (val * 100).toFixed(digitsPastDecimal);
+
+  ascendingDmgToProb.forEach((prob, dmg) => {
      avgDmgUnbounded += dmg * prob;
      avgDmgBounded += Math.min(dmg, props.defender.wounds) * prob;
 
@@ -29,12 +32,16 @@ const ResultsDisplay: React.FC<Props> = (props: Props) => {
        killProb += prob;
      }
 
-     probAtLeastThisMuchDmg += prob;
+     const probAtLeastThisMuchDmg = 1 - probCumulative;
+     probCumulative += prob;
+     const probAtMostThisMuchDmg = probCumulative;
+
      tableBody.push(
-      <tr>
+      <tr key={dmg}>
         <td>{dmg}</td>
-        <td>{(probAtLeastThisMuchDmg * 100).toFixed(digitsPastDecimal)}</td>
-        <td>{(prob * 100).toFixed(digitsPastDecimal)}</td>
+        <td>{toPercentString(probAtLeastThisMuchDmg)}</td>
+        <td>{toPercentString(probAtMostThisMuchDmg)}</td>
+        <td>{toPercentString(prob)}</td>
       </tr>);
   });
 
@@ -68,12 +75,17 @@ const ResultsDisplay: React.FC<Props> = (props: Props) => {
       <Row>
         <Col>
           <Table bordered={true} striped={true} style={{fontSize: '11px'}}>
-            <tr>
-              <th>Dmg</th>
-              <th>p(&gt;=Dmg)<br/>(%)</th>
-              <th>p(Dmg)<br/>(%)</th>
-            </tr>
-            {tableBody.reverse()}
+            <thead>
+              <tr>
+                <th>Dmg</th>
+                <th>p(&gt;=Dmg)<br />(%)</th>
+                <th>p(&lt;=Dmg)<br />(%)</th>
+                <th>p(Dmg)<br />(%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tableBody}
+            </tbody>
           </Table>
         </Col>
       </Row>

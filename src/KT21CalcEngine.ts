@@ -1,10 +1,11 @@
-import Ability from "./Ability";
-import Attacker from "./Attacker";
-import Defender from "./Defender";
 import { factorial, } from 'mathjs';
-import DieProbs from "./DieProbs";
-import * as Util from './Util';
 import _ from "lodash";
+
+import Ability from "src/Ability";
+import Attacker from "src/Attacker";
+import Defender from "src/Defender";
+import DieProbs from "src/DieProbs";
+import * as Util from 'src/Util';
 
 class FinalDiceProb {
   public prob: number;
@@ -185,14 +186,14 @@ function calcMultiRoundDamage(
     const dmgsPrevRounds = dmgsCumulative;
     dmgsCumulative = new Map<number,number>();
 
-    dmgsPrevRounds.forEach((probPrevRounds, dmgPrevRounds) => {
-      dmgsSingleRound.forEach((probSingleRound, dmgSingleRound) => {
+    for(let [dmgPrevRounds, probPrevRounds] of dmgsPrevRounds) {
+      for(let [dmgSingleRound, probSingleRound] of dmgsSingleRound) {
         const dmgCumulative = dmgPrevRounds + dmgSingleRound;
         const probCumulativeOld = dmgsCumulative.get(dmgCumulative) ?? 0;
         const probCumulativeNew = probCumulativeOld + probPrevRounds * probSingleRound;
         dmgsCumulative.set(dmgCumulative, probCumulativeNew);
-      });
-    });
+      }
+    }
   }
 
   return dmgsCumulative;
@@ -301,11 +302,11 @@ function calcDamage(
     critHits -= numCancels;
   }
 
-  if (attacker.criticalDamage >= attacker.normalDamage) {
+  if (attacker.critDmg >= attacker.normDmg) {
     critSavesCancelCritHits();
     critSavesCancelNormHits();
 
-    if (attacker.criticalDamage > 2 * attacker.normalDamage) {
+    if (attacker.critDmg > 2 * attacker.normDmg) {
       normSavesCancelCritHits();
       normSavesCancelNormHits();
     }
@@ -329,7 +330,7 @@ function calcDamage(
     normSavesCancelCritHits();
   }
 
-  damage += critHits * attacker.criticalDamage + normHits * attacker.normalDamage;
+  damage += critHits * attacker.critDmg + normHits * attacker.normDmg;
   return damage;
 }
 

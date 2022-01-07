@@ -7,4 +7,6 @@ export enum Ability {
     CritPromotesOneFailToNormal = "Starfire", // Necron 'starfire core' equipment
 }
 
+export const rerollAbilities = [Ability.Balanced, Ability.Ceaseless, Ability.Relentless];
+
 export default Ability;

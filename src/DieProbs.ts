@@ -1,4 +1,3 @@
-
 export default class DieProbs {
   public crit: number;
   public norm: number;

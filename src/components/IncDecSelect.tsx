@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
-import * as Util from '../Util';
+import * as Util from 'src/Util';
 
 export interface IProps {
   id: string;

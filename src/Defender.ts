@@ -1,6 +1,6 @@
 import _ from "lodash";
-import Die from "./Die";
-import DieProbs from "./DieProbs";
+import Die from "src/Die";
+import DieProbs from "src/DieProbs";
 
 export default class Defender {
   public defense: number;

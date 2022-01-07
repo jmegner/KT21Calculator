@@ -1,7 +1,7 @@
 import React from 'react';
 import * as Test from '@testing-library/react';
 
-import App from './App';
+import App from 'src/App';
 
 // for some reason, "// eslint-disable-next-line no-unused-vars" doesn't work;
 // I have to do a eslint-disable-next-line for all rules;

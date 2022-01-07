@@ -1,12 +1,9 @@
-import App from './App';
-import Attacker from './Attacker';
-import Defender from './Defender';
-import DefenderControls from './components/DefenderControls';
-import { calcDamageProbabilities, exportedForTesting } from './KT21CalcEngine';
-import * as Util from './Util';
+import Attacker from 'src/Attacker';
+import Defender from 'src/Defender';
+import { calcDamageProbabilities, exportedForTesting } from 'src/KT21CalcEngine';
+import * as Util from 'src/Util';
 import _ from 'lodash';
-import Ability from './Ability';
-import { combinations, factorial } from 'mathjs';
+import Ability from 'src/Ability';
 
 const {
   DieProbs,
@@ -373,7 +370,7 @@ describe(calcDamageProbabilities.name + ', mwx', () => {
     const dmgs = calcDamageProbabilities(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(pn, requiredPrecision); // norm hit, any save
     expect(dmgs.get(dmw)).toBeCloseTo(pc * pc, requiredPrecision); // crit hit, crit save
-    expect(dmgs.get(dmw + atk.criticalDamage)).toBeCloseTo(pn * pc, requiredPrecision); // crit hit, norm save
+    expect(dmgs.get(dmw + atk.critDmg)).toBeCloseTo(pn * pc, requiredPrecision); // crit hit, norm save
     expect(dmgs.size).toBe(3);
   });
 });
@@ -419,7 +416,7 @@ describe(calcDamageProbabilities.name + ', APx & invuln', () => {
     expect(dmg).toStrictEqual(0); // normHit always cancelled
 
     const dmgInvuln = avgDmg(atk, defInvuln);
-    expect(dmgInvuln).toStrictEqual(atk.normalDamage / 2); // normHit cancelled half the time
+    expect(dmgInvuln).toStrictEqual(atk.normDmg / 2); // normHit cancelled half the time
   });
   it('APx has no effect against invuln', () => {
     const atkApx0 = newTestAttacker(3).setProp('apx', 0);
@@ -445,7 +442,7 @@ describe(calcDamageProbabilities.name + ', px and lethalx', () => {
 
     const dmgs = calcDamageProbabilities(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(1 - pc, requiredPrecision);
-    expect(dmgs.get(atk.criticalDamage)).toBeCloseTo(pc, requiredPrecision);
+    expect(dmgs.get(atk.critDmg)).toBeCloseTo(pc, requiredPrecision);
   });
 
   it('0 < apx < px, apx used when no crit', () => {
@@ -455,7 +452,7 @@ describe(calcDamageProbabilities.name + ', px and lethalx', () => {
 
     const dmgs = calcDamageProbabilities(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(pn, requiredPrecision);
-    expect(dmgs.get(atk.criticalDamage)).toBeCloseTo(pc, requiredPrecision);
+    expect(dmgs.get(atk.critDmg)).toBeCloseTo(pc, requiredPrecision);
     expect(dmgs.size).toBe(2);
   });
 });
@@ -468,8 +465,8 @@ describe(calcDamageProbabilities.name + ', balanced', () => {
 
     const dmgs = calcDamageProbabilities(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(pf * pf, requiredPrecision);
-    expect(dmgs.get(atk.normalDamage)).toBeCloseTo(pn + pf * pn, requiredPrecision);
-    expect(dmgs.get(atk.criticalDamage)).toBeCloseTo(pc + pf * pc, requiredPrecision);
+    expect(dmgs.get(atk.normDmg)).toBeCloseTo(pn + pf * pn, requiredPrecision);
+    expect(dmgs.get(atk.critDmg)).toBeCloseTo(pc + pf * pc, requiredPrecision);
     expect(dmgs.size).toBe(3);
   });
 });
@@ -485,8 +482,8 @@ describe(calcDamageProbabilities.name + ', ceaseless', () => {
 
     const dmgs = calcDamageProbabilities(atk, def);
     expect(dmgs.get(0)).toBeCloseTo((pf - p1) + p1 * pf, requiredPrecision);
-    expect(dmgs.get(atk.normalDamage)).toBeCloseTo(pn + p1 * pn, requiredPrecision);
-    expect(dmgs.get(atk.criticalDamage)).toBeCloseTo(pc + p1 * pc, requiredPrecision);
+    expect(dmgs.get(atk.normDmg)).toBeCloseTo(pn + p1 * pn, requiredPrecision);
+    expect(dmgs.get(atk.critDmg)).toBeCloseTo(pc + p1 * pc, requiredPrecision);
     expect(dmgs.size).toBe(3);
   });
   it('ceaseless damage', () => {
@@ -510,8 +507,8 @@ describe(calcDamageProbabilities.name + ', relentless', () => {
 
     const dmgs = calcDamageProbabilities(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(pf * pf, requiredPrecision);
-    expect(dmgs.get(atk.normalDamage)).toBeCloseTo(pn + pf * pn, requiredPrecision);
-    expect(dmgs.get(atk.criticalDamage)).toBeCloseTo(pc + pf * pc, requiredPrecision);
+    expect(dmgs.get(atk.normDmg)).toBeCloseTo(pn + pf * pn, requiredPrecision);
+    expect(dmgs.get(atk.critDmg)).toBeCloseTo(pc + pf * pc, requiredPrecision);
     expect(dmgs.size).toBe(3);
   });
   it('relentless damage', () => {
@@ -532,7 +529,7 @@ describe(calcDamageProbabilities.name + ', rending & starfire', () => {
     const def = new Defender(0);
 
     const dmgs = calcDamageProbabilities(atk, def);
-    expect(dmgs.get(2 * atk.criticalDamage)).toBeCloseTo(pc * pc + 2 * pc * pn, requiredPrecision);
+    expect(dmgs.get(2 * atk.critDmg)).toBeCloseTo(pc * pc + 2 * pc * pn, requiredPrecision);
   });
   it('starfire, 2 atk dice, probability 1 crit + 1 norm', () => {
     const atk = newTestAttacker(2).setProp('starfire', true);
@@ -540,7 +537,7 @@ describe(calcDamageProbabilities.name + ', rending & starfire', () => {
     const def = new Defender(0);
 
     const dmgs = calcDamageProbabilities(atk, def);
-    expect(dmgs.get(atk.criticalDamage + atk.normalDamage))
+    expect(dmgs.get(atk.critDmg + atk.normDmg))
       .toBeCloseTo(2 * pc * pf + 2 * pc * pn, requiredPrecision);
   });
 });
@@ -574,7 +571,7 @@ describe(calcDamageProbabilities.name + ', defender abilities', () => {
     const def = new Defender(1, 6).setProp('cover', true);
 
     const dmgs = calcDamageProbabilities(atk, def);
-    expect(dmgs.get(atk.criticalDamage)).toBeCloseTo(1, requiredPrecision);
+    expect(dmgs.get(atk.critDmg)).toBeCloseTo(1, requiredPrecision);
     expect(dmgs.size).toBe(1);
   });
   it('cover, 2 always-norm-hit vs 1 cover save and 1 def roll (sometimes cancelled)', () => {
@@ -584,7 +581,7 @@ describe(calcDamageProbabilities.name + ', defender abilities', () => {
 
     const dmgs = calcDamageProbabilities(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(pc + pn, requiredPrecision);
-    expect(dmgs.get(atk.normalDamage)).toBeCloseTo(pf, requiredPrecision);
+    expect(dmgs.get(atk.normDmg)).toBeCloseTo(pf, requiredPrecision);
     expect(dmgs.size).toBe(2);
   });
   it('enough apx means not even a cover success', () => {
@@ -592,7 +589,7 @@ describe(calcDamageProbabilities.name + ', defender abilities', () => {
     const def = new Defender(3);
 
     const dmgs = calcDamageProbabilities(atk, def);
-    expect(dmgs.get(atk.normalDamage)).toBeCloseTo(1, requiredPrecision);
+    expect(dmgs.get(atk.normDmg)).toBeCloseTo(1, requiredPrecision);
     expect(dmgs.size).toBe(1);
   });
   it('chitin, 1 atk die & 1 def die', () => {
@@ -601,8 +598,8 @@ describe(calcDamageProbabilities.name + ', defender abilities', () => {
     const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
 
     const dmgs = calcDamageProbabilities(atk, def);
-    expect(dmgs.get(atk.criticalDamage)).toBeCloseTo(pc * (pf * (1 - pc) + pn), requiredPrecision);
-    expect(dmgs.get(atk.normalDamage)).toBeCloseTo(pn * pf * pf, requiredPrecision);
+    expect(dmgs.get(atk.critDmg)).toBeCloseTo(pc * (pf * (1 - pc) + pn), requiredPrecision);
+    expect(dmgs.get(atk.normDmg)).toBeCloseTo(pn * pf * pf, requiredPrecision);
     expect(dmgs.get(0)).toEqual(expect.any(Number)); // prob is just remainder
     expect(dmgs.size).toBe(3);
   });
