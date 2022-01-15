@@ -500,7 +500,7 @@ describe(calcDmgProbs.name + ', rending & starfire', () => {
   });
 });
 
-describe(calcDmgProbs.name + ', defender abilities', () => {
+describe(calcDmgProbs.name + ', defender fnp', () => {
   it('fnp with prefnp damages of 1 and 2', () => {
     // we already tested fnp at the withFnpAppliedToDamages level, quick redo at higher level
     const fnp = 5;
@@ -516,9 +516,12 @@ describe(calcDmgProbs.name + ', defender abilities', () => {
     expect(dmgs.get(2)).toBeCloseTo(p2 * pd * pd, requiredPrecision);
     expect(dmgs.size).toBe(3);
   });
+});
+
+describe(calcDmgProbs.name + ', defender cover saves', () => {
   it('cover, 1 always-norm-hit vs 1 cover save (always cancel)', () => {
     const atk = newTestAttacker(1).withAlwaysNormHit();
-    const def = new Defender(1, 6).setProp('cover', true);
+    const def = new Defender(1, 6).setProp('coverSaves', 1);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(1, requiredPrecision);
@@ -526,15 +529,31 @@ describe(calcDmgProbs.name + ', defender abilities', () => {
   });
   it('cover, 1 always-crit-hit vs 1 cover save (never cancel)', () => {
     const atk = newTestAttacker(1).withAlwaysCritHit();
-    const def = new Defender(1, 6).setProp('cover', true);
+    const def = new Defender(1, 6).setProp('coverSaves', 1);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(atk.critDmg)).toBeCloseTo(1, requiredPrecision);
     expect(dmgs.size).toBe(1);
   });
+  it('cover, 1 always-crit-hit vs 2 cover save (cancel)', () => {
+    const atk = newTestAttacker(1).withAlwaysCritHit();
+    const def = new Defender(2, 6).setProp('coverSaves', 2);
+
+    const dmgs = calcDmgProbs(atk, def);
+    expect(dmgs.get(0)).toBeCloseTo(1, requiredPrecision);
+    expect(dmgs.size).toBe(1);
+  });
+  it('cover, 3 always-norm-hit vs 2 cover save (cancel 2 norm hits)', () => {
+    const atk = newTestAttacker(3).withAlwaysNormHit();
+    const def = new Defender(2, 6).setProp('coverSaves', 2);
+
+    const dmgs = calcDmgProbs(atk, def);
+    expect(dmgs.get(atk.normDmg)).toBeCloseTo(1, requiredPrecision);
+    expect(dmgs.size).toBe(1);
+  });
   it('cover, 2 always-norm-hit vs 1 cover save and 1 def roll (sometimes cancelled)', () => {
     const atk = newTestAttacker(2).withAlwaysNormHit();
-    const def = new Defender(2, 3).setProp('cover', true);
+    const def = new Defender(2, 3).setProp('coverSaves', 1);
     const [pc, pn, pf] = def.toDieProbs().toCritNormFail();
 
     const dmgs = calcDmgProbs(atk, def);
@@ -550,6 +569,9 @@ describe(calcDmgProbs.name + ', defender abilities', () => {
     expect(dmgs.get(atk.normDmg)).toBeCloseTo(1, requiredPrecision);
     expect(dmgs.size).toBe(1);
   });
+});
+
+describe(calcDmgProbs.name + ', defender chitin', () => {
   it('chitin, 1 atk die & 1 def die', () => {
     const atk = newTestAttacker(1, 4);
     const def = new Defender(1, 4).setProp('chitin', true);

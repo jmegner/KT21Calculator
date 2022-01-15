@@ -33,7 +33,6 @@ const FightSection: React.FC = () => {
 
   return (
     <Container style={{width: '800'}}>
-      <h1>WORK IN PROGRESS, DOES NOT WORK, DO NOT USE</h1>
       <Row>
         <Col className={Util.centerHoriz + ' p-0 border'}>
           <FighterControls title="Fighter A" attacker={fighterA} changeHandler={setFighterA} />

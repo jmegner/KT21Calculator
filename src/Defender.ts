@@ -8,7 +8,7 @@ export default class Defender {
   public wounds: number;
   public fnp: number;
   public invulnSave: number;
-  public cover: boolean;
+  public coverSaves: number;
   public chitin: boolean;
 
   public constructor(
@@ -17,7 +17,7 @@ export default class Defender {
     wounds: number = 12,
     fnp: number = 0,
     invulnSave: number = 0,
-    cover: boolean = false,
+    coverSaves: number = 0,
     chitin: boolean = false,
   ) {
     this.defense = defense;
@@ -25,7 +25,7 @@ export default class Defender {
     this.wounds = wounds;
     this.fnp = fnp;
     this.invulnSave = invulnSave;
-    this.cover = cover;
+    this.coverSaves = coverSaves;
     this.chitin = chitin;
   }
 

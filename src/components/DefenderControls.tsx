@@ -20,7 +20,7 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
   const woundsId = 'Wounds';
   const fnpId = 'FeelNoPain';
   const invulnSaveId = 'InvulnSave';
-  const coverId = 'Cover';
+  const coverSavesId = 'CoverSaves';
   const chitinId = 'ExtendedChitin';
 
   const def = props.defender;
@@ -34,7 +34,7 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
     new IncProps(woundsId,     def.wounds,           Util.span(1, 19),      numHandler('wounds')),
     new IncProps(fnpId,        def.fnp + '+',        Util.xspan(3, 6, '+'), numHandler('fnp')),
     new IncProps(invulnSaveId, def.invulnSave + '+', Util.xrollSpan,        numHandler('invulnSave')),
-    new IncProps(coverId,      toCheckX(def.cover),  Util.xAndCheck,        boolHandler('cover')),
+    new IncProps(coverSavesId, def.coverSaves,       Util.xspan(1, 2),      numHandler('coverSaves')),
     new IncProps(chitinId,     toCheckX(def.chitin), Util.xAndCheck,        boolHandler('chitin')),
   ];
 

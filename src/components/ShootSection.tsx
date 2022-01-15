@@ -57,18 +57,27 @@ const ShootSection: React.FC = () => {
             <li>
               Feel No Pain (FNP) refers to the category of abilities where just before damage is actually resolved,
               you roll a die for each potential wound, and each rolled success prevents a wound from being lost.
-              Even MWx damage can be prevented via FNP.
+              Even MWx damage can be prevented via FNP. The
+              &#x202F;<a href="https://wahapedia.ru/kill-team2/kill-teams/death-guard#Plague-Marine-Warrior-">Plague Marine (Warrior)</a>&#x202F;
+              ability Disgustingly Resilient is a FNP=5+ ability.
             </li>
             <li>
-              "Starfire" refers to Necron's
-              &#x202F;<a href="https://wahapedia.ru/kill-team2/kill-teams/tomb-world/#Equipment">Starfire Core</a>&#x202F;
-              equipment, which allows you to transform a failed hit into a normal hit if you had at least one
+              "Starfire" refers to
+              &#x202F;<a href="https://wahapedia.ru/kill-team2/kill-teams/tomb-world/#Equipment">Necron Equipment</a>&#x202F;
+              Starfire Core, which allows you to transform a failed hit into a normal hit if you had at least one
               critical hit.
             </li>
             <li>
-              Balanced and Chitin (Hive Fleet's
-              &#x202F;<a href="https://wahapedia.ru/kill-team2/kill-teams/hive-fleet/#Equipment">Extended Chitin</a>&#x202F;
-              equipment) will only reroll a fail even if would be wise to reroll a normal success.
+              Balanced and Chitin
+              (<a href="https://wahapedia.ru/kill-team2/kill-teams/hive-fleet/#Equipment">Hive Fleet equipment</a> Extended Chitin)
+              will only reroll a fail even if would be wise to reroll a normal success.
+            </li>
+            <li>
+              Cover saves can go up to 2 via the
+              &#x202F;<a href="https://wahapedia.ru/kill-team2/kill-teams/hive-fleet#Strategic-Ploys">Hive Fleet strategic ploy</a>&#x202F;
+              Lurk and the
+              &#x202F;<a href="https://wahapedia.ru/kill-team2/kill-teams/brood-coven#Strategic-Ploys">Brood Coven strategic ploy</a>&#x202F;
+              Lurk In The Shadows. Lurk In The Shadows also allows a defender's 1 cover save to count as a critical save, but that is not implemented.
             </li>
           </ul>
         </Col>
