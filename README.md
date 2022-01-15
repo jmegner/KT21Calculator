@@ -5,10 +5,20 @@ Live at [jmegner.github.io/KT21Calculator](https://jmegner.github.io/KT21Calcula
 
 [Announcement reddit thread](https://www.reddit.com/r/killteam/comments/rvhme0/kt21_calculator_web_app/).
 
+Features in the works...
+* allow 2 cover saves
+* results tables have checkbox for damage-oriented or remaining-wounds-oriented numbers
+* have option for user to select a relevant operative profile (ex: Necron Immortal with Gauss Blaster and Starfire Core) instead of individually selecting parameters.
+* fight section
+  * multiple rounds
+  * fnp
+  * more tests
+
 Notable technologies/libs/whatever used... 
 * [TypeScript](https://www.typescriptlang.org/)
 * [React](https://reactjs.org/)
 * [React-Bootstrap](https://react-bootstrap.github.io/)
+* [Create-React-App](https://create-react-app.dev/) (but heavily considering using [NextJS](https://nextjs.org/) in future)
 * [Jest](https://jestjs.io/)
 * [Testing Library](https://testing-library.com/docs/react-testing-library/intro)
 * [GitHub Actions](https://docs.github.com/en/actions)

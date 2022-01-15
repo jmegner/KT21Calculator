@@ -10,17 +10,17 @@ import Defender from 'src/Defender';
 import AttackerControls from "src/components/AttackerControls";
 import DefenderControls from "src/components/DefenderControls";
 import CalcControls from 'src/components/CalcControls';
-import ResultsDisplay from 'src/components/ResultsDisplay';
+import ShootResultsDisplay from 'src/components/ShootResultsDisplay';
 import Credits from 'src/components/Credits';
 import * as Util from "src/Util";
-import { calcDamageProbabilities } from 'src/KT21CalcEngine';
+import { calcDmgProbs } from 'src/CalcEngineShoot';
 
 const ShootSection: React.FC = () => {
   const [attacker, setAttacker] = React.useState(new Attacker());
   const [defender, setDefender] = React.useState(new Defender());
   const [rounds, setRounds] = React.useState(1);
 
-  const damageToProb = calcDamageProbabilities(attacker, defender, rounds);
+  const damageToProb = calcDmgProbs(attacker, defender, rounds);
 
   return (
     <Container style={{width: '510px'}}>
@@ -40,7 +40,7 @@ const ShootSection: React.FC = () => {
         </Col>
       </Row>
       <Row className='border'>
-        <ResultsDisplay damageToProb={damageToProb} defender={defender} />
+        <ShootResultsDisplay damageToProb={damageToProb} defender={defender} />
       </Row>
       <Row>
         <Col className={Util.centerHoriz + ' border'} style={{fontSize: '11px'}}>

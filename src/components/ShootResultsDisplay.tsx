@@ -11,7 +11,7 @@ export interface Props {
   damageToProb: Map<number,number>;
 }
 
-const ResultsDisplay: React.FC<Props> = (props: Props) => {
+const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
   const digitsPastDecimal = 2;
 
   let avgDmgUnbounded = 0;
@@ -93,4 +93,4 @@ const ResultsDisplay: React.FC<Props> = (props: Props) => {
   );
 }
 
-export default ResultsDisplay;
+export default ShootResultsDisplay;

@@ -25,11 +25,13 @@ const FighterControls: React.FC<Props> = (props: Props) => {
   const bsId = 'WS';
   const normDmgId = 'Normal Damage';
   const critDmgId = 'Critical Damage';
-  const rerollId = 'Reroll';
   const lethalxId = 'Lethal';
-  const rendingId = 'Rending';
+
   const woundsId = 'Wounds';
-  const fnpId = 'FeelNoPain';
+  const fnpId = 'FeelNoPain (TODO)';
+  const rerollId = 'Reroll';
+  const rendingId = 'Rending';
+  const brutalId = 'Brutal';
 
   const atk = props.attacker;
   const [textHandler, numHandler, boolHandler]
@@ -47,12 +49,13 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps(fnpId,     atk.fnp + '+',         Util.xspan(3, 6, '+'), numHandler('fnp')),
     new IncProps(rerollId,  atk.reroll,            Util.preX(rerolls),    textHandler('reroll')),
     new IncProps(rendingId, toCheckX(atk.rending), Util.xAndCheck,        boolHandler('rending')),
+    new IncProps(brutalId,  toCheckX(atk.brutal),  Util.xAndCheck,        boolHandler('brutal')),
   ];
 
   const paramElems = params.map(p =>
     <Row key={p.id}><Col className='pr-0'><IncDecSelect {...p}/></Col></Row>);
     //<IncDecSelect key={p.id} {...p}/>);
-  const splitPoint = paramElems.length / 2 + 1;
+  const splitPoint = paramElems.length / 2;
   const paramElemsHalf1 = paramElems.slice(0, splitPoint);
   const paramElemsHalf2 = paramElems.slice(splitPoint);
 

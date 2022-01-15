@@ -30,7 +30,7 @@ export default class Attacker {
     lethalx: number = 0,
     rending: boolean = false,
     starfire: boolean = false,
-    wounds: number = 0,
+    wounds: number = 12,
     fnp: number = 0,
     brutal: boolean = false,
   ) {
@@ -61,6 +61,10 @@ export default class Attacker {
 
   public critSkill(): number {
     return this.lethalx === 0 ? 6 : this.lethalx;
+  }
+
+  public possibleDmg(crits: number, norms: number): number {
+    return crits * (this.critDmg + this.mwx) + norms * this.normDmg;
   }
 
   public toDieProbs(): DieProbs {

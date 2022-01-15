@@ -11,6 +11,8 @@ import FighterControls from 'src/components/FighterControls';
 import Attacker from 'src/Attacker';
 import FightOptionControls from 'src/components/FightOptionControls';
 import FightStrategy from 'src/FightStrategy';
+import { calcRemainingWounds } from 'src/CalcEngineFight';
+import FightResultsDisplay from './FightResultsDisplay';
 
 const FightSection: React.FC = () => {
   const [fighterA, setFighterA] = React.useState(new Attacker());
@@ -18,6 +20,16 @@ const FightSection: React.FC = () => {
   const [strategyFighterA, setStrategyFighterA] = React.useState(FightStrategy.MaxDmgToEnemy);
   const [strategyFighterB, setStrategyFighterB] = React.useState(FightStrategy.MaxDmgToEnemy);
   const [firstFighter, setFirstFighter] = React.useState('A');
+  const aFirst = firstFighter === 'A';
+  const [fighter1WoundProbs, fighter2WoundProbs] = calcRemainingWounds(
+    aFirst ? fighterA : fighterB,
+    aFirst ? fighterB : fighterA,
+    aFirst ? strategyFighterA : strategyFighterB,
+    aFirst ? strategyFighterB : strategyFighterA,
+    1,
+  );
+  const fighterAWoundProbs = aFirst ? fighter1WoundProbs : fighter2WoundProbs;
+  const fighterBWoundProbs = aFirst ? fighter2WoundProbs : fighter1WoundProbs;
 
   return (
     <Container style={{width: '800'}}>
@@ -44,7 +56,12 @@ const FightSection: React.FC = () => {
       </Row>
       <Row className='border'>
         <Col className={Util.centerHoriz + ' p-0 border'}>
-          Results Goes Here
+          <FightResultsDisplay
+            fighterAWoundProbs={fighterAWoundProbs}
+            fighterBWoundProbs={fighterBWoundProbs}
+            fighterAWoundsOrig={fighterA.wounds}
+            fighterBWoundsOrig={fighterB.wounds}
+          />
         </Col>
       </Row>
       <Row>
@@ -57,15 +74,22 @@ const FightSection: React.FC = () => {
           <div>
             Notes:
             <ul>
-              <li>AvgDamageBounded is the average of damage bounded by the number of the other operative's wounds.</li>
-              <li>defendother opative
+              <li>
+                All strategies will do certain no-downside actions, with the consequence that 
+                "Strike" will still sometimes parry and "Parry" will still sometimes strike.
+                <ul>
+                  <li>If fighter can kill enemy in next strike, they will do so.</li>
+                  <li>If fighter can parry enemy's last success and still kill enemy afterwards, they will do so.</li>
+                </ul>
+              </li>
+              <li>
                 Feel No Pain (FNP) refers to the category of abilities where just before damage is actually resolved,
                 you roll a die for each potential wound, and each rolled success prevents a wound from being lost.
                 Even MWx damage can be prevented via FNP.
               </li>
               <li>
                 Balanced will only reroll a fail even if would be wise to reroll a normal success.
-              </li>do so.it , never a normal sucreroll a normal success.
+              </li>
             </ul>
           </div>
         </Col>

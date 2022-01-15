@@ -22,7 +22,7 @@ export interface Props {
 const FightOptionControls: React.FC<Props> = (props: Props) => {
   const strategyFighterAId = 'Fighter A Strategy';
   const strategyFighterBId = 'Fighter B Strategy';
-  const firstFighterId = 'Attacker/First';
+  const firstFighterId = 'Attacker/FirstActer';
   const strategies = Object.values(FightStrategy);
 
   const params: IncProps[] = [

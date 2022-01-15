@@ -1,18 +1,14 @@
 import Attacker from 'src/Attacker';
 import Defender from 'src/Defender';
-import { calcDamageProbabilities, exportedForTesting } from 'src/KT21CalcEngine';
+import { calcDmgProbs, exportedForTesting } from 'src/CalcEngineShoot';
 import * as Util from 'src/Util';
 import _ from 'lodash';
 import Ability from 'src/Ability';
 
 const {
-  DieProbs,
-  FinalDiceProb,
   calcDamage,
-  calcFinalDiceProb,
-  calcMultiRollProb,
   calcMultiRoundDamage,
-  withFnpAppliedToDamages,
+  calcPostFnpDamages,
 } = exportedForTesting;
 
 const requiredPrecision = 10;
@@ -22,14 +18,15 @@ function newTestAttacker(attacks: number = 1, bs: number = 4) : Attacker {
 }
 
 function avgDmg(attacker: Attacker, defender: Defender, numRounds: number = 1): number {
-  return Util.weightedAverage(calcDamageProbabilities(attacker, defender, numRounds));
+  return Util.weightedAverage(calcDmgProbs(attacker, defender, numRounds));
 }
 
-describe(calcDamage.name, () => {
-  let dn = 5; // normal damage
-  let dc = 7; // critical damage
-  let dmw = 100; // mortal wound damage
-  let atker = Attacker.justDamage(dn, dc, dmw);
+describe(calcDamage.name + ' typical dmgs (norm < crit < 2 * norm)', () => {
+  // test typical situation of normDmg < critDmg < 2*normDmg
+  const dn = 5; // normal damage
+  const dc = 7; // critical damage
+  const dmw = 100; // mortal wound damage
+  const atker = new Attacker(0, 0, dn, dc, dmw);
 
   it('0ch 0nh vs 0cs 0ns => 0', () => {
     expect(calcDamage(atker, 0, 0, 0, 0)).toBe(0);
@@ -61,12 +58,15 @@ describe(calcDamage.name, () => {
   it('3ch 2nh vs 1cs 3ns => 3dmw + 1dc + 1dn', () => {
     expect(calcDamage(atker, 3, 2, 1, 3)).toBe(3 * dmw + dc + dn);
   });
+});
 
+describe(calcDamage.name + ', bigCrit (2 * norm < crit)', () => {
   // now test with critHits being so big that normSaves should prefer to first cancel critHits
-  dn = 10; // normal damage
-  dc = 100; // critical damage
-  dmw = 1000; // mortal wound damage
-  atker = Attacker.justDamage(dn, dc, dmw);
+  const dn = 10; // normal damage
+  const dc = 100; // critical damage
+  const dmw = 1000; // mortal wound damage
+  const atker = new Attacker(0, 0, dn, dc, dmw);
+
   it('bigCrit, 0ch 0nh vs 0cs 0ns => 0', () => {
     expect(calcDamage(atker, 0, 0, 0, 0)).toBe(0);
   });
@@ -79,102 +79,60 @@ describe(calcDamage.name, () => {
   it('bigCrit, 0ch 2nh vs 3cs 3ns => 0', () => {
     expect(calcDamage(atker, 0, 2, 3, 3)).toBe(0);
   });
-  it('1ch 0nh vs 0cs 1ns => 1dmw + 1dc', () => {
+  it('bigtCrit, 1ch 0nh vs 0cs 1ns => 1dmw + 1dc', () => {
     expect(calcDamage(atker, 1, 0, 0, 1)).toBe(dmw + dc);
   });
-  it('1ch 0nh vs 0cs 2ns => 1dmw', () => {
+  it('bigtCrit, 1ch 0nh vs 0cs 2ns => 1dmw', () => {
     expect(calcDamage(atker, 1, 0, 0, 2)).toBe(dmw);
   });
-  it('1ch 2nh vs 0cs 2ns => 1dmw + 2dn', () => {
+  it('bigtCrit, 1ch 2nh vs 0cs 2ns => 1dmw + 2dn', () => {
     expect(calcDamage(atker, 1, 2, 0, 2)).toBe(dmw + 2 * dn);
   });
-  it('2ch 2nh vs 0cs 3ns => 2dmw + 1dc + 1dn', () => {
+  it('bigtCrit, 2ch 2nh vs 0cs 3ns => 2dmw + 1dc + 1dn', () => {
     expect(calcDamage(atker, 2, 2, 0, 3)).toBe(2 * dmw + dc + dn);
   });
 });
 
-describe(calcMultiRollProb.name, () => {
-  // using >=1 probabilities so we can have prime factors and not worry about rounding errors
-  const pc = 7; // crit probability
-  const pn = 11; // norm probability
-  const pf = 13; // fail probability
-  it('{0c,0n,1f} => pf^1', () => {
-    expect(calcMultiRollProb(0, pc, 0, pn, 1, pf)).toBe(pf);
+describe(calcDamage.name + ', smallCrit (crit < norm)', () => {
+  // now test with critHits being so small that normHits are always the first choice to cancel
+  const dn = 100; // normal damage
+  const dc = 10; // critical damage
+  const dmw = 1000; // mortal wound damage
+  const atker = new Attacker(0, 0, dn, dc, dmw);
+
+  it('smallCrit, 0ch 0nh vs 0cs 0ns => 0', () => {
+    expect(calcDamage(atker, 0, 0, 0, 0)).toBe(0);
   });
-  it('{0c,3n,0f} => pn^3', () => {
-    expect(calcMultiRollProb(0, pc, 3, pn, 0, pf)).toBe(Math.pow(pn, 3));
+  it('smallCrit, 0ch 2nh vs 0cs 1ns => 1dn', () => {
+    expect(calcDamage(atker, 0, 2, 0, 1)).toBe(dn);
   });
-  it('{3c,0n,0f} * pn * 3 = {2c,1n,0f} * pc', () => {
-    expect(calcMultiRollProb(3, pc, 0, pn, 0, pf) * pn * 3)
-      .toBe(calcMultiRollProb(2, pc, 1, pn, 0, pf) * pc);
+  it('smallCrit, 0ch 2nh vs 1cs 1ns => 0', () => {
+    expect(calcDamage(atker, 0, 2, 1, 1)).toBe(0);
   });
-  it('{1c,1n,1f} => pc*pn*pf*(3!)', () => {
-    expect(calcMultiRollProb(1, pc, 1, pn, 1, pf)).toBe(pc * pn * pf * 6);
+  it('smallCrit, 0ch 2nh vs 3cs 3ns => 0', () => {
+    expect(calcDamage(atker, 0, 2, 3, 3)).toBe(0);
+  });
+  it('smallCrit, 1ch 0nh vs 0cs 1ns => 1dmw + 1dc', () => {
+    expect(calcDamage(atker, 1, 0, 0, 1)).toBe(dmw + dc);
+  });
+  it('smallCrit, 1ch 0nh vs 0cs 2ns => 1dmw', () => {
+    expect(calcDamage(atker, 1, 0, 0, 2)).toBe(dmw);
+  });
+  it('smallCrit, 1ch 2nh vs 0cs 2ns => 1dmw + 2dn', () => {
+    expect(calcDamage(atker, 1, 2, 0, 2)).toBe(dmw + dc);
+  });
+  it('smallCrit, 2ch 2nh vs 0cs 3ns => 2dmw + 2dc', () => {
+    expect(calcDamage(atker, 2, 2, 0, 3)).toBe(2 * dmw + 2 * dc);
   });
 });
 
-describe(calcFinalDiceProb.name, () => {
-  // using >=1 probabilities so we can have prime factors and not worry about rounding errors
-  const pc = 7; // crit probability
-  const pn = 11; // norm probability
-  const pf = 13; // fail probability
-  const dieProbs = new DieProbs(pc, pn, pf);
-
-  it('basic', () => {
-    const actual = calcFinalDiceProb(dieProbs, 1, 0, 0, false);
-    expect(actual).toStrictEqual(new FinalDiceProb(pc, 1, 0));
-  });
-  it('basic balanced 1c', () => {
-    const actual = calcFinalDiceProb(dieProbs, 1, 0, 0, true);
-    expect(actual).toStrictEqual(new FinalDiceProb(pc + pf * pc, 1, 0));
-  });
-  it('basic balanced 1f', () => {
-    const actual = calcFinalDiceProb(dieProbs, 0, 0, 1, true);
-    expect(actual).toStrictEqual(new FinalDiceProb(pf * pf, 0, 0));
-  });
-  it('rending {0c,1n,1f} => {0c,1n,1f}', () => {
-    const actual = calcFinalDiceProb(dieProbs, 0, 1, 1, false, true);
-    expect(actual).toStrictEqual(new FinalDiceProb(pn * pf * 2, 0, 1));
-  });
-  it('rending {1c,0n,1f} => {1c,0n,1f}', () => {
-    const actual = calcFinalDiceProb(dieProbs, 1, 0, 1, false, true);
-    expect(actual).toStrictEqual(new FinalDiceProb(pc * pf * 2, 1, 0));
-  });
-  it('rending {1c,1n,0f} => {2c,0n,0f}', () => {
-    const actual = calcFinalDiceProb(dieProbs, 1, 1, 0, false, true);
-    expect(actual).toStrictEqual(new FinalDiceProb(pc * pn * 2, 2, 0));
-  });
-  it('rending {3c,3n,3f} => {4c, 3n, 2f}', () => {
-    const actual = calcFinalDiceProb(dieProbs, 3, 3, 0, false, true);
-    expect(actual.crits).toBe(4);
-    expect(actual.norms).toBe(2);
-  });
-  it('starfire {0c,1n,1f} => {0c,1n,1f}', () => {
-    const actual = calcFinalDiceProb(dieProbs, 0, 1, 1, false, false, true);
-    expect(actual).toStrictEqual(new FinalDiceProb(pn * pf * 2, 0, 1));
-  });
-  it('starfire {1c,0n,1f} => {1c,1n,0f}', () => {
-    const actual = calcFinalDiceProb(dieProbs, 1, 0, 1, false, false, true);
-    expect(actual).toStrictEqual(new FinalDiceProb(pc * pf * 2, 1, 1));
-  });
-  it('starfire {1c,1n,0f} => {1c,1n,0f}', () => {
-    const actual = calcFinalDiceProb(dieProbs, 1, 1, 0, false, false, true);
-    expect(actual).toStrictEqual(new FinalDiceProb(pc * pn * 2, 1, 1));
-  });
-  it('starfire {3c,3n,3f} => {3c,4n,2f}', () => {
-    const actual = calcFinalDiceProb(dieProbs, 3, 3, 3, false, false, true);
-    expect(actual.crits).toBe(3);
-    expect(actual.norms).toBe(4);
-  });
-});
-
-describe(withFnpAppliedToDamages.name, () => {
+describe(calcPostFnpDamages.name, () => {
   it('single prefnp damage of 3', () => {
     const fnp = 5;
     const pd = 2 / 3; // probability damage gets through
     const pa = 1 / 3; // probability avoided the damage
     const preFnpDmgs = new Map<number,number>([ [3, 1], ]);
-    const postFnpDmgs = withFnpAppliedToDamages(fnp, preFnpDmgs);
+    const postFnpDmgs = calcPostFnpDamages(fnp, preFnpDmgs);
 
     expect(postFnpDmgs.get(1)).toBeCloseTo(Math.pow(pd, 1) * Math.pow(pa, 2) * 3, requiredPrecision);
     expect(postFnpDmgs.get(2)).toBeCloseTo(Math.pow(pd, 2) * Math.pow(pa, 1) * 3, requiredPrecision);
@@ -186,7 +144,7 @@ describe(withFnpAppliedToDamages.name, () => {
     const pd = 2 / 3; // probability damage gets through
     const pa = 1 / 3; // probability avoided the damage
     const preFnpDmgs = new Map<number,number>([ [4, 1], ]);
-    const postFnpDmgs = withFnpAppliedToDamages(fnp, preFnpDmgs);
+    const postFnpDmgs = calcPostFnpDamages(fnp, preFnpDmgs);
 
     expect(postFnpDmgs.get(1)).toBeCloseTo(Math.pow(pd, 1) * Math.pow(pa, 3) * 4, requiredPrecision);
     expect(postFnpDmgs.get(2)).toBeCloseTo(Math.pow(pd, 2) * Math.pow(pa, 2) * 6, requiredPrecision);
@@ -204,7 +162,7 @@ describe(withFnpAppliedToDamages.name, () => {
       [1, p1],
       [2, p2],
     ]);
-    const postFnpDmgs = withFnpAppliedToDamages(fnp, preFnpDmgs);
+    const postFnpDmgs = calcPostFnpDamages(fnp, preFnpDmgs);
 
     expect(postFnpDmgs.get(1)).toBeCloseTo(p2 * pd * pa * 2 + p1 * pd, requiredPrecision);
     expect(postFnpDmgs.get(2)).toBeCloseTo(p2 * pd * pd, requiredPrecision);
@@ -268,7 +226,7 @@ describe(calcMultiRoundDamage.name, () => {
   });
 });
 
-describe(calcDamageProbabilities.name + ', few dice, no abilities', () => {
+describe(calcDmgProbs.name + ', few dice, no abilities', () => {
   const bs = 4;
   const pc = 1/6; // crit probability
   const pn = 1/3; // norm probability
@@ -284,14 +242,14 @@ describe(calcDamageProbabilities.name + ', few dice, no abilities', () => {
     expect(pc + pn + pf).toBeCloseTo(1, requiredPrecision);
   });
   it('1 atkDie vs 0 defDie', () => {
-    const damageToProb = calcDamageProbabilities(atk1, def0);
+    const damageToProb = calcDmgProbs(atk1, def0);
     expect(damageToProb.size).toBe(3);
     expect(damageToProb.get(0)).toBe(pf);
     expect(damageToProb.get(dn)).toBe(pn);
     expect(damageToProb.get(dc)).toBe(pc);
   });
   it('2 atkDie vs 0 defDie', () => {
-    const damageToProb = calcDamageProbabilities(atk2, def0);
+    const damageToProb = calcDmgProbs(atk2, def0);
     expect(damageToProb.size).toBe(6);
     expect(damageToProb.get(0)).toBeCloseTo(pf * pf, requiredPrecision);
     expect(damageToProb.get(dn)).toBeCloseTo(pn * pf * 2, requiredPrecision);
@@ -301,7 +259,7 @@ describe(calcDamageProbabilities.name + ', few dice, no abilities', () => {
     expect(damageToProb.get(2 * dc)).toBeCloseTo(pc * pc, requiredPrecision);
   });
   it('1 atkDie vs 1 defDie', () => {
-    const damageToProb = calcDamageProbabilities(atk1, def1);
+    const damageToProb = calcDmgProbs(atk1, def1);
     const probCritDelivered = pc * (1 - pc); // atk crit and def non-crit
     const probNormDelivered = pn * pf; // atk crit and def non-crit
     const probNothingDeliveredCalculatedDirectly = pf + pc * pc + pn * (1 - pf);
@@ -317,7 +275,7 @@ describe(calcDamageProbabilities.name + ', few dice, no abilities', () => {
     expect(damageToProb.get(0)).toBeCloseTo(probNothingDeliveredCalculatedDirectly, requiredPrecision); // atk fail or atk cancelled
   });
   it('2 atkDie vs 1 defDie', () => {
-    const damageToProb = calcDamageProbabilities(atk2, def1);
+    const damageToProb = calcDmgProbs(atk2, def1);
 
     const probNothingDelivered
       = pc * pf * 2 * pc // 1c vs 1c
@@ -358,7 +316,7 @@ describe(calcDamageProbabilities.name + ', few dice, no abilities', () => {
   });
 });
 
-describe(calcDamageProbabilities.name + ', mwx', () => {
+describe(calcDmgProbs.name + ', mwx', () => {
   // we tested mwx for calcDamage; quick test to make sure calcDamageProbabilities respects mwx too
   it('basic', () => {
     const dmw = 1000; // mw damage
@@ -367,7 +325,7 @@ describe(calcDamageProbabilities.name + ', mwx', () => {
     const atk = newTestAttacker(1, 1).setProp('mwx', dmw);
     const def = new Defender(1, 1).withProp('invulnSave', 1);
 
-    const dmgs = calcDamageProbabilities(atk, def);
+    const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(pn, requiredPrecision); // norm hit, any save
     expect(dmgs.get(dmw)).toBeCloseTo(pc * pc, requiredPrecision); // crit hit, crit save
     expect(dmgs.get(dmw + atk.critDmg)).toBeCloseTo(pn * pc, requiredPrecision); // crit hit, norm save
@@ -375,7 +333,7 @@ describe(calcDamageProbabilities.name + ', mwx', () => {
   });
 });
 
-describe(calcDamageProbabilities.name + ', APx & invuln', () => {
+describe(calcDmgProbs.name + ', APx & invuln', () => {
   it('APx vs fewer defense dice', () => {
     const atkApx0 = new Attacker().setProp('apx', 0);
     const atkApx1 = new Attacker().setProp('apx', 1);
@@ -386,20 +344,20 @@ describe(calcDamageProbabilities.name + ', APx & invuln', () => {
     const def3 = new Defender().setProp('defense', 3);
 
     // scenarios with 0 defense dice (0-0, 1-1,);
-    const dmgs0Minus0DefDice = calcDamageProbabilities(atkApx0, def0);
-    const dmgs1Minus1DefDice = calcDamageProbabilities(atkApx1, def1);
+    const dmgs0Minus0DefDice = calcDmgProbs(atkApx0, def0);
+    const dmgs1Minus1DefDice = calcDmgProbs(atkApx1, def1);
     expect(dmgs0Minus0DefDice).toStrictEqual(dmgs1Minus1DefDice);
 
     // scenarios with 1 defense dice (1-0, 2-1, 3-2,);
-    const dmgs1Minus0DefDice = calcDamageProbabilities(atkApx0, def1);
-    const dmgs2Minus1DefDice = calcDamageProbabilities(atkApx1, def2);
-    const dmgs3Minus2DefDice = calcDamageProbabilities(atkApx2, def3);
+    const dmgs1Minus0DefDice = calcDmgProbs(atkApx0, def1);
+    const dmgs2Minus1DefDice = calcDmgProbs(atkApx1, def2);
+    const dmgs3Minus2DefDice = calcDmgProbs(atkApx2, def3);
     expect(dmgs1Minus0DefDice).toStrictEqual(dmgs2Minus1DefDice);
     expect(dmgs1Minus0DefDice).toStrictEqual(dmgs3Minus2DefDice);
 
     // scenarios with 2 defense dice (2-0, 3-1,);
-    const dmgs2Minus0DefDice = calcDamageProbabilities(atkApx0, def2);
-    const dmgs3Minus1DefDice = calcDamageProbabilities(atkApx1, def3);
+    const dmgs2Minus0DefDice = calcDmgProbs(atkApx0, def2);
+    const dmgs3Minus1DefDice = calcDmgProbs(atkApx1, def3);
     expect(dmgs2Minus0DefDice).toStrictEqual(dmgs3Minus1DefDice);
 
     expect(Util.weightedAverage(dmgs2Minus0DefDice))
@@ -424,23 +382,23 @@ describe(calcDamageProbabilities.name + ', APx & invuln', () => {
     const def = new Defender(3, 3);
     const defInvuln = new Defender().setProp('invulnSave', 6);
 
-    const dmgsApx0Invuln = calcDamageProbabilities(atkApx0, defInvuln);
-    const dmgsApx1Invuln = calcDamageProbabilities(atkApx1, defInvuln);
+    const dmgsApx0Invuln = calcDmgProbs(atkApx0, defInvuln);
+    const dmgsApx1Invuln = calcDmgProbs(atkApx1, defInvuln);
     expect(dmgsApx0Invuln).toStrictEqual(dmgsApx1Invuln);
 
-    const dmgsApx0 = calcDamageProbabilities(atkApx0, def);
+    const dmgsApx0 = calcDmgProbs(atkApx0, def);
     expect(Util.weightedAverage(dmgsApx0))
       .toBeLessThan(Util.weightedAverage(dmgsApx0Invuln));
   });
 });
 
-describe(calcDamageProbabilities.name + ', px and lethalx', () => {
+describe(calcDmgProbs.name + ', px and lethalx', () => {
   it('px gets rid of def dice on crit', () => {
     const atk = newTestAttacker(1, 1).setProp('px', 4).setProp('lethalx', 5);
     const pc = (7 - atk.critSkill()) / 6;
     const def = new Defender(4, 1);
 
-    const dmgs = calcDamageProbabilities(atk, def);
+    const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(1 - pc, requiredPrecision);
     expect(dmgs.get(atk.critDmg)).toBeCloseTo(pc, requiredPrecision);
   });
@@ -450,20 +408,20 @@ describe(calcDamageProbabilities.name + ', px and lethalx', () => {
     const def = new Defender(2, 1);
     const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
 
-    const dmgs = calcDamageProbabilities(atk, def);
+    const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(pn, requiredPrecision);
     expect(dmgs.get(atk.critDmg)).toBeCloseTo(pc, requiredPrecision);
     expect(dmgs.size).toBe(2);
   });
 });
 
-describe(calcDamageProbabilities.name + ', balanced', () => {
+describe(calcDmgProbs.name + ', balanced', () => {
   it('balanced with 1 atk die', () => {
     const atk = newTestAttacker(1).setProp('reroll', Ability.Balanced);
     const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
     const def = new Defender(0);
 
-    const dmgs = calcDamageProbabilities(atk, def);
+    const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(pf * pf, requiredPrecision);
     expect(dmgs.get(atk.normDmg)).toBeCloseTo(pn + pf * pn, requiredPrecision);
     expect(dmgs.get(atk.critDmg)).toBeCloseTo(pc + pf * pc, requiredPrecision);
@@ -471,7 +429,7 @@ describe(calcDamageProbabilities.name + ', balanced', () => {
   });
 });
 
-describe(calcDamageProbabilities.name + ', ceaseless', () => {
+describe(calcDmgProbs.name + ', ceaseless', () => {
   it('ceaseless with 1 atk die', () => {
     const atk = newTestAttacker(1).setProp('reroll', Ability.Ceaseless);
     const pc = 1 / 6;
@@ -480,7 +438,7 @@ describe(calcDamageProbabilities.name + ', ceaseless', () => {
     const p1 = 1 / 6; // probability of rolling exactly a 1
     const def = new Defender(0);
 
-    const dmgs = calcDamageProbabilities(atk, def);
+    const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo((pf - p1) + p1 * pf, requiredPrecision);
     expect(dmgs.get(atk.normDmg)).toBeCloseTo(pn + p1 * pn, requiredPrecision);
     expect(dmgs.get(atk.critDmg)).toBeCloseTo(pc + p1 * pc, requiredPrecision);
@@ -497,7 +455,7 @@ describe(calcDamageProbabilities.name + ', ceaseless', () => {
   });
 });
 
-describe(calcDamageProbabilities.name + ', relentless', () => {
+describe(calcDmgProbs.name + ', relentless', () => {
   it('relentless with 1 atk die', () => {
     const atk = newTestAttacker(1).setProp('reroll', Ability.Relentless);
     const pc = 1 / 6;
@@ -505,7 +463,7 @@ describe(calcDamageProbabilities.name + ', relentless', () => {
     const pf = 3 / 6;
     const def = new Defender(0);
 
-    const dmgs = calcDamageProbabilities(atk, def);
+    const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(pf * pf, requiredPrecision);
     expect(dmgs.get(atk.normDmg)).toBeCloseTo(pn + pf * pn, requiredPrecision);
     expect(dmgs.get(atk.critDmg)).toBeCloseTo(pc + pf * pc, requiredPrecision);
@@ -522,13 +480,13 @@ describe(calcDamageProbabilities.name + ', relentless', () => {
   });
 });
 
-describe(calcDamageProbabilities.name + ', rending & starfire', () => {
+describe(calcDmgProbs.name + ', rending & starfire', () => {
   it('rending, 2 atk dice, probability 2 crits', () => {
     const atk = newTestAttacker(2).setProp('rending', true);
     const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
     const def = new Defender(0);
 
-    const dmgs = calcDamageProbabilities(atk, def);
+    const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(2 * atk.critDmg)).toBeCloseTo(pc * pc + 2 * pc * pn, requiredPrecision);
   });
   it('starfire, 2 atk dice, probability 1 crit + 1 norm', () => {
@@ -536,13 +494,13 @@ describe(calcDamageProbabilities.name + ', rending & starfire', () => {
     const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
     const def = new Defender(0);
 
-    const dmgs = calcDamageProbabilities(atk, def);
+    const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(atk.critDmg + atk.normDmg))
       .toBeCloseTo(2 * pc * pf + 2 * pc * pn, requiredPrecision);
   });
 });
 
-describe(calcDamageProbabilities.name + ', defender abilities', () => {
+describe(calcDmgProbs.name + ', defender abilities', () => {
   it('fnp with prefnp damages of 1 and 2', () => {
     // we already tested fnp at the withFnpAppliedToDamages level, quick redo at higher level
     const fnp = 5;
@@ -553,7 +511,7 @@ describe(calcDamageProbabilities.name + ', defender abilities', () => {
     const atk = new Attacker(1, 3, 1, 2);
     const def = new Defender(0).setProp('fnp', fnp);
 
-    const dmgs = calcDamageProbabilities(atk, def);
+    const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(1)).toBeCloseTo(p2 * pd * pa * 2 + p1 * pd, requiredPrecision);
     expect(dmgs.get(2)).toBeCloseTo(p2 * pd * pd, requiredPrecision);
     expect(dmgs.size).toBe(3);
@@ -562,7 +520,7 @@ describe(calcDamageProbabilities.name + ', defender abilities', () => {
     const atk = newTestAttacker(1).withAlwaysNormHit();
     const def = new Defender(1, 6).setProp('cover', true);
 
-    const dmgs = calcDamageProbabilities(atk, def);
+    const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(1, requiredPrecision);
     expect(dmgs.size).toBe(1);
   });
@@ -570,7 +528,7 @@ describe(calcDamageProbabilities.name + ', defender abilities', () => {
     const atk = newTestAttacker(1).withAlwaysCritHit();
     const def = new Defender(1, 6).setProp('cover', true);
 
-    const dmgs = calcDamageProbabilities(atk, def);
+    const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(atk.critDmg)).toBeCloseTo(1, requiredPrecision);
     expect(dmgs.size).toBe(1);
   });
@@ -579,7 +537,7 @@ describe(calcDamageProbabilities.name + ', defender abilities', () => {
     const def = new Defender(2, 3).setProp('cover', true);
     const [pc, pn, pf] = def.toDieProbs().toCritNormFail();
 
-    const dmgs = calcDamageProbabilities(atk, def);
+    const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(pc + pn, requiredPrecision);
     expect(dmgs.get(atk.normDmg)).toBeCloseTo(pf, requiredPrecision);
     expect(dmgs.size).toBe(2);
@@ -588,7 +546,7 @@ describe(calcDamageProbabilities.name + ', defender abilities', () => {
     const atk = newTestAttacker(1).withAlwaysNormHit().setProp('apx', 3);
     const def = new Defender(3);
 
-    const dmgs = calcDamageProbabilities(atk, def);
+    const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(atk.normDmg)).toBeCloseTo(1, requiredPrecision);
     expect(dmgs.size).toBe(1);
   });
@@ -597,7 +555,7 @@ describe(calcDamageProbabilities.name + ', defender abilities', () => {
     const def = new Defender(1, 4).setProp('chitin', true);
     const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
 
-    const dmgs = calcDamageProbabilities(atk, def);
+    const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(atk.critDmg)).toBeCloseTo(pc * (pf * (1 - pc) + pn), requiredPrecision);
     expect(dmgs.get(atk.normDmg)).toBeCloseTo(pn * pf * pf, requiredPrecision);
     expect(dmgs.get(0)).toEqual(expect.any(Number)); // prob is just remainder
@@ -605,7 +563,7 @@ describe(calcDamageProbabilities.name + ', defender abilities', () => {
   });
 });
 
-describe(calcDamageProbabilities.name + ', multiple rounds', () => {
+describe(calcDmgProbs.name + ', multiple rounds', () => {
   it('damage should scale linearly', () => {
     const atk = newTestAttacker(3);
     const def = new Defender();

@@ -114,3 +114,12 @@ export function binomialPmf(
     * Math.pow(1 - probSuccess, numTrials - numSuccesses)
     ;
 }
+
+export function addToMapValue<T>(map: Map<T,number>, key: T, val: number): void {
+  const oldMapVal = map.get(key) ?? 0;
+  map.set(key, oldMapVal + val);
+}
+
+export function  toPercentString(val: number, digitsPastDecimal: number = 2) {
+  return (val * 100).toFixed(digitsPastDecimal);
+}
