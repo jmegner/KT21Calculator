@@ -60,20 +60,7 @@ const FighterControls: React.FC<Props> = (props: Props) => {
   const paramElemsHalf2 = paramElems.slice(splitPoint);
 
   return (
-    /*
-    <Stack style={{width: '100%'}}>
-      <div>{props.title}</div>
-      <Stack direction='horizontal'>
-        <Stack style={{width: '40%'}}>
-          {paramElemsHalf1}
-        </Stack>
-        <Stack style={{width: '40%'}}>
-          {paramElemsHalf2}
-        </Stack>
-      </Stack>
-    </Stack>
-    */
-    <Container>
+    <Container style={{width: '310px'}}>
       <Row>{props.title}</Row>
       <Row>
         <Col>

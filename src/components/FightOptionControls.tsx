@@ -33,10 +33,10 @@ const FightOptionControls: React.FC<Props> = (props: Props) => {
   ];
 
   const paramCols = params.map(p =>
-    <Col key={p.id} className='pr-0'><IncDecSelect {...p}/></Col>);
+    <Col key={p.id} className='pr-0 col-auto'><IncDecSelect {...p}/></Col>);
 
   return (
-    <Container>
+    <Container style={{width: '600px'}}>
       <Row>
         General
       </Row>
