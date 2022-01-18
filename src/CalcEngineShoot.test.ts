@@ -364,6 +364,10 @@ describe(calcDmgProbs.name + ', APx & invuln', () => {
       .toBeLessThan(Util.weightedAverage(dmgs2Minus1DefDice));
     expect(Util.weightedAverage(dmgs1Minus0DefDice))
       .toBeLessThan(Util.weightedAverage(dmgs0Minus0DefDice));
+
+    // apx > def should give same results as apx = def
+    const dmgs1Minus2DefDice = calcDmgProbs(atkApx2, def1);
+    expect(dmgs1Minus1DefDice).toStrictEqual(dmgs1Minus2DefDice);
   });
   it('invuln used when valid', () => {
     const atk = newTestAttacker(1).withAlwaysNormHit();

@@ -90,7 +90,7 @@ function calcDefenderFinalDiceStuff(
 {
   const defenderSingleDieProbs = defender.toDieProbs();
 
-  const numDefDiceWithoutPx = defender.usesInvulnSave() ? defender.defense : defender.defense - attacker.apx;
+  const numDefDiceWithoutPx = Math.max(0, defender.usesInvulnSave() ? defender.defense : defender.defense - attacker.apx);
   const coverSaves = Math.min(defender.coverSaves, numDefDiceWithoutPx);
   const numDefRollsWithoutPx = numDefDiceWithoutPx - coverSaves;
 
@@ -109,7 +109,7 @@ function calcDefenderFinalDiceStuff(
 
   // for Px triggered and relevant
   if (pxIsRelevant) {
-    const numDefDiceWithPx = defender.defense - effectivePx;
+    const numDefDiceWithPx = Math.max(0, defender.defense - effectivePx);
     coverSavesWithPx = Math.min(defender.coverSaves, numDefDiceWithPx);
     const numDefRollsWithPx = numDefDiceWithPx - coverSavesWithPx;
 
