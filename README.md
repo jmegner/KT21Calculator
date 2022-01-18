@@ -1,18 +1,19 @@
-# KT21 Calculator
+# Kill Team 2021 Calculator ("ktcalc")
 Calculator for helping analyze shooting and fighting attacks in Kill Team (2021 edition). Heavily inspired by [kt2.doit-cms.ru](http://kt2.doit-cms.ru/) and hoping to improve on it.
 
 Live at [jmegner.github.io/KT21Calculator](https://jmegner.github.io/KT21Calculator/).
 
-[Announcement reddit thread](https://www.reddit.com/r/killteam/comments/rvhme0/kt21_calculator_web_app/).
+[Announcement reddit thread](https://www.reddit.com/r/killteam/comments/rvhme0/kt21_calculator_web_app/)
+and
+[follow-up thread for fight support](https://www.reddit.com/r/killteam/comments/s5gczq/kt21_calculator_now_supports_fightingmelee/).
 
-Features in the works...
-* allow 2 cover saves
-* results tables have checkbox for damage-oriented or remaining-wounds-oriented numbers
+Features I plan on implementing...
 * have option for user to select a relevant operative profile (ex: Necron Immortal with Gauss Blaster and Starfire Core) instead of individually selecting parameters.
+* results tables have checkbox for damage-oriented or remaining-wounds-oriented numbers
 * fight section
+  * hammerhand
   * multiple rounds
   * fnp
-  * more tests
 
 Notable technologies/libs/whatever used... 
 * [TypeScript](https://www.typescriptlang.org/)

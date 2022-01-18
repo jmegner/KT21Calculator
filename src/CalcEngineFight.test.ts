@@ -1,9 +1,6 @@
 import Attacker from 'src/Attacker';
-import Defender from 'src/Defender';
 import { calcRemainingWounds, exportedForTesting } from 'src/CalcEngineFight';
-import * as Util from 'src/Util';
 import _ from 'lodash';
-import Ability from 'src/Ability';
 import FightStrategy from 'src/FightStrategy';
 import FightChoice from 'src/FightChoice';
 import FighterState from 'src/FighterState';
@@ -70,8 +67,6 @@ describe(calcParryForLastEnemySuccessThenKillEnemy.name, () => {
   const guy99 = newFighterState(9, 9);
   guy99.profile.critDmg = 3;
   guy99.profile.normDmg = 2;
-  const guy01 = newFighterState(0, 1);
-  const guy10 = newFighterState(1, 0);
 
   it('no parry because multiple enemy success', () => {
     expect(calcParryForLastEnemySuccessThenKillEnemy(guy99, newFighterState(1, 1))).toBe(null);
@@ -84,10 +79,17 @@ describe(calcParryForLastEnemySuccessThenKillEnemy.name, () => {
     expect(calcParryForLastEnemySuccessThenKillEnemy(guy99, newFighterState(1, 0, guy99.totalDmg() - guy99.profile.critDmg + 1))).toBe(null);
   });
   it('typical norm parry', () => {
-    expect(calcParryForLastEnemySuccessThenKillEnemy(guy99, guy01)).toBe(FightChoice.NormParry);
+    expect(calcParryForLastEnemySuccessThenKillEnemy(guy99, newFighterState(0, 1))).toBe(FightChoice.NormParry);
   });
   it('typical crit parry', () => {
-    expect(calcParryForLastEnemySuccessThenKillEnemy(guy99, guy10)).toBe(FightChoice.CritParry);
+    expect(calcParryForLastEnemySuccessThenKillEnemy(guy99, newFighterState(1, 0))).toBe(FightChoice.CritParry);
+  });
+  it('crit parry with storm shield', () => {
+    const guy99Storm = newFighterState(9, 9);
+    guy99Storm.profile.stormShield = true;
+    expect(calcParryForLastEnemySuccessThenKillEnemy(guy99Storm, newFighterState(2, 0))).toBe(FightChoice.CritParry);
+    expect(calcParryForLastEnemySuccessThenKillEnemy(guy99Storm, newFighterState(1, 1))).toBe(FightChoice.CritParry);
+    expect(calcParryForLastEnemySuccessThenKillEnemy(guy99Storm, newFighterState(1, 2))).toBe(null);
   });
 });
 
@@ -111,6 +113,127 @@ describe(calcDieChoice.name + ', common & strike/parry', () => {
     const chooser = newFighterState(10, 10, 1, FightStrategy.MaxDmgToEnemy)
     const enemy = newFighterState(1, 1, 10, FightStrategy.Strike);
     expect(calcDieChoice(chooser, enemy)).toBe(FightChoice.CritStrike);
+  });
+});
+
+describe(resolveDieChoice.name + ', basic & storm shield', () => {
+  const origChooserCrits = 10;
+  const origChooserNorms = 20;
+  const origEnemyCrits = 30;
+  const origEnemyNorms = 40;
+  const finalWounds = 100;
+
+  it('CritStrike, and check even values that shouldn\'t change', () => {
+    const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
+    const enemy = newFighterState(origEnemyCrits, origEnemyNorms, chooser.profile.critDmg + finalWounds);
+
+    resolveDieChoice(FightChoice.CritStrike, chooser, enemy);
+    expect(chooser.crits).toBe(origChooserCrits - 1);
+    expect(chooser.norms).toBe(origChooserNorms);
+    expect(chooser.currentWounds).toBe(finalWounds);
+    expect(enemy.crits).toBe(origEnemyCrits);
+    expect(enemy.norms).toBe(origEnemyNorms);
+    expect(enemy.currentWounds).toBe(finalWounds);
+  });
+  it('NormStrike', () => {
+    const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
+    const enemy = newFighterState(origEnemyCrits, origEnemyNorms, chooser.profile.normDmg + finalWounds);
+
+    resolveDieChoice(FightChoice.NormStrike, chooser, enemy);
+    expect(chooser.crits).toBe(origChooserCrits);
+    expect(chooser.norms).toBe(origChooserNorms - 1);
+    expect(chooser.currentWounds).toBe(finalWounds);
+    expect(enemy.crits).toBe(origEnemyCrits);
+    expect(enemy.norms).toBe(origEnemyNorms);
+    expect(enemy.currentWounds).toBe(finalWounds);
+  });
+  it('CritParry to cancel enemy crit', () => {
+    const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
+    const enemy = newFighterState(origEnemyCrits, origEnemyNorms, finalWounds);
+
+    resolveDieChoice(FightChoice.CritParry, chooser, enemy);
+    expect(chooser.crits).toBe(origChooserCrits - 1);
+    expect(chooser.norms).toBe(origChooserNorms);
+    expect(chooser.currentWounds).toBe(finalWounds);
+    expect(enemy.crits).toBe(origEnemyCrits - 1);
+    expect(enemy.norms).toBe(origEnemyNorms);
+    expect(enemy.currentWounds).toBe(finalWounds);
+  });
+  it('CritParry to cancel enemy norm (no enemy crits)', () => {
+    const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
+    const enemy = newFighterState(0, origEnemyNorms, finalWounds);
+
+    resolveDieChoice(FightChoice.CritParry, chooser, enemy);
+    expect(chooser.crits).toBe(origChooserCrits - 1);
+    expect(chooser.norms).toBe(origChooserNorms);
+    expect(chooser.currentWounds).toBe(finalWounds);
+    expect(enemy.crits).toBe(0);
+    expect(enemy.norms).toBe(origEnemyNorms - 1);
+    expect(enemy.currentWounds).toBe(finalWounds);
+  });
+  it('NormParry to cancel enemy norm', () => {
+    const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
+    const enemy = newFighterState(origEnemyCrits, origEnemyNorms, finalWounds);
+
+    resolveDieChoice(FightChoice.NormParry, chooser, enemy);
+    expect(chooser.crits).toBe(origChooserCrits);
+    expect(chooser.norms).toBe(origChooserNorms - 1);
+    expect(chooser.currentWounds).toBe(finalWounds);
+    expect(enemy.crits).toBe(origEnemyCrits);
+    expect(enemy.norms).toBe(origEnemyNorms - 1);
+    expect(enemy.currentWounds).toBe(finalWounds);
+  });
+  it('CritParry with storm shield to cancel 2 enemy crits', () => {
+    const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
+    const enemy = newFighterState(origEnemyCrits, origEnemyNorms, finalWounds);
+    chooser.profile.stormShield = true;
+
+    resolveDieChoice(FightChoice.CritParry, chooser, enemy);
+    expect(chooser.crits).toBe(origChooserCrits - 1);
+    expect(chooser.norms).toBe(origChooserNorms);
+    expect(chooser.currentWounds).toBe(finalWounds);
+    expect(enemy.crits).toBe(origEnemyCrits - 2);
+    expect(enemy.norms).toBe(origEnemyNorms);
+    expect(enemy.currentWounds).toBe(finalWounds);
+  });
+  it('CritParry with storm shield to cancel 1 enemy crit & 1 enemy norm', () => {
+    const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
+    const enemy = newFighterState(1, origEnemyNorms, finalWounds);
+    chooser.profile.stormShield = true;
+
+    resolveDieChoice(FightChoice.CritParry, chooser, enemy);
+    expect(chooser.crits).toBe(origChooserCrits - 1);
+    expect(chooser.norms).toBe(origChooserNorms);
+    expect(chooser.currentWounds).toBe(finalWounds);
+    expect(enemy.crits).toBe(0);
+    expect(enemy.norms).toBe(origEnemyNorms - 1);
+    expect(enemy.currentWounds).toBe(finalWounds);
+  });
+  it('CritParry with storm shield to cancel 2 enemy norms', () => {
+    const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
+    const enemy = newFighterState(0, origEnemyNorms, finalWounds);
+    chooser.profile.stormShield = true;
+
+    resolveDieChoice(FightChoice.CritParry, chooser, enemy);
+    expect(chooser.crits).toBe(origChooserCrits - 1);
+    expect(chooser.norms).toBe(origChooserNorms);
+    expect(chooser.currentWounds).toBe(finalWounds);
+    expect(enemy.crits).toBe(0);
+    expect(enemy.norms).toBe(origEnemyNorms - 2);
+    expect(enemy.currentWounds).toBe(finalWounds);
+  });
+  it('NormParry with storm shield to cancel 2 enemy norms', () => {
+    const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
+    const enemy = newFighterState(origEnemyCrits, origEnemyNorms, finalWounds);
+    chooser.profile.stormShield = true;
+
+    resolveDieChoice(FightChoice.NormParry, chooser, enemy);
+    expect(chooser.crits).toBe(origChooserCrits);
+    expect(chooser.norms).toBe(origChooserNorms - 1);
+    expect(chooser.currentWounds).toBe(finalWounds);
+    expect(enemy.crits).toBe(origEnemyCrits);
+    expect(enemy.norms).toBe(origEnemyNorms - 2);
+    expect(enemy.currentWounds).toBe(finalWounds);
   });
 });
 
@@ -204,11 +327,31 @@ describe(resolveFight.name + 'hardcoded answers', () => {
   });
 });
 
-/*
-describe('q', () => {
-  it('x', () => {
-    expect(0).toBe(0);
+describe(calcRemainingWounds.name + ' basic', () => {
+  const pc = 1 / 6;
+  const pf = 1 - pc;
+  const w = 5;
+  const dn = 3;
+  const dc = 4;
+
+  it('fight can\'t be cut short', () => {
+    const guy1 = new Attacker(1, 6, dn, dc).setProp('wounds', w);
+    const guy2 = _.clone(guy1);
+
+    const [guy1Wounds, guy2Wounds] = calcRemainingWounds(guy1, guy2, FightStrategy.Strike, FightStrategy.Strike, 1);
+    expect(guy1Wounds.get(w)).toBeCloseTo(pf, requiredPrecision);
+    expect(guy1Wounds.get(w - dc)).toBeCloseTo(pc, requiredPrecision);
+    expect(guy2Wounds.get(w)).toBeCloseTo(pf, requiredPrecision);
+    expect(guy2Wounds.get(w - dc)).toBeCloseTo(pc, requiredPrecision);
+  });
+  it('fight can be cut short', () => {
+    const guy1 = new Attacker(1, 6, dn, dc).setProp('wounds', dc);
+    const guy2 = _.clone(guy1);
+
+    const [guy1Wounds, guy2Wounds] = calcRemainingWounds(guy1, guy2, FightStrategy.Strike, FightStrategy.Strike, 1);
+    expect(guy1Wounds.get(0)).toBeCloseTo(pf * pc, requiredPrecision);
+    expect(guy1Wounds.get(dc)).toBeCloseTo(pc + pf * pf, requiredPrecision);
+    expect(guy2Wounds.get(0)).toBeCloseTo(pc, requiredPrecision);
+    expect(guy2Wounds.get(dc)).toBeCloseTo(pf, requiredPrecision);
   });
 });
-
-*/

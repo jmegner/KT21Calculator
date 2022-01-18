@@ -17,6 +17,7 @@ export default class Attacker {
   public wounds: number; // fight only
   public fnp: number; // fight only
   public brutal: boolean; // fight only
+  public stormShield: boolean; // fight only
 
   public constructor(
     attacks: number = 4,
@@ -33,6 +34,7 @@ export default class Attacker {
     wounds: number = 12,
     fnp: number = 0,
     brutal: boolean = false,
+    stormShield: boolean = false,
   ) {
     this.attacks = attacks;
     this.bs = bs;
@@ -48,6 +50,7 @@ export default class Attacker {
     this.wounds = wounds;
     this.fnp = fnp;
     this.brutal = brutal;
+    this.stormShield = stormShield;
   }
 
   public static justDamage(
@@ -65,6 +68,10 @@ export default class Attacker {
 
   public possibleDmg(crits: number, norms: number): number {
     return crits * (this.critDmg + this.mwx) + norms * this.normDmg;
+  }
+
+  public cancelsPerParry(): number {
+    return this.stormShield ? 2 : 1;
   }
 
   public toDieProbs(): DieProbs {

@@ -406,7 +406,7 @@ describe(calcDmgProbs.name + ', px and lethalx', () => {
   it('0 < apx < px, apx used when no crit', () => {
     const atk = newTestAttacker(1, 1).setProp('apx', 1).setProp('px', 2).setProp('lethalx', 5);
     const def = new Defender(2, 1);
-    const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
+    const [pc, pn, ] = atk.toDieProbs().toCritNormFail();
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(pn, requiredPrecision);
@@ -483,7 +483,7 @@ describe(calcDmgProbs.name + ', relentless', () => {
 describe(calcDmgProbs.name + ', rending & starfire', () => {
   it('rending, 2 atk dice, probability 2 crits', () => {
     const atk = newTestAttacker(2).setProp('rending', true);
-    const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
+    const [pc, pn, ] = atk.toDieProbs().toCritNormFail();
     const def = new Defender(0);
 
     const dmgs = calcDmgProbs(atk, def);

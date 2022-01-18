@@ -156,16 +156,18 @@ function resolveDieChoice(
   else if(choice === FightChoice.CritParry) {
     chooser.crits--;
 
-    if(enemy.crits > 0) {
-      enemy.crits--;
-    }
-    else {
-      enemy.norms--;
+    for(let numCancelled = 0; numCancelled < chooser.profile.cancelsPerParry(); numCancelled++) {
+      if(enemy.crits > 0) {
+        enemy.crits--;
+      }
+      else if(enemy.norms > 0) {
+        enemy.norms--;
+      }
     }
   }
   else if(choice === FightChoice.NormParry) {
     chooser.norms--;
-    enemy.norms--;
+    enemy.norms = Math.max(0, enemy.norms - chooser.profile.cancelsPerParry());
   }
   else {
     throw new Error("invalid DieChoice");
@@ -177,34 +179,32 @@ function calcParryForLastEnemySuccessThenKillEnemy(
   enemy: FighterState,
 ): FightChoice | null
 {
-  // if enemy has only one success left, and chooser can parry it with
-  // enough damage left over to kill enemy, chooser should parry
-  if(enemy.norms + enemy.crits === 1) {
-    let critsAfterParry = 0;
-    let normsAfterParry = 0;
+  // note: this function assumes chooser and enemy have successes
+
+  // if chooser can parry enemy's remaining success (or successes due to storm shield)
+  // AND kill enemy afterwards, then chooser should parry
+  if(enemy.crits + enemy.norms <= chooser.profile.cancelsPerParry()) {
     let fightChoice: FightChoice | null = null;
 
-    if(enemy.norms === 1) {
+    if(enemy.crits > 0) {
+      if(chooser.crits > 0) {
+        fightChoice = FightChoice.CritParry;
+      }
+      // else chooser has no crits and can not parry the enemy crit
+    }
+    // else enemy.norms > 0
+    else {
       if(chooser.norms > 0) {
-        critsAfterParry = chooser.crits;
-        normsAfterParry = chooser.norms - 1;
         fightChoice = FightChoice.NormParry;
       }
       else {
-        critsAfterParry = chooser.crits - 1;
-        normsAfterParry = chooser.norms;
-        fightChoice = FightChoice.CritParry;
-      }
-    }
-    else if(enemy.crits === 1) {
-      if(chooser.crits >= 1) {
-        critsAfterParry = chooser.crits - 1;
-        normsAfterParry = chooser.norms;
         fightChoice = FightChoice.CritParry;
       }
     }
 
     if(fightChoice !== null) {
+      const critsAfterParry = chooser.crits - (fightChoice === FightChoice.CritParry ? 1 : 0);
+      const normsAfterParry = chooser.norms - (fightChoice === FightChoice.NormParry ? 1 : 0);
       const remainingDmg = chooser.profile.possibleDmg(critsAfterParry, normsAfterParry);
 
       if(remainingDmg >= enemy.profile.wounds) {
@@ -228,6 +228,7 @@ function wiseParry(chooser: FighterState, enemy: FighterState): FightChoice {
   else if (chooser.norms > 0 && enemy.norms > 0) {
     return FightChoice.NormParry;
   }
+  // this is a CritParry of an enemy norm success
   else if (chooser.crits > 0) {
     return FightChoice.CritParry;
   }

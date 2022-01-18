@@ -1,13 +1,6 @@
-import Attacker from 'src/Attacker';
-import Defender from 'src/Defender';
-import * as Util from 'src/Util';
-import _ from 'lodash';
-import Ability from 'src/Ability';
 import DieProbs from 'src/DieProbs';
 import FinalDiceProb from 'src/FinalDiceProb';
 import * as Common from 'src/CalcEngineCommon';
-
-const requiredPrecision = 10;
 
 describe(Common.calcMultiRollProb.name, () => {
   // using >=1 probabilities so we can have prime factors and not worry about rounding errors
