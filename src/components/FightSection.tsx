@@ -10,23 +10,21 @@ import * as Util from "src/Util";
 import FighterControls from 'src/components/FighterControls';
 import Attacker from 'src/Attacker';
 import FightOptionControls from 'src/components/FightOptionControls';
-import FightStrategy from 'src/FightStrategy';
 import { calcRemainingWounds } from 'src/CalcEngineFight';
-import FightResultsDisplay from './FightResultsDisplay';
+import FightResultsDisplay from 'src/components/FightResultsDisplay';
+import FightOptions from 'src/FightOptions';
 
 const FightSection: React.FC = () => {
   const [fighterA, setFighterA] = React.useState(new Attacker());
   const [fighterB, setFighterB] = React.useState(new Attacker());
-  const [strategyFighterA, setStrategyFighterA] = React.useState(FightStrategy.MaxDmgToEnemy);
-  const [strategyFighterB, setStrategyFighterB] = React.useState(FightStrategy.MaxDmgToEnemy);
-  const [firstFighter, setFirstFighter] = React.useState('A');
-  const aFirst = firstFighter === 'A';
+  const [fightOptions, setFightOptions] = React.useState(new FightOptions());
+  const aFirst = fightOptions.firstFighter === 'A';
   const [fighter1WoundProbs, fighter2WoundProbs] = calcRemainingWounds(
     aFirst ? fighterA : fighterB,
     aFirst ? fighterB : fighterA,
-    aFirst ? strategyFighterA : strategyFighterB,
-    aFirst ? strategyFighterB : strategyFighterA,
-    1,
+    aFirst ? fightOptions.strategyFighterA : fightOptions.strategyFighterB,
+    aFirst ? fightOptions.strategyFighterB : fightOptions.strategyFighterA,
+    fightOptions.numRounds,
   );
   const fighterAWoundProbs = aFirst ? fighter1WoundProbs : fighter2WoundProbs;
   const fighterBWoundProbs = aFirst ? fighter2WoundProbs : fighter1WoundProbs;
@@ -44,12 +42,8 @@ const FightSection: React.FC = () => {
       <Row className='border'>
         <Col className={Util.centerHoriz + ' p-0 border'}>
           <FightOptionControls
-            strategyFighterA={strategyFighterA}
-            strategyFighterB={strategyFighterB}
-            firstFighter={firstFighter}
-            strategyFighterAChangeHandler={setStrategyFighterA}
-            strategyFighterBChangeHandler={setStrategyFighterB}
-            firstFighterChangeHandler={setFirstFighter}
+            fightOptions={fightOptions}
+            changeHandler={setFightOptions}
           />
         </Col>
       </Row>
@@ -80,11 +74,6 @@ const FightSection: React.FC = () => {
                   <li>If fighter can kill enemy in next strike, they will do so.</li>
                   <li>If fighter can parry enemy's last success and still kill enemy afterwards, they will do so.</li>
                 </ul>
-              </li>
-              <li>
-                Feel No Pain (FNP) refers to the category of abilities where just before damage is actually resolved,
-                you roll a die for each potential wound, and each rolled success prevents a wound from being lost.
-                Even MWx damage can be prevented via FNP.
               </li>
               <li>
                 Balanced will only reroll a fail even if would be wise to reroll a normal success.

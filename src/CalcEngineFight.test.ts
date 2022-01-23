@@ -1,5 +1,10 @@
 import Attacker from 'src/Attacker';
-import { calcRemainingWounds, exportedForTesting } from 'src/CalcEngineFight';
+import {
+  calcRemainingWounds,
+  calcRemainingWoundPairProbs,
+  exportedForTesting,
+  toWoundPairKey,
+} from 'src/CalcEngineFight';
 import _ from 'lodash';
 import FightStrategy from 'src/FightStrategy';
 import FightChoice from 'src/FightChoice';
@@ -353,5 +358,75 @@ describe(calcRemainingWounds.name + ' basic', () => {
     expect(guy1Wounds.get(dc)).toBeCloseTo(pc + pf * pf, requiredPrecision);
     expect(guy2Wounds.get(0)).toBeCloseTo(pc, requiredPrecision);
     expect(guy2Wounds.get(dc)).toBeCloseTo(pf, requiredPrecision);
+  });
+});
+
+describe(calcRemainingWounds.name + ' multiple rounds', () => {
+  const pc = 1 / 6;
+  const pf = 1 - pc;
+  const w = 5;
+  const dn = 3;
+  const dc = 4;
+
+  it('double fight where fight1 can\'t be fatal', () => {
+    const guy1 = new Attacker(1, 6, dn, dc).setProp('wounds', w);
+    const guy2 = _.clone(guy1);
+
+    const [guy1Wounds, guy2Wounds] = calcRemainingWounds(guy1, guy2, FightStrategy.Strike, FightStrategy.Strike, 2);
+    // rolls, then hits taken, then prob
+    // 1 2 1 2  x1  x2  prob
+    // ---------------------
+    // f f f f, 0, 0, f4c0
+    // f f f c, 1, 0, f3c1
+    // f f c f, 0, 1, f3c1
+    // f f c c, 1, 1, f2c2
+    // f c f f, 1, 0, f3c1
+    // f c f c, 2, 0, f2c2
+    // f c c f, 1, 1, f2c2
+    // f c c c, 2, 1, f1c3
+    // c f f f, 0, 1, f3c1
+    // c f f c, 1, 1, f2c2
+    // c f c f, 0, 2, f2c2, guy2 dies before his second action
+    // c f c c, 0, 2, f1c3, guy2 dies before his second action
+    // c c f f, 1, 1, f2c2
+    // c c f c, 2, 1, f1c3
+    // c c c f, 1, 2, f1c3, guy2 dies before his second action
+    // c c c c, 1, 2, f0c4, guy2 dies before his second action
+    const h0 = w; // hits taken = 0
+    const h1 = w - dc; // hits taken = 1
+    const h2 = 0; // hits taken = 2
+    const f4c0 = Math.pow(pf, 4);
+    const f3c1 = Math.pow(pf, 3) * pc;
+    const f2c2 = pf * pf * pc * pc;
+    const f1c3 = pf * Math.pow(pc, 3);
+    const f0c4 = Math.pow(pc, 4);
+
+    expect(guy1Wounds.size).toBe(3);
+    expect(guy2Wounds.size).toBe(3);
+    expect(guy1Wounds.get(h0)).toBeCloseTo(f4c0 + f3c1 * 2 + f2c2     + f1c3           , requiredPrecision);
+    expect(guy1Wounds.get(h1)).toBeCloseTo(       f3c1 * 2 + f2c2 * 4 + f1c3     + f0c4, requiredPrecision);
+    expect(guy1Wounds.get(h2)).toBeCloseTo(                  f2c2     + f1c3 * 2       , requiredPrecision);
+    expect(guy2Wounds.get(h0)).toBeCloseTo(f4c0 + f3c1 * 2 + f2c2                      , requiredPrecision);
+    expect(guy2Wounds.get(h1)).toBeCloseTo(       f3c1 * 2 + f2c2 * 4 + f1c3 * 2       , requiredPrecision);
+    expect(guy2Wounds.get(h2)).toBeCloseTo(                  f2c2     + f1c3 * 2 + f0c4, requiredPrecision);
+  });
+  it('double fight with possibly fatal fight1', () => {
+    const guy1 = new Attacker(1, 6, dn, dc).setProp('wounds', dc);
+    const guy2 = _.clone(guy1);
+
+    // rolls, then remaining health, then prob
+    // 1 2 1 2  w1  w2  prob
+    // ---------------------
+    // f f f f, dc, dc, f4c0
+    // f f f c,  0, dc, f3c1
+    // f f c x, dc,  0, f2c1
+    // f c x x,  0, dc, f1c1
+    // c x x x, dc,  0, f0c1
+    //const [guy1Wounds, guy2Wounds] = calcRemainingWounds(guy1, guy2, FightStrategy.Strike, FightStrategy.Strike, 2);
+    const woundPairProbs = calcRemainingWoundPairProbs(guy1, guy2, FightStrategy.Strike, FightStrategy.Strike, 2);
+    expect(woundPairProbs.size).toBe(3);
+    expect(woundPairProbs.get(toWoundPairKey(dc, dc))).toBeCloseTo(Math.pow(pf, 4), requiredPrecision);
+    expect(woundPairProbs.get(toWoundPairKey(0, dc))).toBeCloseTo(Math.pow(pf, 3) * pc + pf * pc, requiredPrecision);
+    expect(woundPairProbs.get(toWoundPairKey(dc, 0))).toBeCloseTo(pf * pf * pc + pc, requiredPrecision);
   });
 });

@@ -23,7 +23,8 @@
     "test": "react-scripts test",
     "testq": "react-scripts test --watchAll=false --watch=false",
     "eject": "react-scripts eject",
-    "lint": "eslint src/**/*.ts src/**/*.tsx"
+    "lint": "eslint src/**/*.ts src/**/*.tsx",
+    "lintf": "eslint --fix src/**/*.ts src/**/*.tsx"
   },
   "eslintConfig": {
     "extends": "react-app"

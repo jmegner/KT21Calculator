@@ -8,28 +8,30 @@ import {
 import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
 import * as Util from 'src/Util';
 import FightStrategy from 'src/FightStrategy';
+import FightOptions from 'src/FightOptions';
 
 
 export interface Props {
-  strategyFighterA: FightStrategy;
-  strategyFighterAChangeHandler: Util.Accepter<FightStrategy>;
-  strategyFighterB: FightStrategy;
-  strategyFighterBChangeHandler: Util.Accepter<FightStrategy>;
-  firstFighter: string;
-  firstFighterChangeHandler: Util.Accepter<string>;
+  fightOptions: FightOptions;
+  changeHandler: Util.Accepter<FightOptions>;
 }
 
 const FightOptionControls: React.FC<Props> = (props: Props) => {
   const strategyFighterAId = 'Fighter A Strategy';
   const strategyFighterBId = 'Fighter B Strategy';
   const firstFighterId = 'Attacker/FirstActer';
+  const numRoundsId = 'Rounds';
   const strategies = Object.values(FightStrategy);
+  const opts = props.fightOptions;
+  const [textHandler, numHandler, ]
+    = Util.makePropChangeHandlers(opts, props.changeHandler);
 
   const params: IncProps[] = [
-    //           id/label,           selectedValue,          values,      valueChangeHandler
-    new IncProps(strategyFighterAId, props.strategyFighterA, strategies,  props.strategyFighterAChangeHandler as (fighter: string) => void),
-    new IncProps(strategyFighterBId, props.strategyFighterB, strategies,  props.strategyFighterBChangeHandler as (fighter: string) => void),
-    new IncProps(firstFighterId,     props.firstFighter,     ['A', 'B'],  props.firstFighterChangeHandler),
+    //           id/label,           selectedValue,         values,          valueChangeHandler
+    new IncProps(strategyFighterAId, opts.strategyFighterA, strategies,      textHandler('strategyFighterA')),
+    new IncProps(strategyFighterBId, opts.strategyFighterB, strategies,      textHandler('strategyFighterB')),
+    new IncProps(firstFighterId,     opts.firstFighter,     ['A', 'B'],      textHandler('firstFighter')),
+    new IncProps(numRoundsId,        opts.numRounds,        Util.span(1, 3), numHandler('numRounds')),
   ];
 
   const paramCols = params.map(p =>

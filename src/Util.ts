@@ -120,6 +120,12 @@ export function addToMapValue<T>(map: Map<T,number>, key: T, val: number): void 
   map.set(key, oldMapVal + val);
 }
 
+export function addMapValues<T>(mapToChange: Map<T,number>, mapToAdd: Map<T,number>): void {
+  for(let [key, val] of mapToAdd) {
+    addToMapValue(mapToChange, key, val);
+  }
+}
+
 export function  toPercentString(val: number, digitsPastDecimal: number = 2) {
   return (val * 100).toFixed(digitsPastDecimal);
 }
