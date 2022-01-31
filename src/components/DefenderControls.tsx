@@ -29,12 +29,12 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
 
   const params: IncProps[] = [
     //           id,           selectedValue,          values,                valueChangeHandler
-    new IncProps(saveId,       def.save + '+',       Util.rollSpan,         numHandler('save')),
     new IncProps(defenseId,    def.defense,          Util.span(0, 4),       numHandler('defense')),
+    new IncProps(saveId,       def.save + '+',       Util.rollSpan,         numHandler('save')),
     new IncProps(woundsId,     def.wounds,           Util.span(1, 19),      numHandler('wounds')),
-    new IncProps(fnpId,        def.fnp + '+',        Util.xspan(3, 6, '+'), numHandler('fnp')),
-    new IncProps(invulnSaveId, def.invulnSave + '+', Util.xrollSpan,        numHandler('invulnSave')),
     new IncProps(coverSavesId, def.coverSaves,       Util.xspan(1, 2),      numHandler('coverSaves')),
+    new IncProps(invulnSaveId, def.invulnSave + '+', Util.xrollSpan,        numHandler('invulnSave')),
+    new IncProps(fnpId,        def.fnp + '+',        Util.xspan(3, 6, '+'), numHandler('fnp')),
     new IncProps(chitinId,     toCheckX(def.chitin), Util.xAndCheck,        boolHandler('chitin')),
   ];
 

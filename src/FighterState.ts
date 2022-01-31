@@ -1,3 +1,4 @@
+import _ from "lodash";
 import Attacker from "src/Attacker";
 import FightStrategy from 'src/FightStrategy';
 import FightChoice from "src/FightChoice";
@@ -8,19 +9,22 @@ export default class FighterState {
   public norms: number;
   public strategy: FightStrategy;
   public currentWounds: number;
+  public hasDoneStun: boolean;
 
   public constructor(
     profile: Attacker,
     crits: number,
     norms: number,
     strategy: FightStrategy,
-    currentWounds: number = -1
+    currentWounds: number = -1,
+    hasDoneStun: boolean = false,
   ) {
     this.profile = profile;
     this.crits = crits;
     this.norms = norms;
     this.strategy = strategy;
     this.currentWounds = currentWounds > 0 ? currentWounds : this.profile.wounds;
+    this.hasDoneStun = hasDoneStun;
   }
 
   public applyDmg(dmg: number) {
@@ -46,6 +50,8 @@ export default class FighterState {
   }
 
   public withStrategy(strategy: FightStrategy): FighterState {
-    return new FighterState(this.profile, this.crits, this.norms, strategy);
+    const newFighterState = _.clone(this);
+    newFighterState.strategy = strategy;
+    return newFighterState;
   }
 }

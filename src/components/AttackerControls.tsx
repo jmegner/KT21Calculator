@@ -16,35 +16,23 @@ export interface Props {
 }
 
 const AttackerControls: React.FC<Props> = (props: Props) => {
-  const attacksId = 'Attacks';
-  const bsId = 'BS';
-  const normDmgId = 'Normal Damage';
-  const critDmgId = 'Critical Damage';
-  const mwxId = 'MWx';
-  const apxId = 'APx';
-  const pxId = 'Px';
-  const rerollId = 'Reroll';
-  const lethalxId = 'Lethal';
-  const rendingId = 'Rending';
-  const starfireId = 'Starfire Core';
-
   const atk = props.attacker;
   const [textHandler, numHandler, boolHandler]
     = Util.makePropChangeHandlers(atk, props.changeHandler);
 
   const params: IncProps[] = [
-    //           id/label,         selectedValue,            values,              valueChangeHandler
-    new IncProps(attacksId,  atk.attacks,            Util.span(1, 8),       numHandler('attacks')),
-    new IncProps(bsId,       atk.bs + '+',           Util.rollSpan,         numHandler('bs')),
-    new IncProps(normDmgId,  atk.normDmg,            Util.span(1, 9),       numHandler('normDmg')),
-    new IncProps(critDmgId,  atk.critDmg,            Util.span(1, 9),       numHandler('critDmg')),
-    new IncProps(mwxId,      atk.mwx,                Util.xspan(1, 4),      numHandler('mwx')),
-    new IncProps(apxId,      atk.apx,                Util.xspan(1, 3),      numHandler('apx')),
-    new IncProps(pxId,       atk.px,                 Util.xspan(1, 3),      numHandler('px')),
-    new IncProps(rerollId,   atk.reroll,             Util.preX(rerolls),    textHandler('reroll')),
-    new IncProps(lethalxId,  atk.lethalx + '+',      Util.xspan(4, 5, '+'), numHandler('lethalx')),
-    new IncProps(rendingId,  toCheckX(atk.rending),  Util.xAndCheck,        boolHandler('rending')),
-    new IncProps(starfireId, toCheckX(atk.starfire), Util.xAndCheck,        boolHandler('starfire')),
+    //           id/label,     selectedValue,            values,              valueChangeHandler
+    new IncProps('Attacks',    atk.attacks,            Util.span(1, 8),       numHandler('attacks')),
+    new IncProps('BS',         atk.bs + '+',           Util.rollSpan,         numHandler('bs')),
+    new IncProps('Normal Dmg', atk.normDmg,            Util.span(1, 9),       numHandler('normDmg')),
+    new IncProps('Crit Dmg',   atk.critDmg,            Util.span(1, 9),       numHandler('critDmg')),
+    new IncProps('MWx',        atk.mwx,                Util.xspan(1, 4),      numHandler('mwx')),
+    new IncProps('APx',        atk.apx,                Util.xspan(1, 3),      numHandler('apx')),
+    new IncProps('Px',         atk.px,                 Util.xspan(1, 3),      numHandler('px')),
+    new IncProps('Reroll',     atk.reroll,             Util.preX(rerolls),    textHandler('reroll')),
+    new IncProps('LethalX',    atk.lethalx + '+',      Util.xspan(4, 5, '+'), numHandler('lethalx')),
+    new IncProps('Rending',    toCheckX(atk.rending),  Util.xAndCheck,        boolHandler('rending')),
+    new IncProps('Starfire',   toCheckX(atk.starfire), Util.xAndCheck,        boolHandler('starfire')),
   ];
 
   const paramElems = params.map(p =>

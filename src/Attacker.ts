@@ -17,6 +17,7 @@ export default class Attacker {
   public wounds: number; // fight only
   public fnp: number; // fight only
   public brutal: boolean; // fight only
+  public stun: boolean; // fight only
   public stormShield: boolean; // fight only
 
   public constructor(
@@ -34,6 +35,7 @@ export default class Attacker {
     wounds: number = 12,
     fnp: number = 0,
     brutal: boolean = false,
+    stun: boolean = false,
     stormShield: boolean = false,
   ) {
     this.attacks = attacks;
@@ -50,6 +52,7 @@ export default class Attacker {
     this.wounds = wounds;
     this.fnp = fnp;
     this.brutal = brutal;
+    this.stun = stun;
     this.stormShield = stormShield;
   }
 

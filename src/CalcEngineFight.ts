@@ -146,6 +146,13 @@ function calcDieChoice(chooser: FighterState, enemy: FighterState): FightChoice 
     return chooser.nextStrike();
   }
 
+  // if can stun enemy (crit strike that also cancels an enemy NORM success),
+  // and enemy doesn't have any crit successes, then there is no downside
+  // to doing a stunning crit strike now
+  if(chooser.profile.stun && !chooser.hasDoneStun && chooser.crits > 0 && enemy.crits === 0) {
+    return FightChoice.CritStrike;
+  }
+
   // if can parry last enemy success and still kill, then that is awesome
   // and we should do that
   const awesomeParry = calcParryForLastEnemySuccessThenKillEnemy(chooser, enemy);
@@ -154,7 +161,7 @@ function calcDieChoice(chooser: FighterState, enemy: FighterState): FightChoice 
   }
 
   if(chooser.strategy === FightStrategy.Strike) {
-    return chooser.crits > 0 ? FightChoice.CritStrike : FightChoice.NormStrike;
+    return chooser.nextStrike();
   }
   else if(chooser.strategy === FightStrategy.Parry) {
     return wiseParry(chooser, enemy);
@@ -168,9 +175,11 @@ function calcDieChoice(chooser: FighterState, enemy: FighterState): FightChoice 
 
     const chooserWhoStruck = _.clone(chooser);
     const chooserWhoParried = _.clone(chooser);
+    const strikeChoice = chooser.nextStrike();
+    const parryChoice = wiseParry(chooser, enemy);
 
-    resolveDieChoice(chooser.nextStrike(), chooserWhoStruck, enemyWeStruck);
-    resolveDieChoice(wiseParry(chooser, enemy), chooserWhoParried, enemyWeParried);
+    resolveDieChoice(strikeChoice, chooserWhoStruck, enemyWeStruck);
+    resolveDieChoice(parryChoice, chooserWhoParried, enemyWeParried);
 
     resolveFight(enemyWeStruck, chooserWhoStruck);
     resolveFight(enemyWeParried, chooserWhoParried);
@@ -186,10 +195,10 @@ function calcDieChoice(chooser: FighterState, enemy: FighterState): FightChoice 
     }
 
     if(wantStrike) {
-      return chooser.nextStrike();
+      return strikeChoice;
     }
     else {
-      return wiseParry(chooser, enemy);
+      return parryChoice;
     }
   }
 
@@ -205,6 +214,11 @@ function resolveDieChoice(
   if(choice === FightChoice.CritStrike) {
     chooser.crits--;
     enemy.applyDmg(chooser.profile.critDmg);
+
+    if(chooser.profile.stun && !chooser.hasDoneStun) {
+      chooser.hasDoneStun = true;
+      enemy.norms = Math.max(0, enemy.norms - 1); // stun ability can only cancel an enemy norm success
+    }
   }
   else if(choice === FightChoice.NormStrike) {
     chooser.norms--;

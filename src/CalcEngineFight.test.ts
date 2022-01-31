@@ -25,9 +25,14 @@ function newFighterState(
   norms: number,
   wounds: number = 3,
   strategy: FightStrategy = FightStrategy.MaxDmgToEnemy,
+  stun: boolean = false,
+  stormShield: boolean = false,
 ): FighterState {
   return new FighterState(
-    new Attacker(crits + norms, 2, 1, 2).setProp('wounds', wounds),
+    new Attacker(crits + norms, 2, 1, 2)
+      .setProp('wounds', wounds)
+      .setProp('stun', stun)
+      .setProp('stormShield', stormShield),
     crits,
     norms,
     strategy,
@@ -104,53 +109,119 @@ describe(calcDieChoice.name + ', common & strike/parry', () => {
     const enemy = newFighterState(9, 9, chooser.profile.critDmg);
     expect(calcDieChoice(chooser, enemy)).toBe(FightChoice.CritStrike);
   });
-  it('#2: parry if can parry last enemy success and still kill them', () => {
-    const chooser = newFighterState(99, 99, 99, FightStrategy.Strike)
+  it('#2a: crit strike if you have stun, enemy is not already stunned, and enemy has no crit successes', () => {
+    const chooser = newFighterState(99, 99, 99, FightStrategy.Parry, true);
+    const enemy = newFighterState(0, 99, 20);
+    expect(calcDieChoice(chooser, enemy)).toBe(FightChoice.CritStrike);
+  });
+  it('#2b: if enemy already stunned, then cannot stun again', () => {
+    const chooser = newFighterState(99, 99, 99, FightStrategy.Parry, true);
+    chooser.hasDoneStun = true;
+    const enemy = newFighterState(0, 99, 20);
+    expect(calcDieChoice(chooser, enemy)).toBe(FightChoice.NormParry);
+  });
+  it('#2c: if chooser has stun and enemy has crit successes, that is not enough to override Parry strategy', () => {
+    const chooser = newFighterState(99, 99, 99, FightStrategy.Parry, true);
+    const enemy = newFighterState(99, 99, 20);
+    expect(calcDieChoice(chooser, enemy)).toBe(FightChoice.CritParry);
+  });
+  it('#3: parry if can parry last enemy success and still kill them', () => {
+    const chooser = newFighterState(99, 99, 99, FightStrategy.Strike);
     const enemy = newFighterState(1, 0, 20);
     expect(calcDieChoice(chooser, enemy)).toBe(FightChoice.CritParry);
   });
   it('MaxDmgToEnemy, parry lets you survive to give more damage', () => {
-    const chooser = newFighterState(10, 0, 2, FightStrategy.MaxDmgToEnemy)
+    const chooser = newFighterState(10, 0, 2, FightStrategy.MaxDmgToEnemy);
     const enemy = newFighterState(1, 1, 10, FightStrategy.Strike);
     expect(calcDieChoice(chooser, enemy)).toBe(FightChoice.CritParry);
   });
   it('MaxDmgToEnemy, you\'re going to die, so strike', () => {
-    const chooser = newFighterState(10, 10, 1, FightStrategy.MaxDmgToEnemy)
+    const chooser = newFighterState(10, 10, 1, FightStrategy.MaxDmgToEnemy);
     const enemy = newFighterState(1, 1, 10, FightStrategy.Strike);
     expect(calcDieChoice(chooser, enemy)).toBe(FightChoice.CritStrike);
   });
+  it('MinDmgToSelf, you\'re going to die, so strike', () => {
+    const chooser = newFighterState(10, 10, 1, FightStrategy.MinDmgToSelf);
+    const enemy = newFighterState(1, 1, 10, FightStrategy.Strike);
+    expect(calcDieChoice(chooser, enemy)).toBe(FightChoice.CritStrike);
+  });
+  it('MinDmgToSelf, do not use stunning crit strike if could have used that crit to parry an enemy crit', () => {
+    const chooser = newFighterState(1, 1, 99, FightStrategy.MinDmgToSelf, true);
+    const enemy = newFighterState(1, 1, 99, FightStrategy.Strike);
+    expect(calcDieChoice(chooser, enemy)).toBe(FightChoice.CritParry);
+  });
 });
 
-describe(resolveDieChoice.name + ', basic & storm shield', () => {
+describe(resolveDieChoice.name + ', basic, stun, and storm shield', () => {
   const origChooserCrits = 10;
   const origChooserNorms = 20;
   const origEnemyCrits = 30;
   const origEnemyNorms = 40;
   const finalWounds = 100;
 
-  it('CritStrike, and check even values that shouldn\'t change', () => {
-    const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
-    const enemy = newFighterState(origEnemyCrits, origEnemyNorms, chooser.profile.critDmg + finalWounds);
+  it('CritStrike+noStun, and check even values that shouldn\'t change', () => {
+    for(let stormShield of [false, true]) { // storm shield shouldn't matter
+      const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
+      chooser.profile.stormShield = stormShield;
+      const enemy = newFighterState(origEnemyCrits, origEnemyNorms, chooser.profile.critDmg + finalWounds);
 
-    resolveDieChoice(FightChoice.CritStrike, chooser, enemy);
-    expect(chooser.crits).toBe(origChooserCrits - 1);
-    expect(chooser.norms).toBe(origChooserNorms);
-    expect(chooser.currentWounds).toBe(finalWounds);
-    expect(enemy.crits).toBe(origEnemyCrits);
-    expect(enemy.norms).toBe(origEnemyNorms);
-    expect(enemy.currentWounds).toBe(finalWounds);
+      resolveDieChoice(FightChoice.CritStrike, chooser, enemy);
+      expect(chooser.crits).toBe(origChooserCrits - 1);
+      expect(chooser.norms).toBe(origChooserNorms);
+      expect(chooser.currentWounds).toBe(finalWounds);
+      expect(enemy.crits).toBe(origEnemyCrits);
+      expect(enemy.norms).toBe(origEnemyNorms);
+      expect(enemy.currentWounds).toBe(finalWounds);
+    }
+  });
+  it('CritStrike+stun, not already stunned', () => {
+    for(let stormShield of [false, true]) { // storm shield shouldn't matter
+      const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
+      chooser.profile.stun = true;
+      chooser.profile.stormShield = stormShield;
+      const enemy = newFighterState(origEnemyCrits, origEnemyNorms, chooser.profile.critDmg + finalWounds);
+
+      resolveDieChoice(FightChoice.CritStrike, chooser, enemy);
+      expect(chooser.crits).toBe(origChooserCrits - 1);
+      expect(chooser.norms).toBe(origChooserNorms);
+      expect(chooser.currentWounds).toBe(finalWounds);
+      expect(enemy.crits).toBe(origEnemyCrits);
+      expect(enemy.norms).toBe(origEnemyNorms - 1);
+      expect(enemy.currentWounds).toBe(finalWounds);
+    }
+  });
+  it('CritStrike+stun, already stunned', () => {
+    for(let stormShield of [false, true]) { // storm shield shouldn't matter
+      const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
+      chooser.profile.stun = true;
+      chooser.hasDoneStun = true;
+      chooser.profile.stormShield = stormShield;
+      const enemy = newFighterState(origEnemyCrits, origEnemyNorms, chooser.profile.critDmg + finalWounds);
+
+      resolveDieChoice(FightChoice.CritStrike, chooser, enemy);
+      expect(chooser.crits).toBe(origChooserCrits - 1);
+      expect(chooser.norms).toBe(origChooserNorms);
+      expect(chooser.currentWounds).toBe(finalWounds);
+      expect(enemy.crits).toBe(origEnemyCrits);
+      expect(enemy.norms).toBe(origEnemyNorms);
+      expect(enemy.currentWounds).toBe(finalWounds);
+    }
   });
   it('NormStrike', () => {
-    const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
-    const enemy = newFighterState(origEnemyCrits, origEnemyNorms, chooser.profile.normDmg + finalWounds);
+    for(let stunAndStormShield of [false, true]) { // neither should matter
+      const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
+      chooser.profile.stun = stunAndStormShield;
+      chooser.profile.stormShield = stunAndStormShield;
+      const enemy = newFighterState(origEnemyCrits, origEnemyNorms, chooser.profile.normDmg + finalWounds);
 
-    resolveDieChoice(FightChoice.NormStrike, chooser, enemy);
-    expect(chooser.crits).toBe(origChooserCrits);
-    expect(chooser.norms).toBe(origChooserNorms - 1);
-    expect(chooser.currentWounds).toBe(finalWounds);
-    expect(enemy.crits).toBe(origEnemyCrits);
-    expect(enemy.norms).toBe(origEnemyNorms);
-    expect(enemy.currentWounds).toBe(finalWounds);
+      resolveDieChoice(FightChoice.NormStrike, chooser, enemy);
+      expect(chooser.crits).toBe(origChooserCrits);
+      expect(chooser.norms).toBe(origChooserNorms - 1);
+      expect(chooser.currentWounds).toBe(finalWounds);
+      expect(enemy.crits).toBe(origEnemyCrits);
+      expect(enemy.norms).toBe(origEnemyNorms);
+      expect(enemy.currentWounds).toBe(finalWounds);
+    }
   });
   it('CritParry to cancel enemy crit', () => {
     const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
@@ -255,43 +326,47 @@ describe(resolveFight.name + ' smart strategies should optimize goal', () => {
           for(let wounds2 of _.range(maxWounds)) {
             for(let crits2 of _.range(maxSuccesses)) {
               for(let norms2 of _.range(maxSuccesses - crits2)) {
-                const chooserAlwaysStrike = newFighterState(crits1, norms1, wounds1, FightStrategy.Strike);
-                const chooserAlwaysParry = newFighterState(crits1, norms1, wounds1, FightStrategy.Parry);
-                const chooserMaxDmg = newFighterState(crits1, norms1, wounds1, FightStrategy.MaxDmgToEnemy);
-                const chooserMinDmg = newFighterState(crits1, norms1, wounds1, FightStrategy.MinDmgToSelf);
-                const enemyForAlwaysStrike = newFighterState(crits2, norms2, wounds2, FightStrategy.Strike);
-                const enemyForAlwaysParry = _.clone(enemyForAlwaysStrike);
-                const enemyForMaxDmg = _.clone(enemyForAlwaysStrike);
-                const enemyForMinDmg = _.clone(enemyForAlwaysStrike);
+                for(let stun of [false, true]) {
+                  for(let stormShield of [false, true]) {
+                    const chooserAlwaysStrike = newFighterState(crits1, norms1, wounds1, FightStrategy.Strike, stun, stormShield);
+                    const chooserAlwaysParry = newFighterState(crits1, norms1, wounds1, FightStrategy.Parry, stun, stormShield);
+                    const chooserMaxDmg = newFighterState(crits1, norms1, wounds1, FightStrategy.MaxDmgToEnemy, stun, stormShield);
+                    const chooserMinDmg = newFighterState(crits1, norms1, wounds1, FightStrategy.MinDmgToSelf, stun, stormShield);
+                    const enemyForAlwaysStrike = newFighterState(crits2, norms2, wounds2, FightStrategy.Strike);
+                    const enemyForAlwaysParry = _.clone(enemyForAlwaysStrike);
+                    const enemyForMaxDmg = _.clone(enemyForAlwaysStrike);
+                    const enemyForMinDmg = _.clone(enemyForAlwaysStrike);
 
-                resolveFight(chooserAlwaysStrike, enemyForAlwaysStrike);
-                resolveFight(chooserAlwaysParry, enemyForAlwaysParry);
-                resolveFight(chooserMaxDmg, enemyForMaxDmg);
-                resolveFight(chooserMinDmg, enemyForMinDmg);
+                    resolveFight(chooserAlwaysStrike, enemyForAlwaysStrike);
+                    resolveFight(chooserAlwaysParry, enemyForAlwaysParry);
+                    resolveFight(chooserMaxDmg, enemyForMaxDmg);
+                    resolveFight(chooserMinDmg, enemyForMinDmg);
 
-                expect(chooserAlwaysStrike.currentWounds).toBeGreaterThanOrEqual(0);
-                expect(chooserAlwaysParry.currentWounds).toBeGreaterThanOrEqual(0);
-                expect(chooserMaxDmg.currentWounds).toBeGreaterThanOrEqual(0);
-                expect(chooserMinDmg.currentWounds).toBeGreaterThanOrEqual(0);
-                expect(enemyForAlwaysStrike.currentWounds).toBeGreaterThanOrEqual(0);
-                expect(enemyForAlwaysParry.currentWounds).toBeGreaterThanOrEqual(0);
-                expect(enemyForMaxDmg.currentWounds).toBeGreaterThanOrEqual(0);
-                expect(enemyForMinDmg.currentWounds).toBeGreaterThanOrEqual(0);
+                    expect(chooserAlwaysStrike.currentWounds).toBeGreaterThanOrEqual(0);
+                    expect(chooserAlwaysParry.currentWounds).toBeGreaterThanOrEqual(0);
+                    expect(chooserMaxDmg.currentWounds).toBeGreaterThanOrEqual(0);
+                    expect(chooserMinDmg.currentWounds).toBeGreaterThanOrEqual(0);
+                    expect(enemyForAlwaysStrike.currentWounds).toBeGreaterThanOrEqual(0);
+                    expect(enemyForAlwaysParry.currentWounds).toBeGreaterThanOrEqual(0);
+                    expect(enemyForMaxDmg.currentWounds).toBeGreaterThanOrEqual(0);
+                    expect(enemyForMinDmg.currentWounds).toBeGreaterThanOrEqual(0);
 
-                expect(enemyForMaxDmg.currentWounds).toBeLessThanOrEqual(enemyForAlwaysStrike.currentWounds);
-                expect(enemyForMaxDmg.currentWounds).toBeLessThanOrEqual(enemyForAlwaysParry.currentWounds);
-                expect(enemyForMaxDmg.currentWounds).toBeLessThanOrEqual(enemyForMinDmg.currentWounds);
+                    expect(enemyForMaxDmg.currentWounds).toBeLessThanOrEqual(enemyForAlwaysStrike.currentWounds);
+                    expect(enemyForMaxDmg.currentWounds).toBeLessThanOrEqual(enemyForAlwaysParry.currentWounds);
+                    expect(enemyForMaxDmg.currentWounds).toBeLessThanOrEqual(enemyForMinDmg.currentWounds);
 
-                expect(chooserMinDmg.currentWounds).toBeGreaterThanOrEqual(chooserAlwaysStrike.currentWounds);
-                expect(chooserMinDmg.currentWounds).toBeGreaterThanOrEqual(chooserAlwaysParry.currentWounds);
-                expect(chooserMinDmg.currentWounds).toBeGreaterThanOrEqual(chooserMaxDmg.currentWounds);
+                    expect(chooserMinDmg.currentWounds).toBeGreaterThanOrEqual(chooserAlwaysStrike.currentWounds);
+                    expect(chooserMinDmg.currentWounds).toBeGreaterThanOrEqual(chooserAlwaysParry.currentWounds);
+                    expect(chooserMinDmg.currentWounds).toBeGreaterThanOrEqual(chooserMaxDmg.currentWounds);
 
-                if(enemyForMaxDmg.currentWounds < enemyForAlwaysStrike.currentWounds) {
-                  maxDmgBeatStrikeAtLeastOnce = true;
-                }
+                    if(enemyForMaxDmg.currentWounds < enemyForAlwaysStrike.currentWounds) {
+                      maxDmgBeatStrikeAtLeastOnce = true;
+                    }
 
-                if(chooserMinDmg.currentWounds > chooserAlwaysParry.currentWounds) {
-                  minDmgBeatParryAtLeastOnce = true;
+                    if(chooserMinDmg.currentWounds > chooserAlwaysParry.currentWounds) {
+                      minDmgBeatParryAtLeastOnce = true;
+                    }
+                  }
                 }
               }
             }

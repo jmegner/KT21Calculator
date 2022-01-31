@@ -31,12 +31,13 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps('WS',           atk.bs + '+',              Util.rollSpan,         numHandler('bs')),
     new IncProps('Normal Dmg',   atk.normDmg,               Util.span(1, 9),       numHandler('normDmg')),
     new IncProps('Critical Dmg', atk.critDmg,               Util.span(1, 9),       numHandler('critDmg')),
-    new IncProps('Wounds',       atk.wounds,                Util.span(1, 19),      numHandler('wounds')),
-    // 2nd col
     new IncProps('LethalX',      atk.lethalx + '+',         Util.xspan(4, 5, '+'), numHandler('lethalx')),
     new IncProps('Reroll',       atk.reroll,                Util.preX(rerolls),    textHandler('reroll')),
+    // 2nd col
+    new IncProps('Wounds',       atk.wounds,                Util.span(1, 19),      numHandler('wounds')),
     new IncProps('Rending',      toCheckX(atk.rending),     Util.xAndCheck,        boolHandler('rending')),
     new IncProps('Brutal',       toCheckX(atk.brutal),      Util.xAndCheck,        boolHandler('brutal')),
+    new IncProps('Stun',         toCheckX(atk.stun),        Util.xAndCheck,        boolHandler('stun')),
     new IncProps('Storm Shield', toCheckX(atk.stormShield), Util.xAndCheck,        boolHandler('stormShield')),
     //new IncProps('FeelNoPain',   atk.fnp + '+',             Util.xspan(3, 6, '+'), numHandler('fnp')),
   ];
