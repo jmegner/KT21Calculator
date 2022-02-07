@@ -53,7 +53,7 @@ const IncDecSelect: React.FC<IProps> = (props: IProps) => {
       >
         {props.label ?? props.id}
       </label>
-      <InputGroup className='mb-1'>
+      <InputGroup className='mb-1' style={{flexWrap: 'nowrap'}}>
         <Button variant='danger' onClick={() => handleIncDec(-1)}>-</Button>
         <select
           name={props.id}
