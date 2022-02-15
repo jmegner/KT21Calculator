@@ -2,7 +2,7 @@ import Attacker from 'src/Attacker';
 import Defender from 'src/Defender';
 import { calcDmgProbs, exportedForTesting } from 'src/CalcEngineShoot';
 import * as Util from 'src/Util';
-import _ from 'lodash';
+import { range } from 'lodash';
 import Ability from 'src/Ability';
 
 const {
@@ -595,7 +595,7 @@ describe(calcDmgProbs.name + ', multiple rounds', () => {
     const def = new Defender();
     const dmgHist = [];
 
-    for(const numRounds of _.range(1, 6)) {
+    for(const numRounds of range(1, 6)) {
       dmgHist.push(avgDmg(atk, def, numRounds));
       expect(dmgHist[dmgHist.length - 1]).toBeCloseTo(dmgHist[0] * numRounds, requiredPrecision);
     }
@@ -605,7 +605,7 @@ describe(calcDmgProbs.name + ', multiple rounds', () => {
 /*
 describe('q', () => {
   it('x', () => {
-    expect(0).toBe(0);
+    expect(0).toBe(0); // will fail for large values of 0
   });
 });
 

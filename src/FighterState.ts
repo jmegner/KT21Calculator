@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { clone } from "lodash";
 import Attacker from "src/Attacker";
 import FightStrategy from 'src/FightStrategy';
 import FightChoice from "src/FightChoice";
@@ -50,7 +50,7 @@ export default class FighterState {
   }
 
   public withStrategy(strategy: FightStrategy): FighterState {
-    const newFighterState = _.clone(this);
+    const newFighterState = clone(this);
     newFighterState.strategy = strategy;
     return newFighterState;
   }

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { range, clone, concat }  from 'lodash';
 import { combinations } from 'mathjs';
 
 export type Accepter<T> = (arg: T) => void;
@@ -35,18 +35,18 @@ export function boolToCheckX(val: boolean) : string {
 }
 
 export function span(min: number, max: number, suffix?: string) : string[] {
-  return _.range(min, max + 1).map(x => x.toString() + (suffix ? suffix : ''));
+  return range(min, max + 1).map(x => x.toString() + (suffix ? suffix : ''));
 }
 
 export function xspan(min: number, max: number, suffix?: string) : string[] {
-  return _.concat([thickX], span(min, max, suffix));
+  return concat([thickX], span(min, max, suffix));
 }
 
 export const rollSpan = span(2, 6, '+');
 export const xrollSpan = preX(rollSpan);
 
 export function preX(vals: string[]) : string[] {
-  return _.concat([thickX], vals);
+  return concat([thickX], vals);
 }
 
 export function makePropChangeHandler<T>(

@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { range } from "lodash";
 
 import Attacker from "src/Attacker";
 import Defender from "src/Defender";
@@ -155,7 +155,7 @@ function calcMultiRoundDamage(
 {
   let dmgsCumulative = new Map<number,number>(dmgsSingleRound);
 
-  for(let roundIdx of _.range(1, numRounds)) { // eslint-disable-line
+  for(let _ of range(1, numRounds)) { 
     const dmgsPrevRounds = dmgsCumulative;
     dmgsCumulative = new Map<number,number>();
 

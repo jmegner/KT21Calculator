@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { clone } from "lodash";
 import Ability from "src/Ability";
 import DieProbs from "src/DieProbs";
 
@@ -103,7 +103,7 @@ export default class Attacker {
   }
 
   public withProp(propName: keyof Attacker, value: number | Ability | boolean) : Attacker {
-    const copy = _.clone(this);
+    const copy = clone(this);
     copy.setProp(propName, value);
     return copy;
   }
