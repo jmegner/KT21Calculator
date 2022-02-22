@@ -56,7 +56,7 @@ export function makePropChangeHandler<T>(
 ) : (propName: keyof T) => Accepter<string>
 {
   return (propName: keyof T) => function handler(text: string) {
-    let newObj = _.clone(obj);
+    let newObj = clone(obj);
     (newObj as any)[propName] = transformer === undefined ? text : transformer(text);
     objChangeHandler(newObj);
   };

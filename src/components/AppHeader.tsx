@@ -16,14 +16,14 @@ const AppHeader = (props: AppHeaderProps) => (
             name="Shooting Calculator"
             disabled={props.currentView === Calculator.SHOOT}
             onClick={() => props.navCallback( Calculator.SHOOT)}>
-            <img src={shootIcon} alt="Killzone Ranged Weapon Icon" />
+            <img title="Shoot" src={shootIcon} alt="Killzone Ranged Weapon Icon" />
           </button>
           <button
             type="button"
             name="Fight Calculator"
             disabled={props.currentView === Calculator.FIGHT}
             onClick={() => props.navCallback( Calculator.FIGHT)}>
-            <img src={meleeIcon} alt="Killzone Melee Weapon Icon" />
+            <img title="Fight" src={meleeIcon} alt="Killzone Melee Weapon Icon" />
           </button>
   </nav>
 );

@@ -14,8 +14,12 @@ const App = () => {
       <AppHeader navCallback={setCurrentView} currentView={currentView} />
         <Row>
           <Col>
-              {currentView === Calculator.SHOOT && <ShootSection/> }
-              {currentView === Calculator.FIGHT && <FightSection />}
+            <div style={{ display: currentView === Calculator.SHOOT ? 'block' : 'none'}}>
+              <ShootSection/>
+            </div>
+            <div style={{ display: currentView === Calculator.FIGHT ? 'block' : 'none'}}>
+              <FightSection />
+            </div>
           </Col>
         </Row>
     </>
