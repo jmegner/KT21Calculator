@@ -605,7 +605,7 @@ describe(calcDmgProbs.name + ', multiple rounds', () => {
 /*
 describe('q', () => {
   it('x', () => {
-    expect(0).toBe(0); // will fail for large values of 0
+    expect(0).toBe(0);
   });
 });
 
