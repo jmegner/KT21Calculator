@@ -5,7 +5,7 @@ import {
   exportedForTesting,
   toWoundPairKey,
 } from 'src/CalcEngineFight';
-import _ from 'lodash';
+import {clone, range} from 'lodash';
 import FightStrategy from 'src/FightStrategy';
 import FightChoice from 'src/FightChoice';
 import FighterState from 'src/FighterState';
@@ -320,12 +320,12 @@ describe(resolveFight.name + ' smart strategies should optimize goal', () => {
     let maxDmgBeatStrikeAtLeastOnce = false;
     let minDmgBeatParryAtLeastOnce = false;
 
-    for(let wounds1 of _.range(maxWounds)) {
-      for(let crits1 of _.range(maxSuccesses)) {
-        for(let norms1 of _.range(maxSuccesses - crits1)) {
-          for(let wounds2 of _.range(maxWounds)) {
-            for(let crits2 of _.range(maxSuccesses)) {
-              for(let norms2 of _.range(maxSuccesses - crits2)) {
+    for(let wounds1 of range(maxWounds)) {
+      for(let crits1 of range(maxSuccesses)) {
+        for(let norms1 of range(maxSuccesses - crits1)) {
+          for(let wounds2 of range(maxWounds)) {
+            for(let crits2 of range(maxSuccesses)) {
+              for(let norms2 of range(maxSuccesses - crits2)) {
                 for(let stun of [false, true]) {
                   for(let stormShield of [false, true]) {
                     const chooserAlwaysStrike = newFighterState(crits1, norms1, wounds1, FightStrategy.Strike, stun, stormShield);
@@ -333,9 +333,9 @@ describe(resolveFight.name + ' smart strategies should optimize goal', () => {
                     const chooserMaxDmg = newFighterState(crits1, norms1, wounds1, FightStrategy.MaxDmgToEnemy, stun, stormShield);
                     const chooserMinDmg = newFighterState(crits1, norms1, wounds1, FightStrategy.MinDmgToSelf, stun, stormShield);
                     const enemyForAlwaysStrike = newFighterState(crits2, norms2, wounds2, FightStrategy.Strike);
-                    const enemyForAlwaysParry = _.clone(enemyForAlwaysStrike);
-                    const enemyForMaxDmg = _.clone(enemyForAlwaysStrike);
-                    const enemyForMinDmg = _.clone(enemyForAlwaysStrike);
+                    const enemyForAlwaysParry = clone(enemyForAlwaysStrike);
+                    const enemyForMaxDmg = clone(enemyForAlwaysStrike);
+                    const enemyForMinDmg = clone(enemyForAlwaysStrike);
 
                     resolveFight(chooserAlwaysStrike, enemyForAlwaysStrike);
                     resolveFight(chooserAlwaysParry, enemyForAlwaysParry);
@@ -416,7 +416,7 @@ describe(calcRemainingWounds.name + ' basic', () => {
 
   it('fight can\'t be cut short', () => {
     const guy1 = new Attacker(1, 6, dn, dc).setProp('wounds', w);
-    const guy2 = _.clone(guy1);
+    const guy2 = clone(guy1);
 
     const [guy1Wounds, guy2Wounds] = calcRemainingWounds(guy1, guy2, FightStrategy.Strike, FightStrategy.Strike, 1);
     expect(guy1Wounds.get(w)).toBeCloseTo(pf, requiredPrecision);
@@ -426,7 +426,7 @@ describe(calcRemainingWounds.name + ' basic', () => {
   });
   it('fight can be cut short', () => {
     const guy1 = new Attacker(1, 6, dn, dc).setProp('wounds', dc);
-    const guy2 = _.clone(guy1);
+    const guy2 = clone(guy1);
 
     const [guy1Wounds, guy2Wounds] = calcRemainingWounds(guy1, guy2, FightStrategy.Strike, FightStrategy.Strike, 1);
     expect(guy1Wounds.get(0)).toBeCloseTo(pf * pc, requiredPrecision);
@@ -445,7 +445,7 @@ describe(calcRemainingWounds.name + ' multiple rounds', () => {
 
   it('double fight where fight1 can\'t be fatal', () => {
     const guy1 = new Attacker(1, 6, dn, dc).setProp('wounds', w);
-    const guy2 = _.clone(guy1);
+    const guy2 = clone(guy1);
 
     const [guy1Wounds, guy2Wounds] = calcRemainingWounds(guy1, guy2, FightStrategy.Strike, FightStrategy.Strike, 2);
     // rolls, then hits taken, then prob
@@ -487,7 +487,7 @@ describe(calcRemainingWounds.name + ' multiple rounds', () => {
   });
   it('double fight with possibly fatal fight1', () => {
     const guy1 = new Attacker(1, 6, dn, dc).setProp('wounds', dc);
-    const guy2 = _.clone(guy1);
+    const guy2 = clone(guy1);
 
     // rolls, then remaining health, then prob
     // 1 2 1 2  w1  w2  prob

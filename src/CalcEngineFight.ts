@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { clone } from "lodash";
 
 import Attacker from "src/Attacker";
 import * as Util from 'src/Util';
@@ -171,10 +171,10 @@ function calcDieChoice(chooser: FighterState, enemy: FighterState): FightChoice 
   {
     // calc dmgs if all strike or all parry; take better option
     const enemyWeStruck = enemy.withStrategy(FightStrategy.Strike);
-    const enemyWeParried = _.clone(enemyWeStruck);
+    const enemyWeParried = clone(enemyWeStruck);
 
-    const chooserWhoStruck = _.clone(chooser);
-    const chooserWhoParried = _.clone(chooser);
+    const chooserWhoStruck = clone(chooser);
+    const chooserWhoParried = clone(chooser);
     const strikeChoice = chooser.nextStrike();
     const parryChoice = wiseParry(chooser, enemy);
 
