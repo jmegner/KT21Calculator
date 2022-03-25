@@ -1,6 +1,25 @@
 name: 'Deploy react app to github pages'
 
 on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+      tags:
+        description: 'Manual deploy run'
+        required: false
+        type: boolean
+      environment:
+        description: 'Environment for manual deploy'
+        type: environment
+        required: true
   push:
     branches: [ main ]
 
