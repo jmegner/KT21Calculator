@@ -25,6 +25,7 @@
     "baseUrl": "."
   },
   "include": [
-    "src"
+    "src",
+    "src/custom.d.ts"
   ]
 }

@@ -155,6 +155,7 @@ function calcMultiRoundDamage(
 {
   let dmgsCumulative = new Map<number,number>(dmgsSingleRound);
 
+  // eslint-disable-next-line
   for(let _ of range(1, numRounds)) { 
     const dmgsPrevRounds = dmgsCumulative;
     dmgsCumulative = new Map<number,number>();
