@@ -21,7 +21,7 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     = Util.makePropChangeHandlers(atk, props.changeHandler);
 
   const params: IncProps[] = [
-    //           id/label,     selectedValue,            values,              valueChangeHandler
+    //           id/label,     selectedValue,          values,                valueChangeHandler
     new IncProps('Attacks',    atk.attacks,            Util.span(1, 8),       numHandler('attacks')),
     new IncProps('BS',         atk.bs + '+',           Util.rollSpan,         numHandler('bs')),
     new IncProps('Normal Dmg', atk.normDmg,            Util.span(1, 9),       numHandler('normDmg')),

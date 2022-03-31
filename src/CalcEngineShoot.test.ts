@@ -4,6 +4,7 @@ import { calcDmgProbs, exportedForTesting } from 'src/CalcEngineShoot';
 import * as Util from 'src/Util';
 import { range } from 'lodash';
 import Ability from 'src/Ability';
+import ShootOptions from './ShootOptions';
 
 const {
   calcDamage,
@@ -17,11 +18,11 @@ function newTestAttacker(attacks: number = 1, bs: number = 4) : Attacker {
   return new Attacker(attacks, bs, 11, 13);
 }
 
-function avgDmg(attacker: Attacker, defender: Defender, numRounds: number = 1): number {
-  return Util.weightedAverage(calcDmgProbs(attacker, defender, numRounds));
+function avgDmg(attacker: Attacker, defender: Defender, numRounds: number = 1, isFireTeamRules: boolean = false): number {
+  return Util.weightedAverage(calcDmgProbs(attacker, defender, new ShootOptions(numRounds, isFireTeamRules)));
 }
 
-describe(calcDamage.name + ' typical dmgs (norm < crit < 2 * norm)', () => {
+describe(calcDamage.name + ', typical dmgs (norm < crit < 2 * norm)', () => {
   // test typical situation of normDmg < critDmg < 2*normDmg
   const dn = 5; // normal damage
   const dc = 7; // critical damage
@@ -123,6 +124,30 @@ describe(calcDamage.name + ', smallCrit (crit < norm)', () => {
   });
   it('smallCrit, 2ch 2nh vs 0cs 3ns => 2dmw + 2dc', () => {
     expect(calcDamage(atker, 2, 2, 0, 3)).toBe(2 * dmw + 2 * dc);
+  });
+});
+
+describe(calcDamage.name + ', Fire Team rules', () => {
+  // test typical situation of normDmg < critDmg < 2*normDmg
+  const dn = 5; // normal damage
+  const dc = 7; // critical damage
+  const dmw = 100; // mortal wound damage
+  const atker = new Attacker(0, 0, dn, dc, dmw);
+
+  it('0ch 0nh vs 0cs 0ns => 0', () => {
+    expect(calcDamage(atker, 0, 0, 0, 0, true)).toBe(0);
+  });
+  it('0ch 2nh vs 0cs 0ns => 2dn', () => {
+    expect(calcDamage(atker, 0, 2, 0, 0, true)).toBe(2 * dn);
+  });
+  it('0ch 2nh vs 0cs 1ns => 1dn', () => {
+    expect(calcDamage(atker, 0, 2, 0, 1, true)).toBe(dn);
+  });
+  it('2ch 2nh vs 3cs 0ns => 1dc', () => {
+    expect(calcDamage(atker, 2, 2, 3, 0, true)).toBe(dc + 2 * dmw);
+  });
+  it('2ch 2nh vs 0cs 3ns => 1dc', () => {
+    expect(calcDamage(atker, 2, 2, 3, 0, true)).toBe(dc + 2 * dmw);
   });
 });
 

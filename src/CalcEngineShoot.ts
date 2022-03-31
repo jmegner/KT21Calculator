@@ -5,6 +5,7 @@ import Defender from "src/Defender";
 import * as Util from 'src/Util';
 import FinalDiceProb from 'src/FinalDiceProb';
 import * as Common from 'src/CalcEngineCommon';
+import ShootOptions from "./ShootOptions";
 
 class DefenderFinalDiceStuff {
   public finalDiceProbs: FinalDiceProb[];
@@ -32,7 +33,7 @@ class DefenderFinalDiceStuff {
 export function calcDmgProbs(
   attacker: Attacker,
   defender: Defender,
-  numRounds: number = 1,
+  shootOptions: ShootOptions = new ShootOptions(),
 ): Map<number, number> // damage to prob
 {
   const attackerFinalDiceProbs = Common.calcFinalDiceProbsForAttacker(attacker);
@@ -43,7 +44,13 @@ export function calcDmgProbs(
 
   function addAtkDefScenario(atk: FinalDiceProb, def: FinalDiceProb, extraSaves: number): void {
     const currProb = atk.prob * def.prob;
-    const damage = calcDamage(attacker, atk.crits, atk.norms, def.crits, def.norms + extraSaves);
+    const damage = calcDamage(
+      attacker,
+      atk.crits,
+      atk.norms,
+      def.crits,
+      def.norms + extraSaves,
+      shootOptions.isFireTeamRules);
 
     if (damage > 0) {
       Util.addToMapValue(damageToProb, damage, currProb);
@@ -76,8 +83,8 @@ export function calcDmgProbs(
     damageToProb.set(0, 1 - positiveDamageProbSum);
   }
 
-  if(numRounds > 1) {
-    damageToProb = calcMultiRoundDamage(damageToProb, numRounds);
+  if(shootOptions.numRounds > 1) {
+    damageToProb = calcMultiRoundDamage(damageToProb, shootOptions.numRounds);
   }
 
   return damageToProb;
@@ -177,10 +184,10 @@ function calcDamage(
   normHits: number,
   critSaves: number,
   normSaves: number,
+  isFireTeamRules: boolean = false,
 ): number {
   let damage = critHits * attacker.mwx;
-
-  const numNormalSavesToCancelCritHit = 2;
+  const numNormalSavesToCancelCritHit = 2; // for Kill Team rules, not Fire Team rules
 
   function critSavesCancelCritHits() {
     const numCancels = Math.min(critSaves, critHits);
@@ -203,32 +210,41 @@ function calcDamage(
     critHits -= numCancels;
   }
 
-  if (attacker.critDmg >= attacker.normDmg) {
-    critSavesCancelCritHits();
+  if(isFireTeamRules) {
+    // simplest way to implement "saves of any type 1-to-1-cancel normHits then critHits"
+    critSaves += normSaves;
     critSavesCancelNormHits();
+    critSavesCancelCritHits();
+  }
+  // else Kill Team rules
+  else {
+    if (attacker.critDmg >= attacker.normDmg) {
+      critSavesCancelCritHits();
+      critSavesCancelNormHits();
 
-    if (attacker.critDmg > 2 * attacker.normDmg) {
-      normSavesCancelCritHits();
-      normSavesCancelNormHits();
+      if (attacker.critDmg > 2 * attacker.normDmg) {
+        normSavesCancelCritHits();
+        normSavesCancelNormHits();
+      }
+      else {
+        // with norm saves, you prefer to cancel norm hits, but you want to avoid
+        // cancelling all norm hits and being left over with >=1 crit hit and 1 normal save;
+        // in that case, you should have cancelled 1 crit hit before cancelling norm hits;
+        if (normSaves > normHits && normSaves >= numNormalSavesToCancelCritHit && critHits > 0) {
+          normSaves -= numNormalSavesToCancelCritHit;
+          critHits--;
+        }
+
+        normSavesCancelNormHits();
+        normSavesCancelCritHits();
+      }
     }
     else {
-      // with norm saves, you prefer to cancel norm hits, but you want to avoid
-      // cancelling all norm hits and being left over with >=1 crit hit and 1 normal save;
-      // in that case, you should have cancelled 1 crit hit before cancelling norm hits;
-      if (normSaves > normHits && normSaves >= numNormalSavesToCancelCritHit && critHits > 0) {
-        normSaves -= numNormalSavesToCancelCritHit;
-        critHits--;
-      }
-
       normSavesCancelNormHits();
+      critSavesCancelNormHits();
+      critSavesCancelCritHits();
       normSavesCancelCritHits();
     }
-  }
-  else {
-    normSavesCancelNormHits();
-    critSavesCancelNormHits();
-    critSavesCancelCritHits();
-    normSavesCancelCritHits();
   }
 
   damage += critHits * attacker.critDmg + normHits * attacker.normDmg;

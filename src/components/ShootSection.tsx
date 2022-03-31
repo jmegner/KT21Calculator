@@ -5,22 +5,24 @@ import {
   Row,
 } from 'react-bootstrap';
 
-import Attacker from 'src/Attacker';
-import Defender from 'src/Defender';
+import ShootOptions from 'src/ShootOptions';
 import AttackerControls from "src/components/AttackerControls";
 import DefenderControls from "src/components/DefenderControls";
-import CalcControls from 'src/components/CalcControls';
+import ShootOptionControls from 'src/components/ShootOptionControls';
 import ShootResultsDisplay from 'src/components/ShootResultsDisplay';
 import Credits from 'src/components/Credits';
+
+import Attacker from 'src/Attacker';
+import Defender from 'src/Defender';
 import * as Util from "src/Util";
 import { calcDmgProbs } from 'src/CalcEngineShoot';
 
 const ShootSection: React.FC = () => {
   const [attacker, setAttacker] = React.useState(new Attacker());
   const [defender, setDefender] = React.useState(new Defender());
-  const [rounds, setRounds] = React.useState(1);
+  const [shootOptions, setShootOptions] = React.useState(new ShootOptions());
 
-  const damageToProb = calcDmgProbs(attacker, defender, rounds);
+  const damageToProb = calcDmgProbs(attacker, defender, shootOptions);
 
   return (
     <Container style={{width: '510px'}}>
@@ -31,7 +33,7 @@ const ShootSection: React.FC = () => {
               <AttackerControls attacker={attacker} changeHandler={setAttacker} />
             </Row>
             <Row className='border'>
-              <CalcControls rounds={rounds} roundsChangeHandler={setRounds} />
+              <ShootOptionControls shootOptions={shootOptions} changeHandler={setShootOptions} />
             </Row>
           </Container>
         </Col>
@@ -77,7 +79,17 @@ const ShootSection: React.FC = () => {
               &#x202F;<a href="https://wahapedia.ru/kill-team2/kill-teams/hive-fleet#Strategic-Ploys">Hive Fleet strategic ploy</a>&#x202F;
               Lurk and the
               &#x202F;<a href="https://wahapedia.ru/kill-team2/kill-teams/brood-coven#Strategic-Ploys">Brood Coven strategic ploy</a>&#x202F;
-              Lurk In The Shadows. Lurk In The Shadows also allows a defender's 1 cover save to count as a critical save, but that is not implemented.
+              Lurk In The Shadows. Lurk In The Shadows also allows a defender's 1 cover save to count as a critical
+              save, but that is not implemented.
+            </li>
+            <li>
+              FireTeamRules refers to whether to use the hit-cancellation rules from
+              &#x202F;<a href="https://warhammer40000.com/fireteam/">Warhammer 40,000 Fire Team</a>&#x202F;
+              (very similar to Kill Team, but simpler)
+              where any successful save can cancel any successful hit, but all normal hits must be cancelled before
+              cancelling any critical hit.  You can download the
+              &#x202F;<a href="https://warhammer40000.com/wp-content/uploads/2021/08/0Yw56ts8yOI2YO4I.pdf">rules</a>&#x202F;
+              and look at p8-9 for how attack actions work, specifically step4 on p9.
             </li>
           </ul>
         </Col>
