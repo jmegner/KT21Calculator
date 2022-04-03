@@ -25,7 +25,7 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     new IncProps('Attacks',    atk.attacks,            Util.span(1, 8),       numHandler('attacks')),
     new IncProps('BS',         atk.bs + '+',           Util.rollSpan,         numHandler('bs')),
     new IncProps('Normal Dmg', atk.normDmg,            Util.span(1, 9),       numHandler('normDmg')),
-    new IncProps('Crit Dmg',   atk.critDmg,            Util.span(1, 9),       numHandler('critDmg')),
+    new IncProps('Crit Dmg',   atk.critDmg,            Util.span(1, 10),      numHandler('critDmg')),
     new IncProps('MWx',        atk.mwx,                Util.xspan(1, 4),      numHandler('mwx')),
     new IncProps('APx',        atk.apx,                Util.xspan(1, 3),      numHandler('apx')),
     new IncProps('Px',         atk.px,                 Util.xspan(1, 3),      numHandler('px')),
