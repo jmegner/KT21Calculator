@@ -22,7 +22,7 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
 
   const params: IncProps[] = [
     //           id/label,     selectedValue,          values,                valueChangeHandler
-    new IncProps('Attacks',    atk.attacks,            Util.span(1, 8),       numHandler('attacks')),
+    new IncProps('Attacks',    atk.attacks,            Util.span(1, 10),      numHandler('attacks')),
     new IncProps('BS',         atk.bs + '+',           Util.rollSpan,         numHandler('bs')),
     new IncProps('Normal Dmg', atk.normDmg,            Util.span(1, 9),       numHandler('normDmg')),
     new IncProps('Crit Dmg',   atk.critDmg,            Util.span(1, 10),      numHandler('critDmg')),
