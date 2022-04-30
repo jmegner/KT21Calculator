@@ -5,7 +5,7 @@ import {
   exportedForTesting,
   toWoundPairKey,
 } from 'src/CalcEngineFight';
-import {clone, range} from 'lodash';
+import {clone, cloneDeep, range} from 'lodash';
 import FightStrategy from 'src/FightStrategy';
 import FightChoice from 'src/FightChoice';
 import FighterState from 'src/FighterState';
@@ -43,12 +43,22 @@ describe(wiseParry.name, () => {
   const guy1n = newFighterState(0, 1);
   const guy1c = newFighterState(1, 0);
   const guy1c1n = newFighterState(1, 1);
+  const guy1nBrutal = newFighterState(0, 1);
+  const guy1cBrutal = newFighterState(1, 0);
+  guy1nBrutal.profile.brutal = true;
+  guy1cBrutal.profile.brutal = true;
 
   it('1n vs 1n => norm parry', () => {
     expect(wiseParry(guy1n, guy1n)).toBe(FightChoice.NormParry);
   });
+  it('1n vs 1n brutal => norm strike', () => {
+    expect(wiseParry(guy1n, guy1nBrutal)).toBe(FightChoice.NormStrike);
+  });
   it('1n vs 1c => norm strike', () => {
     expect(wiseParry(guy1n, guy1c)).toBe(FightChoice.NormStrike);
+  });
+  it('1n vs 1c brutal => norm strike', () => {
+    expect(wiseParry(guy1n, guy1cBrutal)).toBe(FightChoice.NormStrike);
   });
   it('1n vs 1c+1n => norm parry', () => {
     expect(wiseParry(guy1n, guy1c1n)).toBe(FightChoice.NormParry);
@@ -56,14 +66,23 @@ describe(wiseParry.name, () => {
   it('1c vs 1n => crit parry', () => {
     expect(wiseParry(guy1c, guy1n)).toBe(FightChoice.CritParry);
   });
+  it('1c vs 1n brutal => crit parry', () => {
+    expect(wiseParry(guy1c, guy1nBrutal)).toBe(FightChoice.CritParry);
+  });
   it('1c vs 1c => crit parry', () => {
     expect(wiseParry(guy1c, guy1c)).toBe(FightChoice.CritParry);
+  });
+  it('1c vs 1c brutal => crit parry', () => {
+    expect(wiseParry(guy1c, guy1cBrutal)).toBe(FightChoice.CritParry);
   });
   it('1c vs 1c+1n => crit parry', () => {
     expect(wiseParry(guy1c, guy1c1n)).toBe(FightChoice.CritParry);
   });
   it('1c+1n vs 1n => norm parry', () => {
     expect(wiseParry(guy1c1n, guy1n)).toBe(FightChoice.NormParry);
+  });
+  it('1c+1n vs 1n brutal => crit parry', () => {
+    expect(wiseParry(guy1c1n, guy1nBrutal)).toBe(FightChoice.CritParry);
   });
   it('1c+1n vs 1c => crit parry', () => {
     expect(wiseParry(guy1c1n, guy1c)).toBe(FightChoice.CritParry);
@@ -90,6 +109,11 @@ describe(calcParryForLastEnemySuccessThenKillEnemy.name, () => {
   });
   it('typical norm parry', () => {
     expect(calcParryForLastEnemySuccessThenKillEnemy(guy99, newFighterState(0, 1))).toBe(FightChoice.NormParry);
+  });
+  it('brutal requiring crit parry instead of norm parry', () => {
+    const guy01Brutal = newFighterState(0, 1);
+    guy01Brutal.profile.brutal = true;
+    expect(calcParryForLastEnemySuccessThenKillEnemy(guy99, guy01Brutal)).toBe(FightChoice.CritParry);
   });
   it('typical crit parry', () => {
     expect(calcParryForLastEnemySuccessThenKillEnemy(guy99, newFighterState(1, 0))).toBe(FightChoice.CritParry);

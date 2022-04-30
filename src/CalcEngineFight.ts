@@ -140,9 +140,10 @@ function resolveFight(
 function calcDieChoice(chooser: FighterState, enemy: FighterState): FightChoice {
   // note: this function assumes both chooser and enemy have remaining successes
 
-  // ALWAYS strike if you can kill enemy with a single strike
-  // OR if enemy has brutal
-  if(chooser.nextDmg() >= enemy.currentWounds || enemy.profile.brutal) {
+  // ALWAYS strike if you can kill enemy with a single strike;
+  // also, if enemy has brutal and you have no crits, then you must strike;
+  if(chooser.nextDmg() >= enemy.currentWounds
+    || (enemy.profile.brutal && chooser.crits === 0)) {
     return chooser.nextStrike();
   }
 
@@ -237,6 +238,9 @@ function resolveDieChoice(
     }
   }
   else if(choice === FightChoice.NormParry) {
+    if(enemy.profile.brutal) {
+      throw new Error("not allowed to do FightChoice.NormParry when enemy has brutal")
+    }
     chooser.norms--;
     enemy.norms = Math.max(0, enemy.norms - chooser.profile.cancelsPerParry());
   }
@@ -252,6 +256,13 @@ function calcParryForLastEnemySuccessThenKillEnemy(
 {
   // note: this function assumes chooser and enemy have successes
 
+  // reminder: enemy having brutal means chooser can only parry with crits
+  if(enemy.profile.brutal) {
+    if(chooser.crits === 0) {
+      return null;
+    }
+  }
+
   // if chooser can parry enemy's remaining success (or successes due to storm shield)
   // AND kill enemy afterwards, then chooser should parry
   if(enemy.crits + enemy.norms <= chooser.profile.cancelsPerParry()) {
@@ -265,7 +276,7 @@ function calcParryForLastEnemySuccessThenKillEnemy(
     }
     // else enemy.norms > 0
     else {
-      if(chooser.norms > 0) {
+      if(chooser.norms > 0 && !enemy.profile.brutal) {
         fightChoice = FightChoice.NormParry;
       }
       else {
@@ -296,14 +307,14 @@ function wiseParry(chooser: FighterState, enemy: FighterState): FightChoice {
     return FightChoice.CritParry;
   }
   // do a norm parry, but only if there is an enemy norm success to cancel
-  else if (chooser.norms > 0 && enemy.norms > 0) {
+  else if (chooser.norms > 0 && enemy.norms > 0 && !enemy.profile.brutal) {
     return FightChoice.NormParry;
   }
   // this is a CritParry of an enemy norm success
   else if (chooser.crits > 0) {
     return FightChoice.CritParry;
   }
-  // remaining scenario is chooser has only norm successes and enemy has only crit successes
+  // remaining scenario is chooser has only norm successes and {enemy has only crit successes or brutal}
   return FightChoice.NormStrike;
 }
 
