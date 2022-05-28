@@ -10,6 +10,7 @@ export default class FighterState {
   public strategy: FightStrategy;
   public currentWounds: number;
   public hasDoneStun: boolean;
+  public hasDoneHammerhand: boolean;
 
   public constructor(
     profile: Attacker,
@@ -18,6 +19,7 @@ export default class FighterState {
     strategy: FightStrategy,
     currentWounds: number = -1,
     hasDoneStun: boolean = false,
+    hasDoneHammerhand: boolean = false,
   ) {
     this.profile = profile;
     this.crits = crits;
@@ -25,24 +27,44 @@ export default class FighterState {
     this.strategy = strategy;
     this.currentWounds = currentWounds > 0 ? currentWounds : this.profile.wounds;
     this.hasDoneStun = hasDoneStun;
+    this.hasDoneHammerhand = hasDoneHammerhand;
   }
 
   public applyDmg(dmg: number) {
     this.currentWounds = Math.max(0, this.currentWounds - dmg);
   }
 
+  public hammerhandDmg(
+    crits: number | undefined = undefined,
+    norms: number | undefined = undefined,
+  ) {
+    crits = crits || this.crits;
+    norms = norms || this.norms;
+    return this.profile.hammerhand
+      && !this.hasDoneHammerhand
+      && (crits > 0 || norms > 0)
+      ? 1 : 0;
+  }
+
+  public possibleDmg(crits: number, norms: number): number {
+    return this.hammerhandDmg(crits, norms) + this.profile.possibleDmg(crits, norms);
+  }
+
   public totalDmg(): number {
-    return this.profile.possibleDmg(this.crits, this.norms);
+    return this.possibleDmg(this.crits, this.norms);
   }
 
   public nextDmg(): number {
+    let dmg = this.hammerhandDmg();
+
     if (this.crits > 0) {
-      return this.profile.critDmg;
+      dmg += this.profile.critDmg;
     }
-    if (this.norms > 0) {
-      return this.profile.normDmg;
+    else if (this.norms > 0) {
+      dmg += this.profile.normDmg;
     }
-    return 0;
+
+    return dmg;
   }
 
   public nextStrike(): FightChoice {

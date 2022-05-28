@@ -39,6 +39,7 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps('Brutal',       toCheckX(atk.brutal),      Util.xAndCheck,        boolHandler('brutal')),
     new IncProps('Stun',         toCheckX(atk.stun),        Util.xAndCheck,        boolHandler('stun')),
     new IncProps('Storm Shield', toCheckX(atk.stormShield), Util.xAndCheck,        boolHandler('stormShield')),
+    new IncProps('Hammerhand',   toCheckX(atk.hammerhand),  Util.xAndCheck,        boolHandler('hammerhand')),
     //new IncProps('FeelNoPain',   atk.fnp + '+',             Util.xspan(3, 6, '+'), numHandler('fnp')),
   ];
 

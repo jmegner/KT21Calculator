@@ -1,16 +1,15 @@
 import Attacker from 'src/Attacker';
 import Defender from 'src/Defender';
-import { calcDmgProbs, exportedForTesting } from 'src/CalcEngineShoot';
 import * as Util from 'src/Util';
 import { range } from 'lodash';
 import Ability from 'src/Ability';
-import ShootOptions from './ShootOptions';
-
-const {
+import ShootOptions from 'src/ShootOptions';
+import { calcDmgProbs } from 'src/CalcEngineShoot';
+import {
   calcDamage,
   calcMultiRoundDamage,
   calcPostFnpDamages,
-} = exportedForTesting;
+} from 'src/CalcEngineShootInternal';
 
 const requiredPrecision = 10;
 

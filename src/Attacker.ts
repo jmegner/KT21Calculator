@@ -19,6 +19,7 @@ export default class Attacker {
   public brutal: boolean; // fight only
   public stun: boolean; // fight only
   public stormShield: boolean; // fight only
+  public hammerhand: boolean; // fight only
 
   public constructor(
     attacks: number = 4,
@@ -37,6 +38,7 @@ export default class Attacker {
     brutal: boolean = false,
     stun: boolean = false,
     stormShield: boolean = false,
+    hammerhand: boolean = false,
   ) {
     this.attacks = attacks;
     this.bs = bs;
@@ -54,6 +56,7 @@ export default class Attacker {
     this.brutal = brutal;
     this.stun = stun;
     this.stormShield = stormShield;
+    this.hammerhand = hammerhand;
   }
 
   public static justDamage(
@@ -69,6 +72,7 @@ export default class Attacker {
     return this.lethalx === 0 ? 6 : this.lethalx;
   }
 
+  //#ERROR TODO: look at all uses of possibleDmg to see if okay to not include hammerhand
   public possibleDmg(crits: number, norms: number): number {
     return crits * (this.critDmg + this.mwx) + norms * this.normDmg;
   }

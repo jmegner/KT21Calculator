@@ -1,22 +1,20 @@
 import Attacker from 'src/Attacker';
 import {
   calcRemainingWounds,
-  calcRemainingWoundPairProbs,
-  exportedForTesting,
-  toWoundPairKey,
 } from 'src/CalcEngineFight';
-import {clone, cloneDeep, range} from 'lodash';
+import {
+  calcDieChoice,
+  calcParryForLastEnemySuccessThenKillEnemy,
+  calcRemainingWoundPairProbs,
+  resolveDieChoice,
+  resolveFight,
+  toWoundPairKey,
+  wiseParry,
+} from 'src/CalcEngineFightInternal';
+import {clone, range} from 'lodash';
 import FightStrategy from 'src/FightStrategy';
 import FightChoice from 'src/FightChoice';
 import FighterState from 'src/FighterState';
-
-const {
-  calcDieChoice,
-  calcParryForLastEnemySuccessThenKillEnemy,
-  resolveDieChoice,
-  resolveFight,
-  wiseParry,
-} = exportedForTesting;
 
 const requiredPrecision = 10;
 
@@ -128,9 +126,15 @@ describe(calcParryForLastEnemySuccessThenKillEnemy.name, () => {
 });
 
 describe(calcDieChoice.name + ', common & strike/parry', () => {
-  it('#1: strike if you can kill with next strike', () => {
-    const chooser = newFighterState(1, 1, 99, FightStrategy.Parry)
+  it('#1a: strike if you can kill with next strike', () => {
+    const chooser = newFighterState(1, 1, 99, FightStrategy.Parry);
     const enemy = newFighterState(9, 9, chooser.profile.critDmg);
+    expect(calcDieChoice(chooser, enemy)).toBe(FightChoice.CritStrike);
+  });
+  it('#1b: strike if you can kill with next strike (hammerhand)', () => {
+    const chooser = newFighterState(1, 1, 99, FightStrategy.Parry);
+    const enemy = newFighterState(9, 9, chooser.profile.critDmg + 1);
+    chooser.profile.hammerhand = true;
     expect(calcDieChoice(chooser, enemy)).toBe(FightChoice.CritStrike);
   });
   it('#2a: crit strike if you have stun, enemy is not already stunned, and enemy has no crit successes', () => {
@@ -334,6 +338,17 @@ describe(resolveDieChoice.name + ', basic, stun, and storm shield', () => {
     expect(enemy.crits).toBe(origEnemyCrits);
     expect(enemy.norms).toBe(origEnemyNorms - 2);
     expect(enemy.currentWounds).toBe(finalWounds);
+  });
+  it('hammerhand 1st hit deals extra damage', () => {
+    const initialWounds = 100;
+    const chooser = newFighterState(origChooserCrits, origChooserNorms, finalWounds);
+    const enemy = newFighterState(origEnemyCrits, origEnemyNorms, initialWounds);
+    chooser.profile.hammerhand = true;
+
+    resolveDieChoice(FightChoice.NormStrike, chooser, enemy);
+    expect(enemy.currentWounds).toBe(initialWounds - chooser.profile.normDmg - 1);
+    resolveDieChoice(FightChoice.NormStrike, chooser, enemy);
+    expect(enemy.currentWounds).toBe(initialWounds - 2 * chooser.profile.normDmg - 1);
   });
 });
 

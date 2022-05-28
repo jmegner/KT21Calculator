@@ -17,7 +17,7 @@ export interface Props {
 
 const ShootOptionControls: React.FC<Props> = (props: Props) => {
   const opts = props.shootOptions;
-  // eslient-disable-next-line
+  // eslint-disable-next-line
   const [textHandler, numHandler, boolHandler]
     = Util.makePropChangeHandlers(opts, props.changeHandler);
 
