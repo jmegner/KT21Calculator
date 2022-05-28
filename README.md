@@ -17,7 +17,6 @@ Features I plan on implementing...
 * shoot section
   * Cult Ambush reroll (you roll attack dice and then choose pip type to reroll, like reroll 2s)
 * fight section
-  * hammerhand
   * transition from uninjured to injured (degraded WS) between rounds
   * [Ecclesiarchy strategic ploy](https://wahapedia.ru/kill-team2/kill-teams/ecclesiarchy/#Strategic-Ploys) Divine Shield (crit triggers balanced)
   * fnp: this one is messy, so is low priority
