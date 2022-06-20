@@ -4,15 +4,16 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 
-import Defender from 'src/Defender';
-import { toAscendingMap } from 'src/Util';
+import * as Util from 'src/Util';
+import Tank from 'src/WorldOfTanks/Tank';
 
 export interface Props {
-  defender: Defender;
-  damageToProb: Map<number,number>;
+  defender: Tank;
+  dmgToProb: Map<number,number>;
+  critsToProb: Map<number,number>;
 }
 
-const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
+const ResultsDisplay: React.FC<Props> = (props: Props) => {
   const digitsPastDecimal = 2;
 
   let avgDmgUnbounded = 0;
@@ -20,16 +21,18 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
   let killProb = 0;
   const tableBody: JSX.Element[] = [];
 
-  let ascendingDmgToProb = toAscendingMap(props.damageToProb);
+  let ascendingDmgToProb = Util.toAscendingMap(props.dmgToProb);
+  let ascendingCritsToProb = Util.toAscendingMap(props.critsToProb);
+  const avgCrits = Util.weightedAverage(props.critsToProb);
   let probCumulative = 0;
 
   const toPercentString = (val: number) => (val * 100).toFixed(digitsPastDecimal);
 
   ascendingDmgToProb.forEach((prob, dmg) => {
      avgDmgUnbounded += dmg * prob;
-     avgDmgBounded += Math.min(dmg, props.defender.wounds) * prob;
+     avgDmgBounded += Math.min(dmg, props.defender.hp) * prob;
 
-     if(dmg >= props.defender.wounds) {
+     if(dmg >= props.defender.hp) {
        killProb += prob;
      }
 
@@ -74,6 +77,14 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
         </Col>
       </Row>
       <Row>
+        <Col style={{fontSize: '11px'}}>
+          AvgCrits:
+        </Col>
+        <Col>
+          {avgCrits.toFixed(digitsPastDecimal)}
+        </Col>
+      </Row>
+      <Row>
         <Col>
           <Table bordered={true} striped={true} style={{fontSize: '11px'}}>
             <thead>
@@ -94,4 +105,4 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
   );
 }
 
-export default ShootResultsDisplay;
+export default ResultsDisplay;

@@ -2,6 +2,7 @@ import React from 'react';
 import * as Test from '@testing-library/react';
 
 import App from 'src/App';
+import { BrowserRouter } from 'react-router-dom';
 
 // for some reason, "// eslint-disable-next-line no-unused-vars" doesn't work;
 // I have to do a eslint-disable-next-line for all rules;
@@ -9,6 +10,6 @@ import App from 'src/App';
 type RenderResult = Test.RenderResult<typeof Test.queries, HTMLElement>;
 
 it('app renders without crashing', () => {
-  Test.render(<App />);
+  Test.render(<BrowserRouter><App /></BrowserRouter>);
 });
 

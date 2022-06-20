@@ -6,11 +6,11 @@ export default class DieProbs {
   public constructor(
     crit: number,
     norm: number,
-    fail: number,
+    fail: number = -1,
   ) {
     this.crit = crit;
     this.norm = norm;
-    this.fail = fail;
+    this.fail = fail === -1 ? 1 - crit - norm : fail;
   }
 
   public toCritNormFail(): number[] {

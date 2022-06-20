@@ -40,7 +40,7 @@ function makeFighterResultsSection(
   let deathProb = woundProbs.get(0) ?? 0;
   const tableBody: JSX.Element[] = [];
 
-  let ascendingWoundProbs = new Map<number,number>([...woundProbs.entries()].sort((a, b) => a[0] - b[0]));
+  let ascendingWoundProbs = Util.toAscendingMap(woundProbs);
   let probCumulative = 0;
 
   ascendingWoundProbs.forEach((prob, wounds) => {

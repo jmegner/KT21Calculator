@@ -126,6 +126,10 @@ export function addMapValues<T>(mapToChange: Map<T,number>, mapToAdd: Map<T,numb
   }
 }
 
-export function  toPercentString(val: number, digitsPastDecimal: number = 2) {
+export function toPercentString(val: number, digitsPastDecimal: number = 2) {
   return (val * 100).toFixed(digitsPastDecimal);
+}
+
+export function toAscendingMap<V>(map: Map<number,V>): Map<number,V> {
+  return new Map<number,V>([...map.entries()].sort((a, b) => a[0] - b[0]));
 }

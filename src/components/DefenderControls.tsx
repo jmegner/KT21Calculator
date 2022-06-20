@@ -53,6 +53,6 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
       </Row>
     </Container>
   );
-}
+};
 
 export default DefenderControls;

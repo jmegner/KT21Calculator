@@ -1,4 +1,5 @@
 export enum CalculatorViewChoice {
-  Shoot = 'Shoot',
-  Fight = 'Fight',
+  KtShoot = 'KtShoot',
+  KtFight = 'KtFight',
+  WorldOfTanks = "WorldOfTanks",
 }
