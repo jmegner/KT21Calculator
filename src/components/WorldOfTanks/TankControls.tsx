@@ -21,18 +21,19 @@ const TankControls: React.FC<Props> = (props: Props) => {
   const [textHandler, numHandler, boolHandler]
     = Util.makePropChangeHandlers(tank, props.changeHandler);
   const diceSpan = Util.span(props.isAttacker ? 1 : 0, 10);
+  const hitsToCritsLabel = `HitsToCrits (ex: ${props.isAttacker ? 'BigGun' : 'Spall Liner'})`;
 
   let params: IncProps[] = [
     //           id/label,         selectedValue,                   values,           valueChangeHandler
     new IncProps('Dice',           tank.dice,                       diceSpan,         numHandler('dice')),
     new IncProps('Reroll',         tank.reroll,                     rerolls,          textHandler('reroll')),
+    new IncProps(hitsToCritsLabel, tank.hitsToCrits,                Util.span(0, 3), numHandler('hitsToCrits')),
   ];
 
   if(props.isAttacker) {
     params.push(...[
       //           id/label,         selectedValue,                   values,           valueChangeHandler
-      new IncProps('ArrowShot',      toCheckX(tank.arrowShot),        Util.xAndCheck,   boolHandler('arrowShot')),
-      new IncProps('BigGun',         toCheckX(tank.bigGun),           Util.xAndCheck,   boolHandler('bigGun')),
+      new IncProps('CritsToHits (ex: ArrowShot)', tank.critsToHits,   Util.span(0, 3),  numHandler('critsToHits')),
       new IncProps('Deadeye',        toCheckX(tank.deadeye),          Util.xAndCheck,   boolHandler('deadeye')),
       new IncProps('HighExplosive',  toCheckX(tank.highExplosive),    Util.xAndCheck,   boolHandler('highExplosive')),
       new IncProps('TargetHullDown', toCheckX(tank.targetIsHullDown), Util.xAndCheck,   boolHandler('targetIsHullDown')),

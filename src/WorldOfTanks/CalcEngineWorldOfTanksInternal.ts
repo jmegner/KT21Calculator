@@ -21,20 +21,17 @@ export function calcFinalDiceProbs(tank: Tank): FinalDiceProb[] {
       const prob = Common.calcFinalDiceProb(dieProbs, crits, norms, fails, tank.reroll === Reroll.One)
       probs.push(prob);
 
-      // should never have ArrowShot and BigGun at same time, but if you do,
-      // you'd want to do ArrowShot first (in case you start with no crits)
-      if(tank.arrowShot) {
-        if(prob.crits > 0) {
-          prob.crits--;
-          prob.norms++;
-        }
+      // want to Modify Crits to Hits before Hits to Crits
+      if(tank.critsToHits > 0) {
+        const numModified = Math.min(tank.critsToHits, prob.crits);
+        prob.crits -= numModified;
+        prob.norms += numModified;
       }
 
-      if(tank.bigGun) {
-        if(prob.norms > 0) {
-          prob.norms--;
-          prob.crits++;
-        }
+      if(tank.hitsToCrits > 0) {
+        const numModified = Math.min(tank.hitsToCrits, prob.norms);
+        prob.norms -= numModified;
+        prob.crits += numModified;
       }
 
       if(tank.targetIsHullDown) {
