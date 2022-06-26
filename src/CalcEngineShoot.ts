@@ -59,12 +59,7 @@ export function calcDmgProbs(
     damageToProb = calcPostFnpDamages(defender.fnp, damageToProb);
   }
 
-  let positiveDamageProbSum = 0;
-  damageToProb.forEach(prob => positiveDamageProbSum += prob);
-
-  if (positiveDamageProbSum < 1) {
-    damageToProb.set(0, 1 - positiveDamageProbSum);
-  }
+  Util.fillInProbForZero(damageToProb);
 
   if(shootOptions.numRounds > 1) {
     damageToProb = calcMultiRoundDamage(damageToProb, shootOptions.numRounds);

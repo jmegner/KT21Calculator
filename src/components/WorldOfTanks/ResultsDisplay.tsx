@@ -14,7 +14,8 @@ export interface Props {
 }
 
 const ResultsDisplay: React.FC<Props> = (props: Props) => {
-  const digitsPastDecimal = 2;
+  const digitsPastDecimalForDamage = 3;
+  const digitsPastDecimalForNondamage = 2;
 
   let avgDmgUnbounded = 0;
   let avgDmgBounded = 0;
@@ -26,7 +27,7 @@ const ResultsDisplay: React.FC<Props> = (props: Props) => {
   const avgCrits = Util.weightedAverage(props.critsToProb);
   let probCumulative = 0;
 
-  const toPercentString = (val: number) => (val * 100).toFixed(digitsPastDecimal);
+  const toPercentString = (val: number) => (val * 100).toFixed(digitsPastDecimalForNondamage);
 
   ascendingDmgToProb.forEach((prob, dmg) => {
      avgDmgUnbounded += dmg * prob;
@@ -57,7 +58,7 @@ const ResultsDisplay: React.FC<Props> = (props: Props) => {
           AvgDmgUnbounded:
         </Col>
         <Col>
-          {avgDmgUnbounded.toFixed(digitsPastDecimal)}
+          {avgDmgUnbounded.toFixed(digitsPastDecimalForDamage)}
         </Col>
       </Row>
       <Row>
@@ -65,7 +66,7 @@ const ResultsDisplay: React.FC<Props> = (props: Props) => {
           AvgDmgBounded:
         </Col>
         <Col>
-          {avgDmgBounded.toFixed(digitsPastDecimal)}
+          {avgDmgBounded.toFixed(digitsPastDecimalForDamage)}
         </Col>
       </Row>
       <Row>
@@ -81,7 +82,7 @@ const ResultsDisplay: React.FC<Props> = (props: Props) => {
           AvgCrits:
         </Col>
         <Col>
-          {avgCrits.toFixed(digitsPastDecimal)}
+          {avgCrits.toFixed(digitsPastDecimalForDamage)}
         </Col>
       </Row>
       <Row>

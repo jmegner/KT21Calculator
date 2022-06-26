@@ -42,7 +42,7 @@ const TankControls: React.FC<Props> = (props: Props) => {
   else {
     params.push(...[
       //           id/label,         selectedValue,                   values,           valueChangeHandler
-      new IncProps('HP',             tank.hp,                         Util.span(1,10),  numHandler('hp')),
+      new IncProps('HP',             tank.hp,                         Util.span(1,11),  numHandler('hp')),
     ]);
 
   }

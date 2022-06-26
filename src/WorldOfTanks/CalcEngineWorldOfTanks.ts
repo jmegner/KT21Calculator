@@ -2,6 +2,7 @@ import FinalDiceProb from 'src/FinalDiceProb';
 import Tank from "./Tank";
 import { calcMultiRoundDamage } from 'src/CalcEngineShootInternal';
 import { addToDmgProbs, calcFinalDiceProbs } from 'src/WorldOfTanks/CalcEngineWorldOfTanksInternal';
+import { fillInProbForZero } from 'src/Util';
 
 export function calcDmgAndCritProbs(
   attacker: Tank,
@@ -20,16 +21,8 @@ export function calcDmgAndCritProbs(
     }
   }
 
-  let positiveDamageProbSum = 0;
-  dmgToProb.forEach((prob, dmg) => {
-    if(dmg > 0) {
-      positiveDamageProbSum += prob;
-     }
-  });
-
-  if (positiveDamageProbSum < 1) {
-    dmgToProb.set(0, 1 - positiveDamageProbSum);
-  }
+  fillInProbForZero(dmgToProb);
+  fillInProbForZero(critsToProb);
 
   if(numRounds > 1) {
     dmgToProb = calcMultiRoundDamage(dmgToProb, numRounds);
