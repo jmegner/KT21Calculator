@@ -137,7 +137,7 @@ export function toAscendingMap<V>(map: Map<number,V>): Map<number,V> {
 export function fillInProbForZero(keyToProb: Map<number, number>): void {
   let nonzeroValueProbSum = 0;
   keyToProb.forEach((prob, key) => {
-    if(key != 0) {
+    if(key !== 0) {
       nonzeroValueProbSum += prob;
      }
   });

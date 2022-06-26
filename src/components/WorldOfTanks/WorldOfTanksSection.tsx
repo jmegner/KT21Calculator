@@ -6,24 +6,11 @@ import {
 } from 'react-bootstrap';
 
 import Credits from 'src/components/Credits';
-import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
 
 import * as Util from "src/Util";
-import Tank from 'src/WorldOfTanks/Tank';
-import { calcDmgAndCritProbs } from 'src/WorldOfTanks/CalcEngineWorldOfTanks';
-import TankControls from 'src/components/WorldOfTanks/TankControls';
-import ResultsDisplay from 'src/components/WorldOfTanks/ResultsDisplay';
 import Situation from './Situation';
 
 const WorldOfTanksSection: React.FC = () => {
-  const [attacker, setAttacker] = React.useState(new Tank());
-  const [defender, setDefender] = React.useState(new Tank());
-  const [numRounds, setNumRounds] = React.useState(1);
-
-  const [dmgToProb, critsToProb] = calcDmgAndCritProbs(attacker, defender, numRounds);
-
-  const numRoundsParam = new IncProps('NumRounds', numRounds, Util.span(1, 10), Util.acceptNumToAcceptString(setNumRounds));
-
   return (
     <Container style={{width: '900px'}}>
       <Row>

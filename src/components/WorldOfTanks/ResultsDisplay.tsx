@@ -23,7 +23,6 @@ const ResultsDisplay: React.FC<Props> = (props: Props) => {
   const tableBody: JSX.Element[] = [];
 
   let ascendingDmgToProb = Util.toAscendingMap(props.dmgToProb);
-  let ascendingCritsToProb = Util.toAscendingMap(props.critsToProb);
   const avgCrits = Util.weightedAverage(props.critsToProb);
   let probCumulative = 0;
 

@@ -1,5 +1,3 @@
-import { range } from "lodash";
-
 import Attacker from "src/Attacker";
 import Defender from "src/Defender";
 import * as Util from 'src/Util';
