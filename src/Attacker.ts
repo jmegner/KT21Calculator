@@ -83,10 +83,10 @@ export default class Attacker {
 
   public toDieProbs(): DieProbs {
     // BEFORE taking ceaseless and relentless into account
-    let failHitProb = (this.bs - 1) / 6;
     const critSkill = this.critSkill();
     let critHitProb = (7 - critSkill) / 6;
-    let normHitProb = (critSkill - this.bs) / 6;
+    let normHitProb = Math.max(0, (critSkill - this.bs) / 6); // handle BS=6+ and LethalX=4+
+    let failHitProb = 1 - critHitProb - normHitProb;
 
     // now to take ceaseless and relentless into account...
     if (this.reroll === Ability.Ceaseless || this.reroll === Ability.Relentless) {

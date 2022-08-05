@@ -457,7 +457,7 @@ describe(calcRemainingWounds.name + ' basic', () => {
     const guy1 = new Attacker(1, 6, dn, dc).setProp('wounds', w);
     const guy2 = clone(guy1);
 
-    const [guy1Wounds, guy2Wounds] = calcRemainingWounds(guy1, guy2, FightStrategy.Strike, FightStrategy.Strike, 1);
+    const [guy1Wounds, guy2Wounds] = calcRemainingWounds(guy1, guy2, FightStrategy.Strike, FightStrategy.Strike);
     expect(guy1Wounds.get(w)).toBeCloseTo(pf, requiredPrecision);
     expect(guy1Wounds.get(w - dc)).toBeCloseTo(pc, requiredPrecision);
     expect(guy2Wounds.get(w)).toBeCloseTo(pf, requiredPrecision);
@@ -467,11 +467,20 @@ describe(calcRemainingWounds.name + ' basic', () => {
     const guy1 = new Attacker(1, 6, dn, dc).setProp('wounds', dc);
     const guy2 = clone(guy1);
 
-    const [guy1Wounds, guy2Wounds] = calcRemainingWounds(guy1, guy2, FightStrategy.Strike, FightStrategy.Strike, 1);
+    const [guy1Wounds, guy2Wounds] = calcRemainingWounds(guy1, guy2, FightStrategy.Strike, FightStrategy.Strike);
     expect(guy1Wounds.get(0)).toBeCloseTo(pf * pc, requiredPrecision);
     expect(guy1Wounds.get(dc)).toBeCloseTo(pc + pf * pf, requiredPrecision);
     expect(guy2Wounds.get(0)).toBeCloseTo(pc, requiredPrecision);
     expect(guy2Wounds.get(dc)).toBeCloseTo(pf, requiredPrecision);
+  });
+  it('WS=6+ and LethalX=4+ should be handled same as WS=4+ and LethalX=4+', () => {
+    const guy1 = new Attacker(1, 2, 1, 1).setProp('wounds', 2);
+    const guy2a = new Attacker(1, 4, 1, 2).setProp('wounds', 1).setProp('lethalx', 4);
+    const guy2b = new Attacker(1, 6, 1, 2).setProp('wounds', 1).setProp('lethalx', 4);
+
+    const [guy1AWounds, guy2AWounds] = calcRemainingWounds(guy1, guy2a, FightStrategy.Strike, FightStrategy.Strike);
+    const [guy1BWounds, guy2BWounds] = calcRemainingWounds(guy1, guy2b, FightStrategy.Strike, FightStrategy.Strike);
+    expect(guy1AWounds).toEqual(guy1BWounds);
   });
 });
 
