@@ -32,7 +32,7 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     new IncProps('Reroll',     atk.reroll,             Util.preX(rerolls),    textHandler('reroll')),
     new IncProps('LethalX',    atk.lethalx + '+',      Util.xspan(4, 5, '+'), numHandler('lethalx')),
     new IncProps('Rending',    toCheckX(atk.rending),  Util.xAndCheck,        boolHandler('rending')),
-    new IncProps('Starfire',   toCheckX(atk.starfire), Util.xAndCheck,        boolHandler('starfire')),
+    new IncProps('Starfire*',   toCheckX(atk.starfire), Util.xAndCheck,        boolHandler('starfire')),
   ];
 
   const paramElems = params.map(p =>

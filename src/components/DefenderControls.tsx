@@ -18,24 +18,28 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
   const saveId = 'Save';
   const defenseId = 'Defense';
   const woundsId = 'Wounds';
-  const fnpId = 'FeelNoPain';
-  const invulnSaveId = 'InvulnSave';
-  const coverSavesId = 'CoverSaves';
-  const chitinId = 'ExtendedChitin';
+  const fnpId = 'FeelNoPain*';
+  const invulnSaveId = 'InvulnSave*';
+  const coverNormSavesId = 'CoverNormSaves*';
+  const coverCritSavesId = 'CoverCritSaves*';
+  const hardyxId = 'HardyX*';
+  const chitinId = 'ExtendedChitin*';
 
   const def = props.defender;
   const [, numHandler, boolHandler]
     = Util.makePropChangeHandlers(def, props.changeHandler);
 
   const params: IncProps[] = [
-    //           id,           selectedValue,          values,                valueChangeHandler
-    new IncProps(defenseId,    def.defense,          Util.span(0, 4),       numHandler('defense')),
-    new IncProps(saveId,       def.save + '+',       Util.rollSpan,         numHandler('save')),
-    new IncProps(woundsId,     def.wounds,           Util.span(1, 19),      numHandler('wounds')),
-    new IncProps(coverSavesId, def.coverSaves,       Util.xspan(1, 2),      numHandler('coverSaves')),
-    new IncProps(invulnSaveId, def.invulnSave + '+', Util.xrollSpan,        numHandler('invulnSave')),
-    new IncProps(fnpId,        def.fnp + '+',        Util.xspan(3, 6, '+'), numHandler('fnp')),
-    new IncProps(chitinId,     toCheckX(def.chitin), Util.xAndCheck,        boolHandler('chitin')),
+    //           id,               selectedValue,        values,                valueChangeHandler
+    new IncProps(defenseId,        def.defense,          Util.span(0, 4),       numHandler('defense')),
+    new IncProps(saveId,           def.save + '+',       Util.rollSpan,         numHandler('save')),
+    new IncProps(woundsId,         def.wounds,           Util.span(1, 19),      numHandler('wounds')),
+    new IncProps(coverNormSavesId, def.coverNormSaves,   Util.xspan(1, 3),      numHandler('coverNormSaves')),
+    new IncProps(coverCritSavesId, def.coverCritSaves,   Util.xspan(1, 3),      numHandler('coverCritSaves')),
+    new IncProps(invulnSaveId,     def.invulnSave + '+', Util.xrollSpan,        numHandler('invulnSave')),
+    new IncProps(hardyxId,         def.hardyx + '+',     Util.xspan(5, 5, '+'), numHandler('hardyx')),
+    new IncProps(fnpId,            def.fnp + '+',        Util.xspan(3, 6, '+'), numHandler('fnp')),
+    new IncProps(chitinId,     toCheckX(def.chitin),     Util.xAndCheck,        boolHandler('chitin')),
   ];
 
   const paramElems = params.map(p =>

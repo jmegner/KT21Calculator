@@ -8,8 +8,10 @@ export default class Defender {
   public wounds: number;
   public fnp: number;
   public invulnSave: number;
-  public coverSaves: number;
+  public coverNormSaves: number;
+  public coverCritSaves: number;
   public chitin: boolean;
+  public hardyx: number; // like LethalX, but for defense
 
   public constructor(
     defense: number = 3,
@@ -17,16 +19,20 @@ export default class Defender {
     wounds: number = 12,
     fnp: number = 0,
     invulnSave: number = 0,
-    coverSaves: number = 0,
+    coverNormSaves: number = 0,
+    coverCritSaves: number = 0,
     chitin: boolean = false,
+    hardyx: number = 0,
   ) {
     this.defense = defense;
     this.save = save;
     this.wounds = wounds;
     this.fnp = fnp;
     this.invulnSave = invulnSave;
-    this.coverSaves = coverSaves;
+    this.coverNormSaves = coverNormSaves;
+    this.coverCritSaves = coverCritSaves;
     this.chitin = chitin;
+    this.hardyx = hardyx;
   }
 
   public usesFnp(): boolean {
@@ -41,9 +47,14 @@ export default class Defender {
     return this.usesInvulnSave() ? this.invulnSave : this.save;
   }
 
+  public critSkill(): number {
+    return this.hardyx === 0 ? 6 : this.hardyx;
+  }
+
   public toDieProbs(): DieProbs {
-    const critSaveProb = 1 / 6;
-    const normSaveProb = (6 - this.relevantSave()) / 6;
+    const critSkill = this.critSkill();
+    const critSaveProb = (7 - critSkill) / 6;
+    const normSaveProb = Math.max(0, (critSkill - this.relevantSave()) / 6); // handle Sv=6+ and HardyX=5+
     const failSaveProb = (this.relevantSave() - 1) / 6;
     return new DieProbs(
       critSaveProb,

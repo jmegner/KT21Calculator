@@ -14,7 +14,7 @@ const WorldOfTanksSection: React.FC = () => {
   return (
     <Container style={{width: '900px'}}>
       <Row>
-        <a href='https://www.gf9games.com/worldoftanks/'>World Of Tanks</a>
+        <a href='https://www.gf9games.com/worldoftanks/'>World Of Tanks Miniatures Game</a>
         &#x202F;(<a href='https://www.gf9games.com/worldoftanks/wp-content/uploads/2020/06/WOT-Rulebook-FINAL-Small.pdf'>Rules PDF</a>)
       </Row>
       <Row>

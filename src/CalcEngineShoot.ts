@@ -23,14 +23,19 @@ export function calcDmgProbs(
   // don't add damage=0 stuff until just before multi-round handling
   let damageToProb = new Map<number, number>();
 
-  function addAtkDefScenario(atk: FinalDiceProb, def: FinalDiceProb, extraSaves: number): void {
+  function addAtkDefScenario(
+    atk: FinalDiceProb,
+    def: FinalDiceProb,
+    extraCritSaves: number,
+    extraNormSaves: number,
+  ): void {
     const currProb = atk.prob * def.prob;
     const damage = calcDamage(
       attacker,
       atk.crits,
       atk.norms,
-      def.crits,
-      def.norms + extraSaves,
+      def.crits + extraCritSaves,
+      def.norms + extraNormSaves,
       shootOptions.isFireTeamRules);
 
     if (damage > 0) {
@@ -42,12 +47,12 @@ export function calcDmgProbs(
     if (atk.crits + atk.norms > 0) {
       if (defenderStuff.pxIsRelevant && atk.crits > 0) {
         for (const def of defenderStuff.finalDiceProbsWithPx) {
-          addAtkDefScenario(atk, def, defenderStuff.coverSavesWithPx);
+          addAtkDefScenario(atk, def, defenderStuff.coverCritSavesWithPx, defenderStuff.coverNormSavesWithPx);
         }
       }
       else {
         for (const def of defenderStuff.finalDiceProbs) {
-          addAtkDefScenario(atk, def, defenderStuff.coverSaves);
+          addAtkDefScenario(atk, def, defenderStuff.coverCritSaves, defenderStuff.coverNormSaves);
         }
       }
     }

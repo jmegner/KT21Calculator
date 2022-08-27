@@ -79,8 +79,17 @@ const ShootSection: React.FC = () => {
               &#x202F;<a href="https://wahapedia.ru/kill-team2/kill-teams/hive-fleet#Strategic-Ploys">Hive Fleet strategic ploy</a>&#x202F;
               Lurk and the
               &#x202F;<a href="https://wahapedia.ru/kill-team2/kill-teams/brood-coven#Strategic-Ploys">Brood Coven strategic ploy</a>&#x202F;
-              Lurk In The Shadows. Lurk In The Shadows also allows a defender's 1 cover save to count as a critical
-              save, but that is not implemented.
+              Lurk In The Shadows.
+              
+              Lurk In The Shadows and things like Intercession Squad's Stealthy 
+              &#x202F;<a href="https://wahapedia.ru/kill-team2/kill-teams/intercession-squad#Chapter-Tactics">chapter tactic</a>&#x202F;
+              have an option for a cover save to be a critical save instead of a normal save.
+            </li>
+            <li>
+              HardyX is like LethalX (changes what values give you a critical success), but for defense.
+              For example, the Intercession Squad kill team has a
+              &#x202F;<a href="https://wahapedia.ru/kill-team2/kill-teams/intercession-squad#Chapter-Tactics">chapter tactic</a>&#x202F;
+              Hardy that would be considered HardyX=5+; defense rolls of 5s and 6s would be critical saves.
             </li>
             <li>
               FireTeamRules refers to whether to use the hit-cancellation rules from
