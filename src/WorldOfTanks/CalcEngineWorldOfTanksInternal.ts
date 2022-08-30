@@ -3,9 +3,10 @@ import FinalDiceProb from 'src/FinalDiceProb';
 import * as Common from 'src/CalcEngineCommon';
 import DieProbs from "src/DieProbs";
 import Tank from "src/WorldOfTanks/Tank";
-import Reroll from "src/WorldOfTanks/Reroll";
+import Reroll, { toAbility } from "src/WorldOfTanks/Reroll";
 import { factorial } from 'mathjs';
 import { sum, zip } from 'lodash';
+import Ability from 'src/Ability';
 
 export function calcFinalDiceProbs(tank: Tank): FinalDiceProb[] {
   const dieProbs = new DieProbs(
@@ -18,7 +19,7 @@ export function calcFinalDiceProbs(tank: Tank): FinalDiceProb[] {
   for(let crits = 0; crits <= tank.dice; crits++) {
     for(let norms = 0; norms <= tank.dice - crits; norms++) {
       const fails = tank.dice - crits - norms;
-      const prob = Common.calcFinalDiceProb(dieProbs, crits, norms, fails, tank.reroll === Reroll.One)
+      const prob = Common.calcFinalDiceProb( dieProbs, crits, norms, fails, toAbility(tank.reroll));
       probs.push(prob);
 
       // want to Modify Crits to Hits before Hits to Crits

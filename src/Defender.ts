@@ -1,6 +1,7 @@
 import { clone } from "lodash";
 import Die from "src/Die";
 import DieProbs from "src/DieProbs";
+import Ability from "./Ability";
 
 export default class Defender {
   public defense: number;
@@ -10,7 +11,7 @@ export default class Defender {
   public invulnSave: number;
   public coverNormSaves: number;
   public coverCritSaves: number;
-  public chitin: boolean;
+  public reroll: Ability;
   public hardyx: number; // like LethalX, but for defense
 
   public constructor(
@@ -21,7 +22,7 @@ export default class Defender {
     invulnSave: number = 0,
     coverNormSaves: number = 0,
     coverCritSaves: number = 0,
-    chitin: boolean = false,
+    reroll: Ability = Ability.None,
     hardyx: number = 0,
   ) {
     this.defense = defense;
@@ -31,7 +32,7 @@ export default class Defender {
     this.invulnSave = invulnSave;
     this.coverNormSaves = coverNormSaves;
     this.coverCritSaves = coverCritSaves;
-    this.chitin = chitin;
+    this.reroll = reroll;
     this.hardyx = hardyx;
   }
 
@@ -63,12 +64,12 @@ export default class Defender {
     );
   }
 
-  public setProp(propName: keyof Defender, value: number | boolean) : Defender {
+  public setProp(propName: keyof Defender, value: number | boolean | Ability) : Defender {
     (this[propName] as any) = value;
     return this;
   }
 
-  public withProp(propName: keyof Defender, value: number | boolean) : Defender {
+  public withProp(propName: keyof Defender, value: number | boolean | Ability) : Defender {
     const copy = clone(this);
     copy.setProp(propName, value);
     return copy;

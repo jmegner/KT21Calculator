@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col';
 import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
 import Defender from 'src/Defender';
 import * as Util from 'src/Util';
-import { boolToCheckX as toCheckX } from 'src/Util';
+import {rerollAbilities as rerolls} from 'src/Ability';
 
 export interface Props {
   defender: Defender;
@@ -23,10 +23,10 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
   const coverNormSavesId = 'CoverNormSaves*';
   const coverCritSavesId = 'CoverCritSaves*';
   const hardyxId = 'HardyX*';
-  const chitinId = 'ExtendedChitin*';
+  const rerollId = 'Reroll';
 
   const def = props.defender;
-  const [, numHandler, boolHandler]
+  const [textHandler, numHandler, boolHandler]
     = Util.makePropChangeHandlers(def, props.changeHandler);
 
   const params: IncProps[] = [
@@ -39,7 +39,7 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
     new IncProps(invulnSaveId,     def.invulnSave + '+', Util.xrollSpan,        numHandler('invulnSave')),
     new IncProps(hardyxId,         def.hardyx + '+',     Util.xspan(5, 5, '+'), numHandler('hardyx')),
     new IncProps(fnpId,            def.fnp + '+',        Util.xspan(3, 6, '+'), numHandler('fnp')),
-    new IncProps(chitinId,     toCheckX(def.chitin),     Util.xAndCheck,        boolHandler('chitin')),
+    new IncProps(rerollId,         def.reroll,           Util.preX(rerolls),    textHandler('reroll')),
   ];
 
   const paramElems = params.map(p =>

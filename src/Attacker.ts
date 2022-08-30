@@ -89,10 +89,13 @@ export default class Attacker {
     let failHitProb = 1 - critHitProb - normHitProb;
 
     // now to take ceaseless and relentless into account...
-    if (this.reroll === Ability.Ceaseless || this.reroll === Ability.Relentless) {
-      const rerollMultiplier = (this.reroll === Ability.Ceaseless)
-        ? 7 / 6
-        : (this.bs + 5) / 6;
+    if (this.reroll === Ability.Ceaseless
+      || this.reroll === Ability.Relentless
+      || this.reroll === Ability.CeaselessPlusBalanced
+    ) {
+      const rerollMultiplier = this.reroll === Ability.Relentless
+        ? (this.bs + 5) / 6
+        : 7 / 6;
       critHitProb *= rerollMultiplier;
       normHitProb *= rerollMultiplier;
       failHitProb = 1 - critHitProb - normHitProb;

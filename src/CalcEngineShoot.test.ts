@@ -10,8 +10,7 @@ import {
   calcMultiRoundDamage,
   calcPostFnpDamages,
 } from 'src/CalcEngineShootInternal';
-
-const requiredPrecision = 10;
+import { requiredPrecision } from 'src/CalcEngineCommon.test';
 
 function newTestAttacker(attacks: number = 1, bs: number = 4) : Attacker {
   return new Attacker(attacks, bs, 11, 13);
@@ -626,7 +625,7 @@ describe(calcDmgProbs.name + ', defender cover saves', () => {
 describe(calcDmgProbs.name + ', defender chitin', () => {
   it('chitin, 1 atk die & 1 def die', () => {
     const atk = newTestAttacker(1, 4);
-    const def = new Defender(1, 4).setProp('chitin', true);
+    const def = new Defender(1, 4).setProp('reroll', Ability.Balanced);
     const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
 
     const dmgs = calcDmgProbs(atk, def);
