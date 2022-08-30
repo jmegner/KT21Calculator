@@ -82,26 +82,7 @@ export default class Attacker {
   }
 
   public toDieProbs(): DieProbs {
-    // BEFORE taking ceaseless and relentless into account
-    const critSkill = this.critSkill();
-    let critHitProb = (7 - critSkill) / 6;
-    let normHitProb = Math.max(0, (critSkill - this.bs) / 6); // handle BS=6+ and LethalX=4+
-    let failHitProb = 1 - critHitProb - normHitProb;
-
-    // now to take ceaseless and relentless into account...
-    if (this.reroll === Ability.Ceaseless
-      || this.reroll === Ability.Relentless
-      || this.reroll === Ability.CeaselessPlusBalanced
-    ) {
-      const rerollMultiplier = this.reroll === Ability.Relentless
-        ? (this.bs + 5) / 6
-        : 7 / 6;
-      critHitProb *= rerollMultiplier;
-      normHitProb *= rerollMultiplier;
-      failHitProb = 1 - critHitProb - normHitProb;
-    }
-
-    return new DieProbs(critHitProb, normHitProb, failHitProb);
+    return DieProbs.fromSkills(this.critSkill(), this.bs, this.reroll);
   }
 
   public setProp(propName: keyof Attacker, value: number | Ability | boolean) : Attacker {

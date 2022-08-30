@@ -53,15 +53,7 @@ export default class Defender {
   }
 
   public toDieProbs(): DieProbs {
-    const critSkill = this.critSkill();
-    const critSaveProb = (7 - critSkill) / 6;
-    const normSaveProb = Math.max(0, (critSkill - this.relevantSave()) / 6); // handle Sv=6+ and HardyX=5+
-    const failSaveProb = (this.relevantSave() - 1) / 6;
-    return new DieProbs(
-      critSaveProb,
-      normSaveProb,
-      failSaveProb,
-    );
+    return DieProbs.fromSkills(this.critSkill(), this.relevantSave(), this.reroll);
   }
 
   public setProp(propName: keyof Defender, value: number | boolean | Ability) : Defender {
