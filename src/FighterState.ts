@@ -2,6 +2,7 @@ import { clone } from "lodash";
 import Attacker from "src/Attacker";
 import FightStrategy from 'src/FightStrategy';
 import FightChoice from "src/FightChoice";
+import Ability from "./Ability";
 
 export default class FighterState {
   public profile: Attacker;
@@ -40,7 +41,7 @@ export default class FighterState {
   ) {
     crits = crits || this.crits;
     norms = norms || this.norms;
-    return this.profile.hammerhand
+    return this.profile.abilities.has(Ability.Hammerhand)
       && !this.hasDoneHammerhand
       && (crits > 0 || norms > 0)
       ? 1 : 0;

@@ -6,6 +6,7 @@ import * as Common from 'src/CalcEngineCommon';
 import FightStrategy from 'src/FightStrategy';
 import FighterState from "src/FighterState";
 import FightChoice from "src/FightChoice";
+import Ability from "src/Ability";
 
 export const toWoundPairKey = (guy1Wounds: number, guy2Wounds: number): string => [guy1Wounds, guy2Wounds].toString();
 export const fromWoundPairKey = (woundsPairText: string): number[] => woundsPairText.split(',').map(x => parseInt(x));
@@ -201,7 +202,7 @@ export function resolveDieChoice(
   enemy: FighterState,
 ): void {
   function handleHammerhand() {
-    if(chooser.profile.hammerhand && !chooser.hasDoneHammerhand) {
+    if(chooser.profile.abilities.has(Ability.Hammerhand) && !chooser.hasDoneHammerhand) {
       chooser.hasDoneHammerhand = true;
       enemy.applyDmg(1);
     }
@@ -226,12 +227,25 @@ export function resolveDieChoice(
   else if(choice === FightChoice.CritParry) {
     chooser.crits--;
 
-    for(let numCancelled = 0; numCancelled < chooser.profile.cancelsPerParry(); numCancelled++) {
+    // Dueller: critical parry can cancel additional normal success
+    if(chooser.profile.abilities.has(Ability.Dueller)) {
+      let numCritsCancelled = 0;
+
       if(enemy.crits > 0) {
         enemy.crits--;
+        numCritsCancelled++;
       }
-      else if(enemy.norms > 0) {
-        enemy.norms--;
+
+      enemy.norms = Math.max(0, enemy.norms - 2 + numCritsCancelled);
+    }
+    else {
+      for(let numCancelled = 0; numCancelled < chooser.profile.cancelsPerParry(); numCancelled++) {
+        if(enemy.crits > 0) {
+          enemy.crits--;
+        }
+        else if(enemy.norms > 0) {
+          enemy.norms--;
+        }
       }
     }
   }
@@ -261,10 +275,22 @@ export function calcParryForLastEnemySuccessThenKillEnemy(
     }
   }
 
+  const enemySuccesses = enemy.crits + enemy.norms;
+
   // if chooser can parry enemy's remaining success (or successes due to storm shield)
   // AND kill enemy afterwards, then chooser should parry
-  if(enemy.crits + enemy.norms <= chooser.profile.cancelsPerParry()) {
-    let fightChoice: FightChoice | null = null;
+  let fightChoice: FightChoice | null = null;
+
+  // special case for Dueller
+  if(chooser.profile.abilities.has(Ability.Dueller)
+    && chooser.crits > 0
+    && enemy.crits <= 1
+    && enemySuccesses <= 2
+  ) {
+    fightChoice = FightChoice.CritParry;
+  }
+  // handle StormShield and normal
+  else if(enemy.crits + enemy.norms <= chooser.profile.cancelsPerParry()) {
 
     if(enemy.crits > 0) {
       if(chooser.crits > 0) {
@@ -281,15 +307,15 @@ export function calcParryForLastEnemySuccessThenKillEnemy(
         fightChoice = FightChoice.CritParry;
       }
     }
+  }
 
-    if(fightChoice !== null) {
-      const critsAfterParry = chooser.crits - (fightChoice === FightChoice.CritParry ? 1 : 0);
-      const normsAfterParry = chooser.norms - (fightChoice === FightChoice.NormParry ? 1 : 0);
-      const remainingDmg = chooser.possibleDmg(critsAfterParry, normsAfterParry);
+  if(fightChoice !== null) {
+    const critsAfterParry = chooser.crits - (fightChoice === FightChoice.CritParry ? 1 : 0);
+    const normsAfterParry = chooser.norms - (fightChoice === FightChoice.NormParry ? 1 : 0);
+    const remainingDmg = chooser.possibleDmg(critsAfterParry, normsAfterParry);
 
-      if(remainingDmg >= enemy.profile.wounds) {
-        return fightChoice;
-      }
+    if(remainingDmg >= enemy.profile.wounds) {
+      return fightChoice;
     }
   }
 

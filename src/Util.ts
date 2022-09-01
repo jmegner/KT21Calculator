@@ -57,7 +57,7 @@ export function makePropChangeHandler<T>(
 {
   return (propName: keyof T) => function handler(text: string) {
     let newObj = clone(obj);
-    (newObj as any)[propName] = transformer === undefined ? text : transformer(text);
+    newObj[propName] = transformer === undefined ? text : transformer(text);
     objChangeHandler(newObj);
   };
 }
@@ -88,6 +88,42 @@ export function makeBoolChangeHandler<T>(
 ) : (propName: keyof T) => Accepter<string>
 {
   return makePropChangeHandler(obj, objChangeHandler, t => t === thickCheck);
+}
+
+export function makeSetChangeHandler<ObjType,ItemType>(
+  obj: ObjType,
+  objChangeHandler: (t: ObjType) => void,
+  setName: keyof ObjType,
+  mutuallyExclusiveItems: Iterable<ItemType>,
+) : (propName: keyof ObjType) => Accepter<string>
+{
+  return (propName: keyof ObjType) => function handler(text: string) {
+    let newObj = clone(obj);
+    const newSet = new Set<ItemType>(newObj[propName] as unknown as Set<ItemType>);
+    newObj[setName] = newSet as any;
+
+    for(const item of mutuallyExclusiveItems) {
+      newSet.delete(item);
+    }
+
+    newSet.add(text as unknown as ItemType);
+    objChangeHandler(newObj);
+  };
+}
+
+export function makeSetExtractor<ItemType>(
+  relevantItems: Iterable<ItemType>,
+  defaultItem: ItemType | null = null,
+): (allItems: Set<ItemType>) => ItemType | null
+{
+  return function extractor(allItems: Set<ItemType>): ItemType | null {
+    for(const relevantItem of relevantItems) {
+      if(allItems.has(relevantItem)) {
+        return relevantItem;
+      }
+    }
+    return defaultItem;
+  }
 }
 
 export function nameof<TObject>(obj: TObject, key: keyof TObject): string;
@@ -144,5 +180,14 @@ export function fillInProbForZero(keyToProb: Map<number, number>): void {
 
   if (nonzeroValueProbSum < 1) {
     keyToProb.set(0, 1 - nonzeroValueProbSum);
+  }
+}
+
+export function addOrRemove<T>(theSet: Set<T>, item: T, wantAdd: boolean): void {
+  if(wantAdd) {
+    theSet.add(item);
+  }
+  else {
+    theSet.delete(item);
   }
 }

@@ -4,14 +4,13 @@ import {
   Col,
   Container,
   Row,
-  //Stack,
 } from 'react-bootstrap';
 
 import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
 import * as Util from 'src/Util';
 import { boolToCheckX as toCheckX } from 'src/Util';
 import Attacker from 'src/Attacker';
-import {rerollAbilities as rerolls} from 'src/Ability';
+import Ability, {mutuallyExclusiveFightAbilities, rerollAbilities as rerolls} from 'src/Ability';
 
 
 export interface Props {
@@ -24,6 +23,13 @@ const FighterControls: React.FC<Props> = (props: Props) => {
   const atk = props.attacker;
   const [textHandler, numHandler, boolHandler]
     = Util.makePropChangeHandlers(atk, props.changeHandler);
+  const abilitySetHandler = Util.makeSetChangeHandler<Attacker,Ability>(
+    atk,
+    props.changeHandler,
+    'abilities',
+    mutuallyExclusiveFightAbilities,
+  );
+  const abilityExtractor = Util.makeSetExtractor(mutuallyExclusiveFightAbilities, Ability.None);
 
   const params: IncProps[] = [
     //           id/label,          selectedValue,             values,              valueChangeHandler
@@ -38,8 +44,7 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps('Rending',      toCheckX(atk.rending),     Util.xAndCheck,        boolHandler('rending')),
     new IncProps('Brutal',       toCheckX(atk.brutal),      Util.xAndCheck,        boolHandler('brutal')),
     new IncProps('Stun',         toCheckX(atk.stun),        Util.xAndCheck,        boolHandler('stun')),
-    new IncProps('Storm Shield', toCheckX(atk.stormShield), Util.xAndCheck,        boolHandler('stormShield')),
-    new IncProps('Hammerhand',   toCheckX(atk.hammerhand),  Util.xAndCheck,        boolHandler('hammerhand')),
+    new IncProps('NicheAbility', abilityExtractor(atk.abilities)!, mutuallyExclusiveFightAbilities, abilitySetHandler('abilities')),
     //new IncProps('FeelNoPain',   atk.fnp + '+',             Util.xspan(3, 6, '+'), numHandler('fnp')),
   ];
 

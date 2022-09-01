@@ -1,6 +1,7 @@
 import { clone } from "lodash";
 import Ability from "src/Ability";
 import DieProbs from "src/DieProbs";
+import * as Util from 'src/Util';
 
 export default class Attacker {
   public attacks: number;
@@ -18,8 +19,7 @@ export default class Attacker {
   public fnp: number; // fight only
   public brutal: boolean; // fight only
   public stun: boolean; // fight only
-  public stormShield: boolean; // fight only
-  public hammerhand: boolean; // fight only
+  public abilities: Set<Ability>; // for {Dueller,StormShield,Hammerhand}; TODO add {rending, starfire, brutal, stun};
 
   public constructor(
     attacks: number = 4,
@@ -37,8 +37,7 @@ export default class Attacker {
     fnp: number = 0,
     brutal: boolean = false,
     stun: boolean = false,
-    stormShield: boolean = false,
-    hammerhand: boolean = false,
+    abilities: Set<Ability> = new Set<Ability>(),
   ) {
     this.attacks = attacks;
     this.bs = bs;
@@ -55,8 +54,7 @@ export default class Attacker {
     this.fnp = fnp;
     this.brutal = brutal;
     this.stun = stun;
-    this.stormShield = stormShield;
-    this.hammerhand = hammerhand;
+    this.abilities = abilities;
   }
 
   public static justDamage(
@@ -78,22 +76,35 @@ export default class Attacker {
   }
 
   public cancelsPerParry(): number {
-    return this.stormShield ? 2 : 1;
+    return this.abilities.has(Ability.StormShield) ? 2 : 1;
   }
 
   public toDieProbs(): DieProbs {
     return DieProbs.fromSkills(this.critSkill(), this.bs, this.reroll);
   }
 
-  public setProp(propName: keyof Attacker, value: number | Ability | boolean) : Attacker {
+  public setProp(propName: keyof Attacker, value: number | Ability | boolean | Set<Ability>) : Attacker {
     (this[propName] as any) = value;
     return this;
   }
 
-  public withProp(propName: keyof Attacker, value: number | Ability | boolean) : Attacker {
+  public withProp(propName: keyof Attacker, value: number | Ability | boolean | Set<Ability>) : Attacker {
     const copy = clone(this);
     copy.setProp(propName, value);
     return copy;
+  }
+
+  // TODO: use this more
+  public has(ability: Ability): boolean {
+    if(this.reroll === ability) {
+      return true;
+    }
+    return this.abilities.has(ability);
+  }
+
+  public setAbility(ability: Ability, addIt: boolean): Attacker {
+    Util.addOrRemove(this.abilities, ability, addIt);
+    return this;
   }
 
   public withAlwaysNormHit() : Attacker {
