@@ -22,7 +22,10 @@ const ShootSection: React.FC = () => {
   const [defender, setDefender] = React.useState(new Defender());
   const [shootOptions, setShootOptions] = React.useState(new ShootOptions());
 
-  const damageToProb = calcDmgProbs(attacker, defender, shootOptions);
+  //const damageToProb = calcDmgProbs(attacker, defender, shootOptions);
+
+  const saveToDmgToProb = new Map<number,Map<number,number>>([2, 3, 4, 5, 6].map(save =>
+    [save, calcDmgProbs(attacker, defender.withProp('save', save), shootOptions)]));
 
   return (
     <Container style={{width: '510px'}}>
@@ -42,7 +45,7 @@ const ShootSection: React.FC = () => {
         </Col>
       </Row>
       <Row className='border'>
-        <ShootResultsDisplay damageToProb={damageToProb} defender={defender} />
+        <ShootResultsDisplay saveToDmgToProb={saveToDmgToProb} defender={defender} />
       </Row>
       <Row>
         <Col className={Util.centerHoriz + ' border'} style={{fontSize: '11px'}}>

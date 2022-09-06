@@ -15,31 +15,22 @@ export interface Props {
 
 
 const DefenderControls: React.FC<Props> = (props: Props) => {
-  const saveId = 'Save';
-  const defenseId = 'Defense';
-  const woundsId = 'Wounds';
-  const fnpId = 'FeelNoPain*';
-  const invulnSaveId = 'InvulnSave*';
-  const coverNormSavesId = 'CoverNormSaves*';
-  const coverCritSavesId = 'CoverCritSaves*';
-  const hardyxId = 'HardyX*';
-  const rerollId = 'Reroll';
-
   const def = props.defender;
-  const [textHandler, numHandler, boolHandler]
+  const [textHandler, numHandler, /*boolHandler*/]
     = Util.makePropChangeHandlers(def, props.changeHandler);
 
   const params: IncProps[] = [
     //           id,               selectedValue,        values,                valueChangeHandler
-    new IncProps(defenseId,        def.defense,          Util.span(0, 4),       numHandler('defense')),
-    new IncProps(saveId,           def.save + '+',       Util.rollSpan,         numHandler('save')),
-    new IncProps(woundsId,         def.wounds,           Util.span(1, 19),      numHandler('wounds')),
-    new IncProps(coverNormSavesId, def.coverNormSaves,   Util.xspan(1, 3),      numHandler('coverNormSaves')),
-    new IncProps(coverCritSavesId, def.coverCritSaves,   Util.xspan(1, 3),      numHandler('coverCritSaves')),
-    new IncProps(invulnSaveId,     def.invulnSave + '+', Util.xrollSpan,        numHandler('invulnSave')),
-    new IncProps(hardyxId,         def.hardyx + '+',     Util.xspan(5, 5, '+'), numHandler('hardyx')),
-    new IncProps(fnpId,            def.fnp + '+',        Util.xspan(3, 6, '+'), numHandler('fnp')),
-    new IncProps(rerollId,         def.reroll,           Util.preX(rerolls),    textHandler('reroll')),
+    new IncProps('Defense',        def.defense,          Util.span(0, 4),       numHandler('defense')),
+    new IncProps('Save',           def.save + '+',       Util.rollSpan,         numHandler('save')),
+    new IncProps('Wounds',         def.wounds,           Util.span(1, 20),      numHandler('wounds')),
+    new IncProps('CoverNormSaves', def.coverNormSaves,   Util.xspan(1, 4),      numHandler('coverNormSaves')),
+    new IncProps('CoverCritSaves', def.coverCritSaves,   Util.xspan(1, 4),      numHandler('coverCritSaves')),
+    new IncProps('NormToCrit',     def.normToCritPromotions, Util.xspan(1, 4),  numHandler('normToCritPromotions')),
+    new IncProps('InvulnSave',     def.invulnSave + '+', Util.xrollSpan,        numHandler('invulnSave')),
+    new IncProps('HardyX',         def.hardyx + '+',     Util.xspan(5, 2, '+'), numHandler('hardyx')),
+    new IncProps('FeelNoPain',     def.fnp + '+',        Util.xspan(6, 2, '+'), numHandler('fnp')),
+    new IncProps('Reroll',         def.reroll,           Util.preX(rerolls),    textHandler('reroll')),
   ];
 
   const paramElems = params.map(p =>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { useSearchParams } from 'react-router-dom';
 
+import * as Util from 'src/Util';
 import AppHeader from "src/components/AppHeader";
 import ShootSection from 'src/components/ShootSection';
 import FightSection from 'src/components/FightSection';
@@ -44,6 +45,11 @@ const App = () => {
   return (
     <>
       <AppHeader navCallback={setCurrentView} currentView={currentView} />
+        <Row>
+          <Col className={Util.centerHoriz + ' p-0'}>
+            Check 'Notes' at bottom for explanations.
+          </Col>
+        </Row>
         <Row>
           <Col>
             {sectionDiv(CalculatorViewChoice.KtShoot, <ShootSection/>)}

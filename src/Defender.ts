@@ -13,6 +13,7 @@ export default class Defender {
   public coverCritSaves: number;
   public reroll: Ability;
   public hardyx: number; // like LethalX, but for defense
+  public normToCritPromotions: number;
 
   public constructor(
     defense: number = 3,
@@ -24,6 +25,7 @@ export default class Defender {
     coverCritSaves: number = 0,
     reroll: Ability = Ability.None,
     hardyx: number = 0,
+    normToCritPromotions: number = 0,
   ) {
     this.defense = defense;
     this.save = save;
@@ -34,6 +36,7 @@ export default class Defender {
     this.coverCritSaves = coverCritSaves;
     this.reroll = reroll;
     this.hardyx = hardyx;
+    this.normToCritPromotions = normToCritPromotions;
   }
 
   public usesFnp(): boolean {

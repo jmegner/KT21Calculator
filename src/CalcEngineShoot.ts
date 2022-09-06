@@ -28,14 +28,21 @@ export function calcDmgProbs(
     def: FinalDiceProb,
     extraCritSaves: number,
     extraNormSaves: number,
+    numSavePromotions: number,
   ): void {
     const currProb = atk.prob * def.prob;
+    let critSaves = def.crits + extraCritSaves;
+    let normSaves = def.norms + extraNormSaves;
+    const actualPromotions = Math.min(numSavePromotions, normSaves);
+    critSaves += actualPromotions;
+    normSaves -= actualPromotions;
+
     const damage = calcDamage(
       attacker,
       atk.crits,
       atk.norms,
-      def.crits + extraCritSaves,
-      def.norms + extraNormSaves,
+      critSaves,
+      normSaves,
       shootOptions.isFireTeamRules);
 
     if (damage > 0) {
@@ -47,12 +54,24 @@ export function calcDmgProbs(
     if (atk.crits + atk.norms > 0) {
       if (defenderStuff.pxIsRelevant && atk.crits > 0) {
         for (const def of defenderStuff.finalDiceProbsWithPx) {
-          addAtkDefScenario(atk, def, defenderStuff.coverCritSavesWithPx, defenderStuff.coverNormSavesWithPx);
+          addAtkDefScenario(
+            atk,
+            def,
+            defenderStuff.coverCritSavesWithPx,
+            defenderStuff.coverNormSavesWithPx,
+            defender.normToCritPromotions,
+          );
         }
       }
       else {
         for (const def of defenderStuff.finalDiceProbs) {
-          addAtkDefScenario(atk, def, defenderStuff.coverCritSaves, defenderStuff.coverNormSaves);
+          addAtkDefScenario(
+            atk,
+            def,
+            defenderStuff.coverCritSaves,
+            defenderStuff.coverNormSaves,
+            defender.normToCritPromotions,
+          );
         }
       }
     }

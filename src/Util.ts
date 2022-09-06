@@ -34,8 +34,9 @@ export function boolToCheckX(val: boolean) : string {
   return val ? thickCheck : thickX;
 }
 
-export function span(min: number, max: number, suffix?: string) : string[] {
-  return range(min, max + 1).map(x => x.toString() + (suffix ? suffix : ''));
+export function span(first: number, last: number, suffix?: string) : string[] {
+  const delta = first <= last ? 1 : -1;
+  return range(first, last + delta, delta).map(x => x.toString() + (suffix ? suffix : ''));
 }
 
 export function xspan(min: number, max: number, suffix?: string) : string[] {
@@ -136,6 +137,16 @@ export function weightedAverage(valToWeight: Map<number,number>) : number {
   let avg = 0;
   valToWeight.forEach((weight, val) => { avg += val * weight; });
   return avg;
+}
+
+export function killProb(dmgToProb: Map<number,number>, wounds: number): number {
+  let probSum = 0;
+  for(const [dmg, prob] of dmgToProb) {
+    if(dmg >= wounds) {
+      probSum += prob;
+    }
+  }
+  return probSum;
 }
 
 export function binomialPmf(
