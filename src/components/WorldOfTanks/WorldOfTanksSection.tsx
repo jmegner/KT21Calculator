@@ -37,7 +37,6 @@ const WorldOfTanksSection: React.FC = () => {
           Notes:
           <ul>
             <li>AvgDamageBounded is the average of damage bounded by the number of the defender's wounds.</li>
-            <li>AvgDamageUnbounded is the average of damage without regard to defender's wounds.</li>
             <li>HitsToCrits examples: Big Gun, Binocular Telescope (while Stationary), Eagle Eye (don't forget to decrease attack dice), Spall Liner, Preventative Maintenance</li>
           </ul>
         </Col>

@@ -5,26 +5,30 @@ import Col from 'react-bootstrap/Col';
 
 import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
 import ShootOptions from 'src/ShootOptions';
-import * as Util from 'src/Util';
+import * as N from 'src/Notes';
 import {
+  Accepter,
   boolToCheckX as toCheckX,
+  makePropChangeHandlers,
+  span,
+  xAndCheck,
 } from 'src/Util';
 
 export interface Props {
   shootOptions: ShootOptions;
-  changeHandler: Util.Accepter<ShootOptions>;
+  changeHandler: Accepter<ShootOptions>;
 }
 
 const ShootOptionControls: React.FC<Props> = (props: Props) => {
   const opts = props.shootOptions;
   // eslint-disable-next-line
   const [textHandler, numHandler, boolHandler]
-    = Util.makePropChangeHandlers(opts, props.changeHandler);
+    = makePropChangeHandlers(opts, props.changeHandler);
 
   const params: IncProps[] = [
     //           id,       selectedValue,values,          valueChangeHandler
-    new IncProps('Rounds',        opts.numRounds,                 Util.span(1, 9), numHandler('numRounds')),
-    new IncProps('FireTeamRules', toCheckX(opts.isFireTeamRules), Util.xAndCheck,  boolHandler('isFireTeamRules')),
+    new IncProps('Rounds',        opts.numRounds,                 span(1, 9), numHandler('numRounds')),
+    new IncProps(N.FireTeamRules, toCheckX(opts.isFireTeamRules), xAndCheck,  boolHandler('isFireTeamRules')),
   ];
 
   const paramElems = params.map(p =>

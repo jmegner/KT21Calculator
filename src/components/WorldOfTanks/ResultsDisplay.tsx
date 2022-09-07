@@ -60,6 +60,7 @@ const ResultsDisplay: React.FC<Props> = (props: Props) => {
           {avgDmgUnbounded.toFixed(digitsPastDecimalForDamage)}
         </Col>
       </Row>
+      {/*
       <Row>
         <Col style={{fontSize: '11px'}}>
           AvgDmgBounded:
@@ -68,6 +69,7 @@ const ResultsDisplay: React.FC<Props> = (props: Props) => {
           {avgDmgBounded.toFixed(digitsPastDecimalForDamage)}
         </Col>
       </Row>
+      */}
       <Row>
         <Col style={{fontSize: '11px'}}>
           KillChance:

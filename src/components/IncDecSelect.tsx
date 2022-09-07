@@ -2,9 +2,11 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import * as Util from 'src/Util';
+import Note from 'src/Notes';
 
 export interface IProps {
   id: string;
+  hoverText?: string;
   label?: string;
   values: string[];
   selectedValue: number | string;
@@ -13,17 +15,25 @@ export interface IProps {
 
 export class Props implements IProps {
   public id: string;
+  public hoverText?: string;
   public selectedValue: number | string;
   public values: string[];
   public valueChangeHandler: Util.Accepter<string>;
 
   constructor(
-    id: string,
+    idOrNote: string | Note,
     selectedValue: string | number,
     values: string[] | number[],
     valueChangeHandler: Util.Accepter<string>,
   ) {
-    this.id = id;
+    if(idOrNote instanceof Note) {
+      this.id = idOrNote.name;
+      this.hoverText = idOrNote.description;
+    }
+    else {
+      this.id = idOrNote;
+    }
+
     this.values = values.map((val: any) => val.toString()) as string[];
     this.selectedValue = selectedValue.toString();
     this.valueChangeHandler = valueChangeHandler;
@@ -49,9 +59,10 @@ const IncDecSelect: React.FC<IProps> = (props: IProps) => {
     <div>
       <label
         htmlFor={props.id}
+        title={props.hoverText}
         style={{ fontSize: '11px', display: 'inline', verticalAlign: 'middle' }}
       >
-        {props.label ?? props.id}
+        {props.label ?? props.id}{props.hoverText ? '*' : ''}
       </label>
       <InputGroup className='mb-1' style={{flexWrap: 'nowrap'}}>
         <Button variant='danger' onClick={() => handleIncDec(-1)}>-</Button>

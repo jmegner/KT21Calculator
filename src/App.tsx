@@ -46,8 +46,8 @@ const App = () => {
     <>
       <AppHeader navCallback={setCurrentView} currentView={currentView} />
         <Row>
-          <Col className={Util.centerHoriz + ' p-0'}>
-            Check 'Notes' at bottom for explanations.
+          <Col className={Util.centerHoriz + ' p-0'} style={{fontSize: '11px'}}>
+            Starred (*) items have explanations in hovertext and 'Notes' at bottom.
           </Col>
         </Row>
         <Row>

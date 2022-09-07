@@ -8,44 +8,59 @@ import {
 
 import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
 import * as Util from 'src/Util';
-import { boolToCheckX as toCheckX } from 'src/Util';
+import {
+  Accepter,
+  boolToCheckX as toCheckX,
+  makePropChangeHandlers,
+  makeSetChangeHandler,
+  makeSetExtractor,
+  preX,
+  rollSpan,
+  span,
+  xAndCheck,
+  xspan,
+} from 'src/Util';
 import Attacker from 'src/Attacker';
-import Ability, {mutuallyExclusiveFightAbilities, rerollAbilities as rerolls} from 'src/Ability';
+import Ability, {
+  mutuallyExclusiveFightAbilities as nicheAbilities,
+  rerollAbilities as rerolls
+} from 'src/Ability';
+import * as N from 'src/Notes';
 
 
 export interface Props {
   title: string;
   attacker: Attacker;
-  changeHandler: Util.Accepter<Attacker>;
+  changeHandler: Accepter<Attacker>;
 }
 
 const FighterControls: React.FC<Props> = (props: Props) => {
   const atk = props.attacker;
   const [textHandler, numHandler, boolHandler]
-    = Util.makePropChangeHandlers(atk, props.changeHandler);
-  const abilitySetHandler = Util.makeSetChangeHandler<Attacker,Ability>(
+    = makePropChangeHandlers(atk, props.changeHandler);
+  const abilitySetHandler = makeSetChangeHandler<Attacker,Ability>(
     atk,
     props.changeHandler,
     'abilities',
-    mutuallyExclusiveFightAbilities,
+    nicheAbilities,
   );
-  const abilityExtractor = Util.makeSetExtractor(mutuallyExclusiveFightAbilities, Ability.None);
+  const abilityExtractor = makeSetExtractor(nicheAbilities, Ability.None);
+  const ability = abilityExtractor(atk.abilities)!;
 
   const params: IncProps[] = [
-    //           id/label,          selectedValue,             values,              valueChangeHandler
-    new IncProps('Attacks',      atk.attacks,               Util.span(1, 8),       numHandler('attacks')),
-    new IncProps('WS',           atk.bs + '+',              Util.rollSpan,         numHandler('bs')),
-    new IncProps('Normal Dmg',   atk.normDmg,               Util.span(1, 9),       numHandler('normDmg')),
-    new IncProps('Critical Dmg', atk.critDmg,               Util.span(1, 9),       numHandler('critDmg')),
-    new IncProps('LethalX',      atk.lethalx + '+',         Util.xspan(4, 5, '+'), numHandler('lethalx')),
-    new IncProps('Reroll',       atk.reroll,                Util.preX(rerolls),    textHandler('reroll')),
+    //           id/label,          selectedValue,      values,           valueChangeHandler
+    new IncProps('Attacks',      atk.attacks,           span(1, 8),       numHandler('attacks')),
+    new IncProps('WS',           atk.bs + '+',          rollSpan,         numHandler('bs')),
+    new IncProps('Normal Dmg',   atk.normDmg,           span(1, 9),       numHandler('normDmg')),
+    new IncProps('Critical Dmg', atk.critDmg,           span(1, 9),       numHandler('critDmg')),
+    new IncProps('LethalX',      atk.lethalx + '+',     xspan(4, 5, '+'), numHandler('lethalx')),
+    new IncProps(N.Reroll,       atk.reroll,            preX(rerolls),    textHandler('reroll')),
     // 2nd col
-    new IncProps('Wounds',       atk.wounds,                Util.span(1, 19),      numHandler('wounds')),
-    new IncProps('Rending',      toCheckX(atk.rending),     Util.xAndCheck,        boolHandler('rending')),
-    new IncProps('Brutal',       toCheckX(atk.brutal),      Util.xAndCheck,        boolHandler('brutal')),
-    new IncProps('Stun',         toCheckX(atk.stun),        Util.xAndCheck,        boolHandler('stun')),
-    new IncProps('NicheAbility', abilityExtractor(atk.abilities)!, mutuallyExclusiveFightAbilities, abilitySetHandler('abilities')),
-    //new IncProps('FeelNoPain',   atk.fnp + '+',             Util.xspan(3, 6, '+'), numHandler('fnp')),
+    new IncProps('Wounds',       atk.wounds,            span(1, 19),      numHandler('wounds')),
+    new IncProps(N.Rending,      toCheckX(atk.rending), xAndCheck,        boolHandler('rending')),
+    new IncProps(N.Brutal,       toCheckX(atk.brutal),  xAndCheck,        boolHandler('brutal')),
+    new IncProps(N.StunMelee,    toCheckX(atk.stun),    xAndCheck,        boolHandler('stun')),
+    new IncProps(N.NicheAbility, ability,               nicheAbilities,   abilitySetHandler('abilities')),
   ];
 
   const paramElems = params.map(p =>

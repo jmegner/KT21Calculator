@@ -13,6 +13,7 @@ import FightOptionControls from 'src/components/FightOptionControls';
 import { calcRemainingWounds } from 'src/CalcEngineFight';
 import FightResultsDisplay from 'src/components/FightResultsDisplay';
 import FightOptions from 'src/FightOptions';
+import * as N from 'src/Notes';
 
 const FightSection: React.FC = () => {
   const [fighterA, setFighterA] = React.useState(new Attacker());
@@ -28,6 +29,14 @@ const FightSection: React.FC = () => {
   );
   const fighterAWoundProbs = aFirst ? fighter1WoundProbs : fighter2WoundProbs;
   const fighterBWoundProbs = aFirst ? fighter2WoundProbs : fighter1WoundProbs;
+
+  const noteListItems: JSX.Element[] = [
+    N.Reroll,
+    N.Rending,
+    N.Brutal,
+    N.StunMelee,
+    N.NicheAbility,
+  ].map(note => <li><b>{note.name}</b>: {note.description}</li>);
 
   return (
     <Container style={{width: '800'}}>
@@ -76,8 +85,9 @@ const FightSection: React.FC = () => {
                 </ul>
               </li>
               <li>
-                Balanced will only reroll a fail even if would be wise to reroll a normal success.
+                Balanced and Relentless will not reroll a normal success even if it would be wise to do so.
               </li>
+              {noteListItems}
             </ul>
           </div>
         </Col>

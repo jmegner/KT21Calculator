@@ -8,6 +8,7 @@ import * as Util from 'src/Util';
 import { boolToCheckX as toCheckX } from 'src/Util';
 import Attacker from 'src/Attacker';
 import {rerollAbilities as rerolls} from 'src/Ability';
+import * as N from 'src/Notes';
 
 
 export interface Props {
@@ -29,10 +30,10 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     new IncProps('MWx',        atk.mwx,                Util.xspan(1, 9),      numHandler('mwx')),
     new IncProps('APx',        atk.apx,                Util.xspan(1, 4),      numHandler('apx')),
     new IncProps('Px',         atk.px,                 Util.xspan(1, 4),      numHandler('px')),
-    new IncProps('Reroll',     atk.reroll,             Util.preX(rerolls),    textHandler('reroll')),
+    new IncProps(N.Reroll,     atk.reroll,             Util.preX(rerolls),    textHandler('reroll')),
     new IncProps('LethalX',    atk.lethalx + '+',      Util.xspan(5, 2, '+'), numHandler('lethalx')),
-    new IncProps('Rending',    toCheckX(atk.rending),  Util.xAndCheck,        boolHandler('rending')),
-    new IncProps('Starfire*',  toCheckX(atk.starfire), Util.xAndCheck,        boolHandler('starfire')),
+    new IncProps(N.Rending,    toCheckX(atk.rending),  Util.xAndCheck,        boolHandler('rending')),
+    new IncProps(N.Starfire, toCheckX(atk.starfire), Util.xAndCheck,        boolHandler('starfire')),
   ];
 
   const paramElems = params.map(p =>

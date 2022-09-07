@@ -7,6 +7,7 @@ import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
 import Defender from 'src/Defender';
 import * as Util from 'src/Util';
 import {rerollAbilities as rerolls} from 'src/Ability';
+import * as N from 'src/Notes';
 
 export interface Props {
   defender: Defender;
@@ -24,13 +25,13 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
     new IncProps('Defense',        def.defense,          Util.span(0, 4),       numHandler('defense')),
     new IncProps('Save',           def.save + '+',       Util.rollSpan,         numHandler('save')),
     new IncProps('Wounds',         def.wounds,           Util.span(1, 20),      numHandler('wounds')),
-    new IncProps('CoverNormSaves', def.coverNormSaves,   Util.xspan(1, 4),      numHandler('coverNormSaves')),
-    new IncProps('CoverCritSaves', def.coverCritSaves,   Util.xspan(1, 4),      numHandler('coverCritSaves')),
-    new IncProps('NormToCrit',     def.normToCritPromotions, Util.xspan(1, 4),  numHandler('normToCritPromotions')),
-    new IncProps('InvulnSave',     def.invulnSave + '+', Util.xrollSpan,        numHandler('invulnSave')),
-    new IncProps('HardyX',         def.hardyx + '+',     Util.xspan(5, 2, '+'), numHandler('hardyx')),
-    new IncProps('FeelNoPain',     def.fnp + '+',        Util.xspan(6, 2, '+'), numHandler('fnp')),
-    new IncProps('Reroll',         def.reroll,           Util.preX(rerolls),    textHandler('reroll')),
+    new IncProps(N.CoverNormSaves, def.coverNormSaves,   Util.xspan(1, 4),      numHandler('coverNormSaves')),
+    new IncProps(N.CoverCritSaves, def.coverCritSaves,   Util.xspan(1, 4),      numHandler('coverCritSaves')),
+    new IncProps(N.NormToCrit,     def.normToCritPromotions, Util.xspan(1, 4),  numHandler('normToCritPromotions')),
+    new IncProps(N.InvulnSave,     def.invulnSave + '+', Util.xrollSpan,        numHandler('invulnSave')),
+    new IncProps(N.HardyX,         def.hardyx + '+',     Util.xspan(5, 2, '+'), numHandler('hardyx')),
+    new IncProps(N.FeelNoPain,     def.fnp + '+',        Util.xspan(6, 2, '+'), numHandler('fnp')),
+    new IncProps(N.Reroll,         def.reroll,           Util.preX(rerolls),    textHandler('reroll')),
   ];
 
   const paramElems = params.map(p =>
