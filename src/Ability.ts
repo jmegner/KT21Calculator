@@ -5,7 +5,7 @@ export enum Ability {
     Relentless = "Relentless", // reroll any of your choosing
     CeaselessPlusBalanced = "BothCeaselessAndBalanced", // ex: Auto Bolt Rifle (Ceaseless) and Devastator Doctrine (Balanced)
     Rending = "Rending", // if have crit, promote one normal hit to crit
-    CritPromotesOneFailToNormal = "Starfire", // Necron 'starfire core' equipment
+    CritPromotesOneFailToNormal = "Starfire/DakkaDakkaDakka", // crit triggers promotion of 1 fail to 1 norm
     StormShield = "StormShield", // each parry cancels two successes
     Hammerhand = "Hammerhand", // first strike does one extra dmg
     Dueller = "Dueller", // each crit parry cancels extra normal success

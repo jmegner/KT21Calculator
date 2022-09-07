@@ -17,8 +17,8 @@ export const Rending = new Note(
   `If you roll >=1 crit, you can modify a norm to a crit.`,
 );
 export const Starfire = new Note(
-  `Starfire`,
-  `Necron equipment Starfire Core allows you to modify a failed hit into a normal hit if you had at least one critical hit.`,
+  `Starfire/DakkaDakkaDakka`,
+  `Necron equipment Starfire Core and Kommando strategic ploy "Dakka! Dakka! Dakka!" allow you to modify a failed hit into a normal hit if you had at least one critical hit.`,
 );
 export const CoverNormSaves = new Note(
   `CoverNormSaves`,
