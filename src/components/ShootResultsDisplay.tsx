@@ -5,7 +5,8 @@ import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 
 import Defender from 'src/Defender';
-import { toAscendingMap, weightedAverage, killProb, } from 'src/Util';
+import { toAscendingMap, weightedAverage, killProb, standardDeviation, } from 'src/Util';
+import { range } from 'lodash';
 
 export interface Props {
   defender: Defender;
@@ -18,36 +19,34 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
   const toPercentString = (val: number) => (val * 100).toFixed(digitsPastDecimal);
 
   const saveToAvgDmgTableBody: JSX.Element[] = [];
-  const saveToKillChanceTableBody: JSX.Element[] = [];
-  const saveToTypicalWounds = new Map<number,Array<number>>([
-    [2, [19, 18]],
-    [3, [ 15, 14, 13, 12, 11]],
-    [4, [9, 8, 7]],
-    [5, [9, 8, 7]],
-    [6, [3]],
-  ]);
+  const killChanceTableBody: JSX.Element[] = [];
+
+  for(const wounds of range(1, 20)) {
+    const killChances: number[] = [];
+
+    for(const save of range(2, 6)) {
+      killChances.push(killProb(props.saveToDmgToProb.get(save)!, wounds));
+    }
+
+    killChanceTableBody.push(
+      <tr key={`KillChance_${wounds}`}>
+        <td>{wounds}</td>
+        {killChances.map(killChance => <td>{toPercentString(killChance)}%</td>)}
+      </tr>
+    );
+  }
 
   for(const [save, dmgToProb] of props.saveToDmgToProb.entries()) {
     const avgDmg = weightedAverage(dmgToProb);
+    const stdDev = standardDeviation(dmgToProb);
 
     saveToAvgDmgTableBody.push(
       <tr key={`AvgDmg_${save}`}>
         <td>{save}+</td>
         <td>{avgDmg.toFixed(digitsPastDecimal)}</td>
+        <td>{stdDev.toFixed(digitsPastDecimal)}</td>
       </tr>
     );
-
-    for(const wounds of saveToTypicalWounds.get(save)!) {
-      const killChance = killProb(dmgToProb, wounds);
-
-      saveToKillChanceTableBody.push(
-        <tr key={`KillChance_${save}_${wounds}`}>
-          <td>{save}+</td>
-          <td>{wounds}</td>
-          <td>{toPercentString(killChance)}%</td>
-        </tr>
-      );
-    }
   }
 
   let avgDmgUnbounded = 0;
@@ -105,14 +104,17 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
         <Col>
           {toPercentString(killChance)}%
         </Col>
+        <br/>
       </Row>
       <Row>
         <Col>
+          <span style={{fontSize: '13px'}}>AvgDmg for various Sv...</span>
           <Table bordered={true} striped={true} style={{fontSize: '11px'}}>
             <thead>
               <tr>
                 <th>Sv</th>
                 <th>AvgDmg</th>
+                <th>StdDev</th>
               </tr>
             </thead>
             <tbody>
@@ -121,22 +123,26 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
           </Table>
         </Col>
         <Col>
+          <span style={{fontSize: '13px'}}>KillChances for various Sv&amp;W...</span>
           <Table bordered={true} striped={true} style={{fontSize: '11px'}}>
             <thead>
               <tr>
-                <th>Sv</th>
                 <th>Wounds</th>
-                <th>KillChance</th>
+                <th>Sv=2+</th>
+                <th>Sv=3+</th>
+                <th>Sv=4+</th>
+                <th>Sv=5+</th>
               </tr>
             </thead>
             <tbody>
-              {saveToKillChanceTableBody}
+              {killChanceTableBody}
             </tbody>
           </Table>
         </Col>
       </Row>
       <Row>
         <Col>
+          <span style={{fontSize: '13px'}}>Dmg probs for exact scenario...</span>
           <Table bordered={true} striped={true} style={{fontSize: '11px'}}>
             <thead>
               <tr>

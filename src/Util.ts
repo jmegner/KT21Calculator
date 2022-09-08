@@ -139,6 +139,20 @@ export function weightedAverage(valToWeight: Map<number,number>) : number {
   return avg;
 }
 
+export function standardDeviation(valToProb: Map<number,number>) : number {
+  // variance = sum(x^2*px) - sum(x*px)^2
+  let sumOfSquares = 0;
+  let sum = 0;
+  for(const [val, prob] of valToProb.entries()) {
+    const weightedVal = val * prob;
+    sum += weightedVal;
+    sumOfSquares += weightedVal * val;
+  }
+
+  const stdDev = Math.sqrt(sumOfSquares - sum*sum);
+  return stdDev;
+}
+
 export function killProb(dmgToProb: Map<number,number>, wounds: number): number {
   let probSum = 0;
   for(const [dmg, prob] of dmgToProb) {
