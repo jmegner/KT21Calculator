@@ -18,7 +18,6 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
   const digitsPastDecimal = 2;
   const toPercentString = (val: number) => (val * 100).toFixed(digitsPastDecimal);
 
-  const saveToAvgDmgTableBody: JSX.Element[] = [];
   const killChanceTableBody: JSX.Element[] = [];
 
   for(const wounds of range(1, 20)) {
@@ -36,6 +35,27 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
     );
   }
 
+  const killChanceTable = 
+    <>
+      <span style={{ fontSize: '13px' }}>KillChances for various Sv&amp;W...</span>
+      <Table bordered={true} striped={true} style={{ fontSize: '11px' }}>
+        <thead>
+          <tr>
+            <th>Wounds</th>
+            <th>Sv=2+</th>
+            <th>Sv=3+</th>
+            <th>Sv=4+</th>
+            <th>Sv=5+</th>
+          </tr>
+        </thead>
+        <tbody>
+          {killChanceTableBody}
+        </tbody>
+      </Table>
+    </>;
+
+  const saveToAvgDmgTableBody: JSX.Element[] = [];
+
   for(const [save, dmgToProb] of props.saveToDmgToProb.entries()) {
     const avgDmg = weightedAverage(dmgToProb);
     const stdDev = standardDeviation(dmgToProb);
@@ -48,6 +68,23 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
       </tr>
     );
   }
+
+  const saveToAvgDmgTable =
+    <>
+      <span style={{ fontSize: '13px' }}>AvgDmg for various Sv...</span>
+      <Table bordered={true} striped={true} style={{ fontSize: '11px' }}>
+        <thead>
+          <tr>
+            <th>Sv</th>
+            <th>AvgDmg</th>
+            <th>StdDev</th>
+          </tr>
+        </thead>
+        <tbody>
+          {saveToAvgDmgTableBody}
+        </tbody>
+      </Table>
+    </>;
 
   let avgDmgUnbounded = 0;
   let avgDmgBounded = 0;
@@ -75,6 +112,24 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
       </tr>
     );
   });
+
+  const dmgProbTable =
+    <>
+      <span style={{ fontSize: '13px' }}>Dmg probs for exact scenario...</span>
+      <Table bordered={true} striped={true} style={{ fontSize: '11px' }}>
+        <thead>
+          <tr>
+            <th>Dmg</th>
+            <th>p(&gt;=Dmg)<br />(%)</th>
+            <th>p(&lt;=Dmg)<br />(%)</th>
+            <th>p(Dmg)<br />(%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {dmgProbTableBody}
+        </tbody>
+      </Table>
+    </>;
 
   return (
     <Container style={{width: '320px'}}>
@@ -108,54 +163,15 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
       </Row>
       <Row>
         <Col>
-          <span style={{fontSize: '13px'}}>AvgDmg for various Sv...</span>
-          <Table bordered={true} striped={true} style={{fontSize: '11px'}}>
-            <thead>
-              <tr>
-                <th>Sv</th>
-                <th>AvgDmg</th>
-                <th>StdDev</th>
-              </tr>
-            </thead>
-            <tbody>
-              {saveToAvgDmgTableBody}
-            </tbody>
-          </Table>
-        </Col>
-        <Col>
-          <span style={{fontSize: '13px'}}>KillChances for various Sv&amp;W...</span>
-          <Table bordered={true} striped={true} style={{fontSize: '11px'}}>
-            <thead>
-              <tr>
-                <th>Wounds</th>
-                <th>Sv=2+</th>
-                <th>Sv=3+</th>
-                <th>Sv=4+</th>
-                <th>Sv=5+</th>
-              </tr>
-            </thead>
-            <tbody>
-              {killChanceTableBody}
-            </tbody>
-          </Table>
+          {dmgProbTable}
         </Col>
       </Row>
       <Row>
         <Col>
-          <span style={{fontSize: '13px'}}>Dmg probs for exact scenario...</span>
-          <Table bordered={true} striped={true} style={{fontSize: '11px'}}>
-            <thead>
-              <tr>
-                <th>Dmg</th>
-                <th>p(&gt;=Dmg)<br />(%)</th>
-                <th>p(&lt;=Dmg)<br />(%)</th>
-                <th>p(Dmg)<br />(%)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dmgProbTableBody}
-            </tbody>
-          </Table>
+          {saveToAvgDmgTable}
+        </Col>
+        <Col>
+          {killChanceTable}
         </Col>
       </Row>
     </Container>
