@@ -8,6 +8,7 @@ import * as Util from 'src/Util';
 import { boolToCheckX as toCheckX } from 'src/Util';
 import Tank from 'src/WorldOfTanks/Tank';
 import {rerolls} from 'src/WorldOfTanks/Reroll';
+import * as N from 'src/Notes';
 
 
 export interface Props {
@@ -34,9 +35,9 @@ const TankControls: React.FC<Props> = (props: Props) => {
     params.push(...[
       //           id/label,         selectedValue,                   values,           valueChangeHandler
       new IncProps('CritsToHits (ex: ArrowShot)', tank.critsToHits,   Util.span(0, 3),  numHandler('critsToHits')),
-      new IncProps('Deadeye',        toCheckX(tank.deadeye),          Util.xAndCheck,   boolHandler('deadeye')),
-      new IncProps('HighExplosive',  toCheckX(tank.highExplosive),    Util.xAndCheck,   boolHandler('highExplosive')),
-      new IncProps('TargetHullDown', toCheckX(tank.targetIsHullDown), Util.xAndCheck,   boolHandler('targetIsHullDown')),
+      new IncProps(N.Deadeye,        toCheckX(tank.deadeye),          Util.xAndCheck,   boolHandler('deadeye')),
+      new IncProps(N.HighExplosive,  toCheckX(tank.highExplosive),    Util.xAndCheck,   boolHandler('highExplosive')),
+      new IncProps(N.TargetHullDown, toCheckX(tank.targetIsHullDown), Util.xAndCheck,   boolHandler('targetIsHullDown')),
     ]);
   }
   else {

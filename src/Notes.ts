@@ -73,3 +73,18 @@ export const Dummy = new Note(
   ``,
   ``,
 );
+
+// World Of Tanks...
+
+export const Deadeye = new Note(
+  `Deadeye`,
+  `For each crit, attacker draws two crit cards and chooses which one to use.`,
+);
+export const TargetHullDown = new Note(
+  `TargetHullDown`,
+  `If target is 'hull down', then attacker discards a normal hit.`,
+);
+export const HighExplosive = new Note(
+  `HighExplosive`,
+  `Attacker discards all normal hits before Assessing Damage.`,
+);
