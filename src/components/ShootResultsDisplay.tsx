@@ -96,25 +96,28 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
   const killChance = killProb(chosenSaveDmgToProb, props.defender.wounds);
   let ascendingDmgToProb = toAscendingMap(chosenSaveDmgToProb);
   let probCumulative = 0;
+  let wantMoreDmgRows = true;
 
   for(const [dmg, prob] of ascendingDmgToProb) {
      avgDmgUnbounded += dmg * prob;
 
-     const probAtLeastThisMuchDmg = 1 - probCumulative;
-     probCumulative += prob;
-     const probAtMostThisMuchDmg = probCumulative;
+    if (wantMoreDmgRows) {
+      const probAtLeastThisMuchDmg = 1 - probCumulative;
+      probCumulative += prob;
+      const probAtMostThisMuchDmg = probCumulative;
 
-     dmgProbTableBody.push(
-      <tr key={dmg}>
-        <td>{dmg}</td>
-        <td>{toPercentString(probAtLeastThisMuchDmg)}</td>
-        <td>{toPercentString(probAtMostThisMuchDmg)}</td>
-        <td>{toPercentString(prob)}</td>
-      </tr>
-    );
+      dmgProbTableBody.push(
+        <tr key={dmg}>
+          <td>{dmg}</td>
+          <td>{toPercentString(probAtLeastThisMuchDmg)}</td>
+          <td>{toPercentString(probAtMostThisMuchDmg)}</td>
+          <td>{toPercentString(prob)}</td>
+        </tr>
+      );
 
-    if(dmg >= MaxWounds) {
-      break;
+      if (dmg >= MaxWounds) {
+        wantMoreDmgRows = false;
+      }
     }
   }
 
