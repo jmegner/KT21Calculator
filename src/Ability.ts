@@ -1,6 +1,7 @@
 export enum Ability {
     None = 'X',
     Balanced = "Balanced", // reroll 1 die; also used for Extended Chitin during defense
+    DoubleBalanced = "DoubleBalanced", // reroll 2 dice; basicially single reroll ability from two different sources
     Ceaseless = "Ceaseless", // reroll all 1s
     Relentless = "Relentless", // reroll any of your choosing
     CeaselessPlusBalanced = "BothCeaselessAndBalanced", // ex: Auto Bolt Rifle (Ceaseless) and Devastator Doctrine (Balanced)
@@ -15,6 +16,7 @@ export enum Ability {
 export const rerollAbilities = [
   Ability.Ceaseless,
   Ability.Balanced,
+  Ability.DoubleBalanced,
   Ability.Relentless,
   Ability.CeaselessPlusBalanced,
 ];

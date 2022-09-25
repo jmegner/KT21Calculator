@@ -7,7 +7,6 @@ import {
 } from 'react-bootstrap';
 
 import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
-import * as Util from 'src/Util';
 import {
   Accepter,
   boolToCheckX as toCheckX,

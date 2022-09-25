@@ -1,3 +1,4 @@
+import { range } from 'lodash';
 import { factorial, } from 'mathjs';
 
 import Ability from "src/Ability";
@@ -61,34 +62,19 @@ export function calcFinalDiceProb(
   starfire: boolean = false,
 ): FinalDiceProb
 {
-  let prob = calcMultiRollProb(crits, dieProbs.crit, norms, dieProbs.norm, fails, dieProbs.fail);
+  let prob = 0
 
-  // there are multiple ways to get to this {crits,norms,fails} via OriginalRoll + BalancedRoll
   if (reroll === Ability.Balanced) {
-    // if have {c,n,f}, then could be because...
-    //    was {c,n,f=0} and no balance roll
-    //    was {c,n,f>0} then balanced-rolled f
-    //    was {c-1,n,f+1} then balanced-rolled c
-    //    was {c,n-1,f+1} then balanced-rolled n
-
-    // consider possibility of OriginalRollWithSomeFails + FailedBalancedRoll
-    // at this point, just need to multiply original roll prob by FailedBalancedRoll prob
-    if (fails > 0) {
-      prob *= dieProbs.fail;
-    }
-    // else "no fails" means start out with probability of original roll
-
-    // possibility that BalancedRoll became one of our crits
-    if (crits > 0) {
-      prob += dieProbs.crit * calcMultiRollProb(crits - 1, dieProbs.crit, norms, dieProbs.norm, fails + 1, dieProbs.fail);
-    }
-
-    // possibility that BalancedRoll became one of our norms
-    if (norms > 0) {
-      prob += dieProbs.norm * calcMultiRollProb(crits, dieProbs.crit, norms - 1, dieProbs.norm, fails + 1, dieProbs.fail);
-    }
+    prob = calcFinalDiceProbBalanced(dieProbs, crits, norms, fails, 1);
   }
-  else if (reroll === Ability.CeaselessPlusBalanced) {
+  else if (reroll === Ability.DoubleBalanced) {
+    prob = calcFinalDiceProbBalanced(dieProbs, crits, norms, fails, 2);
+  }
+  else {
+    prob = calcMultiRollProb(dieProbs, crits, norms, fails);
+  }
+
+  if (reroll === Ability.CeaselessPlusBalanced) {
     const probRollBeforeBalanced = prob;
     // probSingleFailCanNotBeRerolled = (BS - 1) / (7*BS - 13)
     // but, to put it in terms of given ceaseless fail prob: 1/7 + 1/(42*pFail)
@@ -115,7 +101,7 @@ export function calcFinalDiceProb(
     // 3rd, consider prob of PreBalancedRollWithOneLessCrit+CanDoBalancedRoll+CritBalancedRoll
     if(crits > 0) {
       const conditionalProbSomeCanBeRerolled = 1 - Math.pow(probSingleFailCanNotBeRerolled, fails + 1);
-      prob += calcMultiRollProb(crits - 1, dieProbs.crit, norms, dieProbs.norm, fails + 1, dieProbs.fail)
+      prob += calcMultiRollProb(dieProbs, crits - 1, norms, fails + 1)
         * conditionalProbSomeCanBeRerolled
         * nonceaselessProbCrit;
     }
@@ -123,7 +109,7 @@ export function calcFinalDiceProb(
     // 4th, consider prob of PreBalancedRollWithOneLessNorm+CanDoBalancedRoll+NormBalancedRoll
     if(norms > 0) {
       const conditionalProbSomeCanBeRerolled = 1 - Math.pow(probSingleFailCanNotBeRerolled, fails + 1);
-      prob += calcMultiRollProb(crits, dieProbs.crit, norms - 1, dieProbs.norm, fails + 1, dieProbs.fail)
+      prob += calcMultiRollProb(dieProbs, crits, norms - 1, fails + 1)
         * conditionalProbSomeCanBeRerolled
         * nonceaselessProbNorm;
     }
@@ -147,22 +133,58 @@ export function calcFinalDiceProb(
 }
 
 export function calcMultiRollProb(
+  dieProbs: DieProbs,
   numCrits: number,
-  probCrit: number,
   numNorms: number,
-  probNorm: number,
   numFails: number,
-  probFail: number,
 ): number
 {
   const prob
-    = Math.pow(probCrit, numCrits)
-    * Math.pow(probNorm, numNorms)
-    * Math.pow(probFail, numFails)
+    = Math.pow(dieProbs.crit, numCrits)
+    * Math.pow(dieProbs.norm, numNorms)
+    * Math.pow(dieProbs.fail, numFails)
     * factorial(numCrits + numNorms + numFails)
     / factorial(numCrits)
     / factorial(numNorms)
     / factorial(numFails)
     ;
+  return prob;
+}
+
+export function calcFinalDiceProbBalanced(
+  dieProbs: DieProbs,
+  crits: number,
+  norms: number,
+  fails: number,
+  balancedFactor: number,
+): number {
+  let prob = 0;
+
+  for(const rerolls of range(Math.min(fails, balancedFactor), balancedFactor + 1)) {
+    for(const balancedCrits of range(Math.min(crits, rerolls) + 1)) {
+      for(const balancedNorms of range(Math.min(norms, rerolls - balancedCrits) + 1)) {
+        const balancedFails = rerolls - balancedCrits - balancedNorms;
+        if(balancedFails > fails) {
+          continue;
+        }
+        // if rerolling less than able, must be because didn't have many fails
+        if(rerolls < balancedFactor && balancedCrits + balancedNorms + fails > rerolls) {
+          continue;
+        }
+        const preBalancedProb = calcMultiRollProb(
+          dieProbs,
+          crits - balancedCrits,
+          norms - balancedNorms,
+          fails + balancedCrits + balancedNorms);
+        const balancedRollsProb = calcMultiRollProb(
+          dieProbs,
+          balancedCrits,
+          balancedNorms,
+          balancedFails);
+        prob += preBalancedProb * balancedRollsProb;
+      }
+    }
+  }
+
   return prob;
 }

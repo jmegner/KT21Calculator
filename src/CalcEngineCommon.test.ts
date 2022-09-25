@@ -10,28 +10,34 @@ describe(Common.calcMultiRollProb.name, () => {
   const pc = 7; // crit probability
   const pn = 11; // norm probability
   const pf = 13; // fail probability
+  const dp = new DieProbs(pc, pn, pf);
   it('{0c,0n,1f} => pf^1', () => {
-    expect(Common.calcMultiRollProb(0, pc, 0, pn, 1, pf)).toBe(pf);
+    expect(Common.calcMultiRollProb(dp, 0, 0, 1)).toBe(pf);
   });
   it('{0c,3n,0f} => pn^3', () => {
-    expect(Common.calcMultiRollProb(0, pc, 3, pn, 0, pf)).toBe(Math.pow(pn, 3));
+    expect(Common.calcMultiRollProb(dp, 0, 3, 0)).toBe(Math.pow(pn, 3));
   });
   it('{3c,0n,0f} * pn * 3 = {2c,1n,0f} * pc', () => {
-    expect(Common.calcMultiRollProb(3, pc, 0, pn, 0, pf) * pn * 3)
-      .toBe(Common.calcMultiRollProb(2, pc, 1, pn, 0, pf) * pc);
+    expect(Common.calcMultiRollProb(dp, 3, 0, 0) * pn * 3)
+      .toBe(Common.calcMultiRollProb(dp, 2, 1, 0) * pc);
   });
   it('{1c,1n,1f} => pc*pn*pf*(3!)', () => {
-    expect(Common.calcMultiRollProb(1, pc, 1, pn, 1, pf)).toBe(pc * pn * pf * 6);
+    expect(Common.calcMultiRollProb(dp, 1, 1, 1)).toBe(pc * pn * pf * 6);
   });
 });
 
 function expectClose(
   actual: FinalDiceProb,
   expectedProb: number,
-  expectedCrits: number,
-  expectedNorms: number): void {
-  expect(actual.crits).toEqual(expectedCrits);
-  expect(actual.norms).toEqual(expectedNorms);
+  expectedCrits?: number,
+  expectedNorms?: number,
+  ): void {
+  if(expectedCrits !== undefined) {
+    expect(actual.crits).toEqual(expectedCrits);
+  }
+  if(expectedNorms !== undefined) {
+    expect(actual.norms).toEqual(expectedNorms);
+  }
   expect(actual.prob).toBeCloseTo(expectedProb, requiredPrecision)
 }
 
@@ -64,6 +70,34 @@ describe(Common.calcFinalDiceProb.name, () => {
   it('basic balanced 1f', () => {
     const actual = Common.calcFinalDiceProb(dieProbs, 0, 0, 1, Ability.Balanced);
     expectClose(actual, pf * pf, 0, 0);
+  });
+  it('double balanced 1c', () => {
+    const actual = Common.calcFinalDiceProb(dieProbs, 1, 0, 0, Ability.DoubleBalanced);
+    expectClose(actual, pc + pf * pc);
+  });
+  it('double balanced 1f', () => {
+    const actual = Common.calcFinalDiceProb(dieProbs, 0, 0, 1, Ability.DoubleBalanced);
+    expectClose(actual, pf * pf);
+  });
+  it('double balanced 2c', () => {
+    const actual = Common.calcFinalDiceProb(dieProbs, 2, 0, 0, Ability.DoubleBalanced);
+    expectClose(actual, pc*pc + 2*pc*pf*pc + pf*pf*pc*pc);
+  });
+  it('double balanced 2f', () => {
+    const actual = Common.calcFinalDiceProb(dieProbs, 0, 0, 2, Ability.DoubleBalanced);
+    expectClose(actual, pf*pf*pf*pf);
+  });
+  it('double balanced {1c,1n}', () => {
+    const actual = Common.calcFinalDiceProb(dieProbs, 1, 1, 0, Ability.DoubleBalanced);
+    expectClose(actual, 2*pc*pn + 2*pc*pf*pn + 2*pn*pf*pc + pf*pf*2*pc*pn);
+  });
+  it('double balanced {3c}', () => {
+    const actual = Common.calcFinalDiceProb(dieProbs, 3, 0, 0, Ability.DoubleBalanced);
+    expectClose(actual, pc*pc*pc + 3*pc*pc*pf*pc + 3*pc*pf*pf*pc*pc);
+  });
+  it('double balanced {2c,1f}', () => {
+    const actual = Common.calcFinalDiceProb(dieProbs, 2, 0, 1, Ability.DoubleBalanced);
+    expectClose(actual, 3*pc*pc*pf*pf + 3*pc*pf*pf*2*pc*pf + pf*pf*pf*pc*pc);
   });
   it('basic CeaselessPlusBalanced 1c', () => {
     const actual = Common.calcFinalDiceProb(dieProbsCeaseless, 1, 0, 0, Ability.CeaselessPlusBalanced);

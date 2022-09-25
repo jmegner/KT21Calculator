@@ -1,6 +1,6 @@
 {
   "homepage": "https://jmegner.github.io/KT21Calculator/",
-  "name": "basic-ts",
+  "name": "ktcalc",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
