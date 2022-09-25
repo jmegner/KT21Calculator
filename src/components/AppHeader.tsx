@@ -4,6 +4,7 @@ import "src/components/AppHeader.css"
 import { CalculatorViewChoice } from 'src/CalculatorViewChoice';
 import ktFightIcon from 'src/images/KtFightIcon.svg';
 import ktShootIcon from 'src/images/KtShootIcon.svg';
+import ktShootMassAnalysisIcon from 'src/images/ShootMultipleTargetsIcon.svg';
 import wotIcon from 'src/images/WorldOfTanksIcon.svg';
 
 type AppHeaderProps = {
@@ -49,6 +50,12 @@ const AppHeader = (props: AppHeaderProps) => {
       wotIcon,
       'World Of Tanks logo',
     )}
+    {/*makeButton(
+      CalculatorViewChoice.KtShootMassAnalysis,
+      'Kill Team Shooting Mass Analysis',
+      ktShootMassAnalysisIcon,
+      'Multiple people targeted.',
+    )*/}
   </nav>
 };
 

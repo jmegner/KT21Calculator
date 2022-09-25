@@ -53,7 +53,7 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps('WS',           atk.bs + '+',          rollSpan,         numHandler('bs')),
     new IncProps('Normal Dmg',   atk.normDmg,           span(1, 9),       numHandler('normDmg')),
     new IncProps('Critical Dmg', atk.critDmg,           span(1, 9),       numHandler('critDmg')),
-    new IncProps('LethalX',      atk.lethalx + '+',     xspan(4, 5, '+'), numHandler('lethalx')),
+    new IncProps('Lethal',       atk.lethal + '+',      xspan(4, 5, '+'), numHandler('lethal')),
     new IncProps(N.Reroll,       atk.reroll,            preX(rerolls),    textHandler('reroll')),
     // 2nd col
     new IncProps('Wounds',       atk.wounds,            span(1, 19),      numHandler('wounds')),

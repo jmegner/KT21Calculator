@@ -12,7 +12,7 @@ export default class Defender {
   public coverNormSaves: number;
   public coverCritSaves: number;
   public reroll: Ability;
-  public hardyx: number; // like LethalX, but for defense
+  public hardyx: number; // like Lethal, but for defense
   public normToCritPromotions: number;
 
   public constructor(

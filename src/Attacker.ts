@@ -12,7 +12,7 @@ export default class Attacker {
   public apx: number; // shoot only
   public px: number; // shoot only
   public reroll: Ability;
-  public lethalx: number; // 0 means default of crit on 6+; can be 7 to force never-crit
+  public lethal: number; // 0 means default of crit on 6+; can be 7 to force never-crit
   public rending: boolean; // a crit promotes a normal hit to a crit;
   public starfire: boolean; // a crit promotes a fail to a normal hit; shoot only
   public wounds: number; // fight only
@@ -30,7 +30,7 @@ export default class Attacker {
     apx: number = 0,
     px: number = 0,
     reroll: Ability = Ability.None,
-    lethalx: number = 0,
+    lethal: number = 0,
     rending: boolean = false,
     starfire: boolean = false,
     wounds: number = 12,
@@ -47,7 +47,7 @@ export default class Attacker {
     this.apx = apx;
     this.px = px;
     this.reroll = reroll;
-    this.lethalx = lethalx;
+    this.lethal = lethal;
     this.rending = rending;
     this.starfire = starfire;
     this.wounds = wounds;
@@ -67,7 +67,7 @@ export default class Attacker {
   }
 
   public critSkill(): number {
-    return this.lethalx === 0 ? 6 : this.lethalx;
+    return this.lethal === 0 ? 6 : this.lethal;
   }
 
   //#ERROR TODO: look at all uses of possibleDmg to see if okay to not include hammerhand
@@ -108,10 +108,10 @@ export default class Attacker {
   }
 
   public withAlwaysNormHit() : Attacker {
-    return this.withProp('bs', 1).setProp('lethalx', 7);
+    return this.withProp('bs', 1).setProp('lethal', 7);
   }
 
   public withAlwaysCritHit() : Attacker {
-    return this.withProp('bs', 1).setProp('lethalx', 1);
+    return this.withProp('bs', 1).setProp('lethal', 1);
   }
 }

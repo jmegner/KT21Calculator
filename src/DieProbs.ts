@@ -18,7 +18,7 @@ export default class DieProbs {
   public static fromSkills(critSkill: number, normSkill: number, reroll: Ability) {
     // BEFORE taking ceaseless and relentless into account
     let critHitProb = (7 - critSkill) / 6;
-    let normHitProb = Math.max(0, (critSkill - normSkill) / 6); // handle BS=6+ and LethalX=4+
+    let normHitProb = Math.max(0, (critSkill - normSkill) / 6); // handle BS=6+ and Lethal=4+
     let failHitProb = 1 - critHitProb - normHitProb;
 
     // now to take ceaseless and relentless into account...
@@ -28,7 +28,7 @@ export default class DieProbs {
       || reroll === Ability.CeaselessPlusBalanced
     ) {
       const rerollMultiplier = reroll === Ability.Relentless
-        ? (normSkill + 5) / 6
+        ? 1 + failHitProb
         : 7 / 6;
       critHitProb *= rerollMultiplier;
       normHitProb *= rerollMultiplier;

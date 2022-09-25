@@ -16,7 +16,7 @@ const WorldOfTanksSection: React.FC = () => {
     N.Deadeye,
     N.HighExplosive,
     N.TargetHullDown,
-  ].map(note => <li><b>{note.name}</b>: {note.description}</li>);
+  ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
 
   return (
     <Container style={{width: '900px'}}>

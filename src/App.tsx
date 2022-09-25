@@ -3,11 +3,12 @@ import { Col, Row } from 'react-bootstrap';
 import { useSearchParams } from 'react-router-dom';
 
 import * as Util from 'src/Util';
+import { CalculatorViewChoice } from 'src/CalculatorViewChoice';
 import AppHeader from "src/components/AppHeader";
 import ShootSection from 'src/components/ShootSection';
 import FightSection from 'src/components/FightSection';
-import { CalculatorViewChoice } from 'src/CalculatorViewChoice';
-import WorldOfTanksSection from './components/WorldOfTanks/WorldOfTanksSection';
+import ShootMassAnalysisSection from 'src/components/ShootMassAnalysisSection';
+import WorldOfTanksSection from 'src/components/WorldOfTanks/WorldOfTanksSection';
 
 const App = () => {
   const [currentView, setCurrentView] = useState<CalculatorViewChoice>(CalculatorViewChoice.KtShoot);
@@ -54,6 +55,7 @@ const App = () => {
           <Col>
             {sectionDiv(CalculatorViewChoice.KtShoot, <ShootSection/>)}
             {sectionDiv(CalculatorViewChoice.KtFight, <FightSection/>)}
+            {sectionDiv(CalculatorViewChoice.KtShootMassAnalysis, <ShootMassAnalysisSection/>)}
             {sectionDiv(CalculatorViewChoice.WorldOfTanks, <WorldOfTanksSection/>)}
           </Col>
         </Row>

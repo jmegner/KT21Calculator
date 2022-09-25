@@ -419,9 +419,9 @@ describe(calcDmgProbs.name + ', APx & invuln', () => {
   });
 });
 
-describe(calcDmgProbs.name + ', px and lethalx', () => {
+describe(calcDmgProbs.name + ', px and lethal', () => {
   it('px gets rid of def dice on crit', () => {
-    const atk = newTestAttacker(1, 1).setProp('px', 4).setProp('lethalx', 5);
+    const atk = newTestAttacker(1, 1).setProp('px', 4).setProp('lethal', 5);
     const pc = (7 - atk.critSkill()) / 6;
     const def = new Defender(4, 1);
 
@@ -431,7 +431,7 @@ describe(calcDmgProbs.name + ', px and lethalx', () => {
   });
 
   it('0 < apx < px, apx used when no crit', () => {
-    const atk = newTestAttacker(1, 1).setProp('apx', 1).setProp('px', 2).setProp('lethalx', 5);
+    const atk = newTestAttacker(1, 1).setProp('apx', 1).setProp('px', 2).setProp('lethal', 5);
     const def = new Defender(2, 1);
     const [pc, pn, ] = atk.toDieProbs().toCritNormFail();
 

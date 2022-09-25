@@ -192,7 +192,10 @@ export function toPercentString(val: number, digitsPastDecimal: number = 2) {
 }
 
 export function toAscendingMap<V>(map: Map<number,V>): Map<number,V> {
-  return new Map<number,V>([...map.entries()].sort((a, b) => a[0] - b[0]));
+  return new Map<number,V>(
+    [...map.entries()]
+    .sort((a, b) => a[0] - b[0])
+  );
 }
 
 export function fillInProbForZero(keyToProb: Map<number, number>): void {

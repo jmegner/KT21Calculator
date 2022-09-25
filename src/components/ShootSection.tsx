@@ -25,7 +25,7 @@ const ShootSection: React.FC = () => {
 
   //const damageToProb = calcDmgProbs(attacker, defender, shootOptions);
 
-  const saveToDmgToProb = new Map<number,Map<number,number>>([2, 3, 4, 5, 6].map(save =>
+  const saveToDmgToProb = new Map<number,Map<number,number>>([2, 3, 4, 5].map(save =>
     [save, calcDmgProbs(attacker, defender.withProp('save', save), shootOptions)]));
   
   const noteListItems: JSX.Element[] = [
@@ -39,7 +39,7 @@ const ShootSection: React.FC = () => {
     N.InvulnSave,
     N.HardyX,
     N.FeelNoPain,
-  ].map(note => <li><b>{note.name}</b>: {note.description}</li>);
+  ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
 
   return (
     <Container style={{width: '510px'}}>

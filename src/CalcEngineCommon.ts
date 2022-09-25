@@ -88,7 +88,6 @@ export function calcFinalDiceProb(
       prob += dieProbs.norm * calcMultiRollProb(crits, dieProbs.crit, norms - 1, dieProbs.norm, fails + 1, dieProbs.fail);
     }
   }
-  // experiment for CeaselessPlusBalanced
   else if (reroll === Ability.CeaselessPlusBalanced) {
     const probRollBeforeBalanced = prob;
     // probSingleFailCanNotBeRerolled = (BS - 1) / (7*BS - 13)

@@ -31,9 +31,9 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     new IncProps('APx',        atk.apx,                Util.xspan(1, 4),      numHandler('apx')),
     new IncProps('Px',         atk.px,                 Util.xspan(1, 4),      numHandler('px')),
     new IncProps(N.Reroll,     atk.reroll,             Util.preX(rerolls),    textHandler('reroll')),
-    new IncProps('LethalX',    atk.lethalx + '+',      Util.xspan(5, 2, '+'), numHandler('lethalx')),
+    new IncProps('Lethal',     atk.lethal + '+',       Util.xspan(5, 2, '+'), numHandler('lethal')),
     new IncProps(N.Rending,    toCheckX(atk.rending),  Util.xAndCheck,        boolHandler('rending')),
-    new IncProps(N.Starfire, toCheckX(atk.starfire), Util.xAndCheck,        boolHandler('starfire')),
+    new IncProps(N.Starfire,   toCheckX(atk.starfire), Util.xAndCheck,        boolHandler('starfire')),
   ];
 
   const paramElems = params.map(p =>

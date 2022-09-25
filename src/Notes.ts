@@ -38,7 +38,7 @@ export const InvulnSave = new Note(
 );
 export const HardyX = new Note(
   `HardyX`,
-  `HardyX is like LethalX (changes what values give you a critical success), but for defense. Name comes from Intercession Squad chapter tactic Hardy.`,
+  `HardyX is like Lethal (changes what values give you a critical success), but for defense. Name comes from Intercession Squad chapter tactic Hardy.`,
 );
 export const FeelNoPain = new Note(
   `FeelNoPain`,

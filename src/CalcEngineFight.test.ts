@@ -527,10 +527,10 @@ describe(calcRemainingWounds.name + ' basic', () => {
     expect(guy2Wounds.get(0)).toBeCloseTo(pc, requiredPrecision);
     expect(guy2Wounds.get(dc)).toBeCloseTo(pf, requiredPrecision);
   });
-  it('WS=6+ and LethalX=4+ should be handled same as WS=4+ and LethalX=4+', () => {
+  it('WS=6+ and Lethal=4+ should be handled same as WS=4+ and Lethal=4+', () => {
     const guy1 = new Attacker(1, 2, 1, 1).setProp('wounds', 2);
-    const guy2a = new Attacker(1, 4, 1, 2).setProp('wounds', 1).setProp('lethalx', 4);
-    const guy2b = new Attacker(1, 6, 1, 2).setProp('wounds', 1).setProp('lethalx', 4);
+    const guy2a = new Attacker(1, 4, 1, 2).setProp('wounds', 1).setProp('lethal', 4);
+    const guy2b = new Attacker(1, 6, 1, 2).setProp('wounds', 1).setProp('lethal', 4);
 
     const [guy1AWounds, guy2AWounds] = calcRemainingWounds(guy1, guy2a, FightStrategy.Strike, FightStrategy.Strike);
     const [guy1BWounds, guy2BWounds] = calcRemainingWounds(guy1, guy2b, FightStrategy.Strike, FightStrategy.Strike);
