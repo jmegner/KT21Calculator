@@ -15,6 +15,10 @@ export const Reroll = new Note(
     + `  BothCeaselessAndBalanced rerolls 1s and then rerolls 1 die that hasn't already been rerolled.`
     ,
 );
+export const AutoNormHits = new Note(
+  `AutoNormHits`,
+  `How many attack dice can be automatically retained as a normal success. Much like cover saves but for attack dice.`,
+);
 export const Rending = new Note(
   `Rending`,
   `If you roll >=1 crit, you can modify a norm to a crit.`,

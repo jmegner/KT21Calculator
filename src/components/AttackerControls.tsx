@@ -22,18 +22,19 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     = Util.makePropChangeHandlers(atk, props.changeHandler);
 
   const params: IncProps[] = [
-    //           id/label,     selectedValue,          values,                valueChangeHandler
-    new IncProps('Attacks',    atk.attacks,            Util.span(1, 10),      numHandler('attacks')),
-    new IncProps('BS',         atk.bs + '+',           Util.rollSpan,         numHandler('bs')),
-    new IncProps('Normal Dmg', atk.normDmg,            Util.span(0, 9),       numHandler('normDmg')),
-    new IncProps('Crit Dmg',   atk.critDmg,            Util.span(0, 10),      numHandler('critDmg')),
-    new IncProps('MWx',        atk.mwx,                Util.xspan(1, 9),      numHandler('mwx')),
-    new IncProps('APx',        atk.apx,                Util.xspan(1, 4),      numHandler('apx')),
-    new IncProps('Px',         atk.px,                 Util.xspan(1, 4),      numHandler('px')),
-    new IncProps(N.Reroll,     atk.reroll,             Util.preX(rerolls),    textHandler('reroll')),
-    new IncProps('Lethal',     atk.lethal + '+',       Util.xspan(5, 2, '+'), numHandler('lethal')),
-    new IncProps(N.Rending,    toCheckX(atk.rending),  Util.xAndCheck,        boolHandler('rending')),
-    new IncProps(N.Starfire,   toCheckX(atk.starfire), Util.xAndCheck,        boolHandler('starfire')),
+    //           id/label,       selectedValue,          values,                valueChangeHandler
+    new IncProps('Attacks',      atk.attacks,            Util.span(1, 9),      numHandler('attacks')),
+    new IncProps('BS',           atk.bs + '+',           Util.rollSpan,         numHandler('bs')),
+    new IncProps('Normal Dmg',   atk.normDmg,            Util.span(0, 9),       numHandler('normDmg')),
+    new IncProps('Crit Dmg',     atk.critDmg,            Util.span(0, 10),      numHandler('critDmg')),
+    new IncProps('MWx',          atk.mwx,                Util.xspan(1, 9),      numHandler('mwx')),
+    new IncProps('Lethal',       atk.lethal + '+',       Util.xspan(5, 2, '+'), numHandler('lethal')),
+    new IncProps('APx',          atk.apx,                Util.xspan(1, 4),      numHandler('apx')),
+    new IncProps('Px',           atk.px,                 Util.xspan(1, 4),      numHandler('px')),
+    new IncProps(N.Reroll,       atk.reroll,             Util.preX(rerolls),    textHandler('reroll')),
+    new IncProps(N.Rending,      toCheckX(atk.rending),  Util.xAndCheck,        boolHandler('rending')),
+    new IncProps(N.Starfire,     toCheckX(atk.starfire), Util.xAndCheck,        boolHandler('starfire')),
+    new IncProps(N.AutoNormHits, atk.autoNormHits,       Util.xspan(1, 9),      numHandler('autoNormHits')),
   ];
 
   const paramElems = params.map(p =>

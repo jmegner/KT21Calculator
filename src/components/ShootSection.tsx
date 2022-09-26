@@ -33,6 +33,7 @@ const ShootSection: React.FC = () => {
     N.Reroll,
     N.Rending,
     N.Starfire,
+    N.AutoNormHits,
     N.CoverNormSaves,
     N.CoverCritSaves,
     N.NormToCrit,

@@ -19,6 +19,7 @@ export default class Attacker {
   public fnp: number; // fight only
   public brutal: boolean; // fight only
   public stun: boolean; // fight only
+  public autoNormHits: number;
   public abilities: Set<Ability>; // for {Dueller,StormShield,Hammerhand}; TODO add {rending, starfire, brutal, stun};
 
   public constructor(
@@ -37,6 +38,7 @@ export default class Attacker {
     fnp: number = 0,
     brutal: boolean = false,
     stun: boolean = false,
+    autoNormHits: number = 0,
     abilities: Set<Ability> = new Set<Ability>(),
   ) {
     this.attacks = attacks;
@@ -54,6 +56,7 @@ export default class Attacker {
     this.fnp = fnp;
     this.brutal = brutal;
     this.stun = stun;
+    this.autoNormHits = autoNormHits;
     this.abilities = abilities;
   }
 
@@ -94,7 +97,6 @@ export default class Attacker {
     return copy;
   }
 
-  // TODO: use this more
   public has(ability: Ability): boolean {
     if(this.reroll === ability) {
       return true;

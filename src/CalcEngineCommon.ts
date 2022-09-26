@@ -14,6 +14,9 @@ export function calcFinalDiceProbsForAttacker(
     attacker.toDieProbs(),
     attacker.attacks,
     attacker.reroll,
+    0,
+    attacker.autoNormHits,
+    0,
     attacker.rending,
     attacker.starfire,
   );
@@ -23,11 +26,19 @@ export function calcFinalDiceProbs(
   singleDieProbs: DieProbs,
   numDice: number,
   reroll: Ability,
+  autoCrits: number = 0,
+  autoNorms: number = 0,
+  normToCritPromotions: number = 0,
   rending: boolean = false,
-  starfire: boolean = false
+  starfire: boolean = false,
 ): FinalDiceProb[]
 {
   let finalDiceProbs: FinalDiceProb[] = [];
+
+  autoCrits = Math.min(autoCrits, numDice);
+  numDice -= autoCrits;
+  autoNorms = Math.min(autoNorms, numDice);
+  numDice -= autoNorms;
 
   for (let crits = 0; crits <= numDice; crits++) {
     for (let norms = 0; norms <= numDice - crits; norms++) {
@@ -39,6 +50,9 @@ export function calcFinalDiceProbs(
         norms,
         fails,
         reroll,
+        autoCrits,
+        autoNorms,
+        normToCritPromotions,
         rending,
         starfire,
       );
@@ -58,6 +72,9 @@ export function calcFinalDiceProb(
   norms: number,
   fails: number,
   reroll: Ability = Ability.None, // really just care if Balanced or CeaselessPlusBalanced
+  autoCrits: number = 0,
+  autoNorms: number = 0,
+  normToCritPromotions: number = 0,
   rending: boolean = false,
   starfire: boolean = false,
 ): FinalDiceProb
@@ -115,17 +132,24 @@ export function calcFinalDiceProb(
     }
   }
 
-  if (rending) {
-    if (crits > 0 && norms > 0) {
-      crits++;
-      norms--;
-    }
-  }
+  crits += autoCrits;
+  norms += autoNorms;
 
   if (starfire) {
     if (crits > 0 && fails > 0) {
       norms++;
       fails--;
+    }
+  }
+
+  const actualPromotions = Math.min(normToCritPromotions, norms);
+  crits += actualPromotions;
+  norms -= actualPromotions;
+
+  if (rending) {
+    if (crits > 0 && norms > 0) {
+      crits++;
+      norms--;
     }
   }
 

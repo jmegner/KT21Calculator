@@ -11,28 +11,16 @@ class DefenderFinalDiceStuff {
   public finalDiceProbs: FinalDiceProb[];
   public finalDiceProbsWithPx: FinalDiceProb[];
   public pxIsRelevant: boolean;
-  public coverCritSaves: number;
-  public coverCritSavesWithPx: number;
-  public coverNormSaves: number;
-  public coverNormSavesWithPx: number;
 
   public constructor(
     finalDiceProbs: FinalDiceProb[],
     finalDiceProbsWithPx: FinalDiceProb[],
     pxIsRelevant: boolean,
-    coverCritSaves: number,
-    coverCritSavesWithPx: number,
-    coverNormSaves: number,
-    coverNormSavesWithPx: number,
   )
   {
     this.finalDiceProbs = finalDiceProbs;
     this.finalDiceProbsWithPx = finalDiceProbsWithPx;
     this.pxIsRelevant = pxIsRelevant;
-    this.coverCritSaves = coverCritSaves;
-    this.coverCritSavesWithPx = coverCritSavesWithPx;
-    this.coverNormSaves = coverNormSaves;
-    this.coverNormSavesWithPx = coverNormSavesWithPx;
   }
 }
 
@@ -44,14 +32,14 @@ export function calcDefenderFinalDiceStuff(
   const defenderSingleDieProbs = defender.toDieProbs();
 
   const numDefDiceWithoutPx = Math.max(0, defender.usesInvulnSave() ? defender.defense : defender.defense - attacker.apx);
-  const coverCritSaves = Math.min(defender.coverCritSaves, numDefDiceWithoutPx);
-  const coverNormSaves = Math.min(defender.coverNormSaves, numDefDiceWithoutPx - coverCritSaves);
-  const numDefRollsWithoutPx = numDefDiceWithoutPx - coverCritSaves - coverNormSaves;
 
   const defenderFinalDiceProbs = Common.calcFinalDiceProbs(
     defenderSingleDieProbs,
-    numDefRollsWithoutPx,
+    numDefDiceWithoutPx,
     defender.reroll,
+    defender.coverCritSaves,
+    defender.coverNormSaves,
+    defender.normToCritPromotions,
     );
 
   let defenderFinalDiceProbsWithPx: FinalDiceProb[] = [];
@@ -59,20 +47,18 @@ export function calcDefenderFinalDiceStuff(
   // if APx > Px, then ignore Px
   const effectivePx = attacker.apx >= attacker.px ? 0 : attacker.px;
   const pxIsRelevant = effectivePx > 0 && !defender.usesInvulnSave();
-  let coverCritSavesWithPx = 0;
-  let coverNormSavesWithPx = 0;
 
   // for Px triggered and relevant
   if (pxIsRelevant) {
     const numDefDiceWithPx = Math.max(0, defender.defense - effectivePx);
-    coverCritSavesWithPx = Math.min(defender.coverCritSaves, numDefDiceWithPx);
-    coverNormSavesWithPx = Math.min(defender.coverNormSaves, numDefDiceWithPx - coverCritSavesWithPx);
-    const numDefRollsWithPx = numDefDiceWithPx - coverCritSavesWithPx - coverNormSavesWithPx;
 
     defenderFinalDiceProbsWithPx = Common.calcFinalDiceProbs(
       defenderSingleDieProbs,
-      numDefRollsWithPx,
+      numDefDiceWithPx,
       defender.reroll,
+      defender.coverCritSaves,
+      defender.coverNormSaves,
+      defender.normToCritPromotions,
     );
   }
 
@@ -80,10 +66,6 @@ export function calcDefenderFinalDiceStuff(
     defenderFinalDiceProbs,
     defenderFinalDiceProbsWithPx,
     pxIsRelevant,
-    coverCritSaves,
-    coverCritSavesWithPx,
-    coverNormSaves,
-    coverNormSavesWithPx,
   );
 }
 
