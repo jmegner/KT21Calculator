@@ -44,10 +44,7 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
         <thead>
           <tr>
             <th>W</th>
-            <th>Sv=2+</th>
-            <th>Sv=3+</th>
-            <th>Sv=4+</th>
-            <th>Sv=5+</th>
+            {saves.map(save => <th key={'Sv' + save}>Sv={save}+</th>)}
           </tr>
         </thead>
         <tbody>

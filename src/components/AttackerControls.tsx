@@ -9,6 +9,7 @@ import { boolToCheckX as toCheckX } from 'src/Util';
 import Attacker from 'src/Attacker';
 import {rerollAbilities as rerolls} from 'src/Ability';
 import * as N from 'src/Notes';
+import NoCoverType from 'src/NoCoverType';
 
 
 export interface Props {
@@ -20,6 +21,7 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
   const atk = props.attacker;
   const [textHandler, numHandler, boolHandler]
     = Util.makePropChangeHandlers(atk, props.changeHandler);
+  const noCoverChoices = Object.values(NoCoverType);
 
   const params: IncProps[] = [
     //           id/label,       selectedValue,          values,                valueChangeHandler
@@ -29,12 +31,14 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     new IncProps('Crit Dmg',     atk.critDmg,            Util.span(0, 10),      numHandler('critDmg')),
     new IncProps('MWx',          atk.mwx,                Util.xspan(1, 9),      numHandler('mwx')),
     new IncProps('Lethal',       atk.lethal + '+',       Util.xspan(5, 2, '+'), numHandler('lethal')),
+    new IncProps(N.Reroll,       atk.reroll,             Util.preX(rerolls),    textHandler('reroll')),
+    // 2nd column
     new IncProps('APx',          atk.apx,                Util.xspan(1, 4),      numHandler('apx')),
     new IncProps('Px',           atk.px,                 Util.xspan(1, 4),      numHandler('px')),
-    new IncProps(N.Reroll,       atk.reroll,             Util.preX(rerolls),    textHandler('reroll')),
     new IncProps(N.Rending,      toCheckX(atk.rending),  Util.xAndCheck,        boolHandler('rending')),
     new IncProps(N.Starfire,     toCheckX(atk.starfire), Util.xAndCheck,        boolHandler('starfire')),
     new IncProps(N.AutoNormHits, atk.autoNormHits,       Util.xspan(1, 9),      numHandler('autoNormHits')),
+    //new IncProps(N.NoCover,      atk.noCover,            noCoverChoices,        textHandler('noCover')),
   ];
 
   const paramElems = params.map(p =>

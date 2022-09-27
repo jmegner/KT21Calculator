@@ -17,6 +17,7 @@ import Defender from 'src/Defender';
 import * as Util from "src/Util";
 import { calcDmgProbs } from 'src/CalcEngineShoot';
 import * as N from 'src/Notes';
+import { SaveRange } from 'src/KtMisc';
 
 const ShootSection: React.FC = () => {
   const [attacker, setAttacker] = React.useState(new Attacker());
@@ -25,7 +26,7 @@ const ShootSection: React.FC = () => {
 
   //const damageToProb = calcDmgProbs(attacker, defender, shootOptions);
 
-  const saveToDmgToProb = new Map<number,Map<number,number>>([2, 3, 4, 5].map(save =>
+  const saveToDmgToProb = new Map<number,Map<number,number>>(SaveRange.map(save =>
     [save, calcDmgProbs(attacker, defender.withProp('save', save), shootOptions)]));
   
   const noteListItems: JSX.Element[] = [

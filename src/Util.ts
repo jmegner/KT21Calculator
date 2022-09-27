@@ -43,6 +43,10 @@ export function xspan(min: number, max: number, suffix?: string) : string[] {
   return concat([thickX], span(min, max, suffix));
 }
 
+export function withPlus(elems: any[]) : string[] {
+  return elems.map(elem => elem.toString() + '+');
+}
+
 export const rollSpan = span(2, 6, '+');
 export const xrollSpan = preX(rollSpan);
 

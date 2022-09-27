@@ -2,6 +2,7 @@ import { clone } from "lodash";
 import Ability from "src/Ability";
 import DieProbs from "src/DieProbs";
 import * as Util from 'src/Util';
+import NoCoverType from "./NoCoverType";
 
 export default class Attacker {
   public attacks: number;
@@ -20,6 +21,7 @@ export default class Attacker {
   public brutal: boolean; // fight only
   public stun: boolean; // fight only
   public autoNormHits: number;
+  public noCover: NoCoverType;
   public abilities: Set<Ability>; // for {Dueller,StormShield,Hammerhand}; TODO add {rending, starfire, brutal, stun};
 
   public constructor(
@@ -39,6 +41,7 @@ export default class Attacker {
     brutal: boolean = false,
     stun: boolean = false,
     autoNormHits: number = 0,
+    noCover: NoCoverType = NoCoverType.No,
     abilities: Set<Ability> = new Set<Ability>(),
   ) {
     this.attacks = attacks;
@@ -57,6 +60,7 @@ export default class Attacker {
     this.brutal = brutal;
     this.stun = stun;
     this.autoNormHits = autoNormHits;
+    this.noCover = noCover;
     this.abilities = abilities;
   }
 
