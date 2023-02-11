@@ -17,8 +17,7 @@ export function calcFinalDiceProbsForAttacker(
     0,
     attacker.autoNormHits,
     0,
-    attacker.rending,
-    attacker.starfire,
+    attacker.abilities,
   );
 }
 
@@ -29,8 +28,7 @@ export function calcFinalDiceProbs(
   autoCrits: number = 0,
   autoNorms: number = 0,
   normToCritPromotions: number = 0,
-  rending: boolean = false,
-  starfire: boolean = false,
+  abilities: Set<Ability> = new Set<Ability>(),
 ): FinalDiceProb[]
 {
   let finalDiceProbs: FinalDiceProb[] = [];
@@ -53,8 +51,7 @@ export function calcFinalDiceProbs(
         autoCrits,
         autoNorms,
         normToCritPromotions,
-        rending,
-        starfire,
+        abilities,
       );
 
       if (finalDiceProb.prob > 0) {
@@ -75,8 +72,7 @@ export function calcFinalDiceProb(
   autoCrits: number = 0,
   autoNorms: number = 0,
   normToCritPromotions: number = 0,
-  rending: boolean = false,
-  starfire: boolean = false,
+  abilities: Set<Ability> = new Set<Ability>(),
 ): FinalDiceProb
 {
   let prob = 0
@@ -135,7 +131,7 @@ export function calcFinalDiceProb(
   crits += autoCrits;
   norms += autoNorms;
 
-  if (starfire) {
+  if (abilities.has(Ability.FailToNormIfCrit)) {
     if (crits > 0 && fails > 0) {
       norms++;
       fails--;
@@ -146,7 +142,7 @@ export function calcFinalDiceProb(
   crits += actualPromotions;
   norms -= actualPromotions;
 
-  if (rending) {
+  if (abilities.has(Ability.Rending)) {
     if (crits > 0 && norms > 0) {
       crits++;
       norms--;

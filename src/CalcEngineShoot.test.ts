@@ -509,7 +509,7 @@ describe(calcDmgProbs.name + ', relentless', () => {
 
 describe(calcDmgProbs.name + ', rending & starfire', () => {
   it('rending, 2 atk dice, probability 2 crits', () => {
-    const atk = newTestAttacker(2).setProp('rending', true);
+    const atk = newTestAttacker(2).setAbility(Ability.Rending, true);
     const [pc, pn, ] = atk.toDieProbs().toCritNormFail();
     const def = new Defender(0);
 
@@ -517,7 +517,7 @@ describe(calcDmgProbs.name + ', rending & starfire', () => {
     expect(dmgs.get(2 * atk.critDmg)).toBeCloseTo(pc * pc + 2 * pc * pn, requiredPrecision);
   });
   it('starfire, 2 atk dice, probability 1 crit + 1 norm', () => {
-    const atk = newTestAttacker(2).setProp('starfire', true);
+    const atk = newTestAttacker(2).setAbility(Ability.FailToNormIfCrit, true);
     const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
     const def = new Defender(0);
 

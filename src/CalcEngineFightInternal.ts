@@ -133,14 +133,14 @@ export function calcDieChoice(chooser: FighterState, enemy: FighterState): Fight
   // ALWAYS strike if you can kill enemy with a single strike;
   // also, if enemy has brutal and you have no crits, then you must strike;
   if(chooser.nextDmg() >= enemy.currentWounds
-    || (enemy.profile.brutal && chooser.crits === 0)) {
+    || (enemy.profile.has(Ability.Brutal) && chooser.crits === 0)) {
     return chooser.nextStrike();
   }
 
   // if can stun enemy (crit strike that also cancels an enemy NORM success),
   // and enemy doesn't have any crit successes, then there is no downside
   // to doing a stunning crit strike now
-  if(chooser.profile.stun && !chooser.hasDoneStun && chooser.crits > 0 && enemy.crits === 0) {
+  if(chooser.profile.has(Ability.Stun) && !chooser.hasDoneStun && chooser.crits > 0 && enemy.crits === 0) {
     return FightChoice.CritStrike;
   }
 
@@ -212,7 +212,7 @@ export function resolveDieChoice(
     chooser.crits--;
     enemy.applyDmg(chooser.profile.critDmg);
 
-    if(chooser.profile.stun && !chooser.hasDoneStun) {
+    if(chooser.profile.has(Ability.Stun) && !chooser.hasDoneStun) {
       chooser.hasDoneStun = true;
       enemy.norms = Math.max(0, enemy.norms - 1); // stun ability can only cancel an enemy norm success
     }
@@ -250,7 +250,7 @@ export function resolveDieChoice(
     }
   }
   else if(choice === FightChoice.NormParry) {
-    if(enemy.profile.brutal) {
+    if(enemy.profile.has(Ability.Brutal)) {
       throw new Error("not allowed to do FightChoice.NormParry when enemy has brutal")
     }
     chooser.norms--;
@@ -269,7 +269,7 @@ export function calcParryForLastEnemySuccessThenKillEnemy(
   // note: this function assumes chooser and enemy have successes
 
   // reminder: enemy having brutal means chooser can only parry with crits
-  if(enemy.profile.brutal) {
+  if(enemy.profile.has(Ability.Brutal)) {
     if(chooser.crits === 0) {
       return null;
     }
@@ -300,7 +300,7 @@ export function calcParryForLastEnemySuccessThenKillEnemy(
     }
     // else enemy.norms > 0
     else {
-      if(chooser.norms > 0 && !enemy.profile.brutal) {
+      if(chooser.norms > 0 && !enemy.profile.has(Ability.Brutal)) {
         fightChoice = FightChoice.NormParry;
       }
       else {
@@ -331,7 +331,7 @@ export function wiseParry(chooser: FighterState, enemy: FighterState): FightChoi
     return FightChoice.CritParry;
   }
   // do a norm parry, but only if there is an enemy norm success to cancel
-  else if (chooser.norms > 0 && enemy.norms > 0 && !enemy.profile.brutal) {
+  else if (chooser.norms > 0 && enemy.norms > 0 && !enemy.profile.has(Ability.Brutal)) {
     return FightChoice.NormParry;
   }
   // this is a CritParry of an enemy norm success

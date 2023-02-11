@@ -14,15 +14,11 @@ export default class Attacker {
   public px: number; // shoot only
   public reroll: Ability;
   public lethal: number; // 0 means default of crit on 6+; can be 7 to force never-crit
-  public rending: boolean; // a crit promotes a normal hit to a crit;
-  public starfire: boolean; // a crit promotes a fail to a normal hit; shoot only
   public wounds: number; // fight only
   public fnp: number; // fight only
-  public brutal: boolean; // fight only
-  public stun: boolean; // fight only
   public autoNormHits: number;
   public noCover: NoCoverType;
-  public abilities: Set<Ability>; // for {Dueller,StormShield,Hammerhand}; TODO add {rending, starfire, brutal, stun};
+  public abilities: Set<Ability>; // for {Dueller,StormShield,Hammerhand,CloseAssault,ToxinSacs}; TODO add {rending, starfire, brutal, stun};
 
   public constructor(
     attacks: number = 4,
@@ -34,12 +30,8 @@ export default class Attacker {
     px: number = 0,
     reroll: Ability = Ability.None,
     lethal: number = 0,
-    rending: boolean = false,
-    starfire: boolean = false,
     wounds: number = 12,
     fnp: number = 0,
-    brutal: boolean = false,
-    stun: boolean = false,
     autoNormHits: number = 0,
     noCover: NoCoverType = NoCoverType.No,
     abilities: Set<Ability> = new Set<Ability>(),
@@ -53,12 +45,8 @@ export default class Attacker {
     this.px = px;
     this.reroll = reroll;
     this.lethal = lethal;
-    this.rending = rending;
-    this.starfire = starfire;
     this.wounds = wounds;
     this.fnp = fnp;
-    this.brutal = brutal;
-    this.stun = stun;
     this.autoNormHits = autoNormHits;
     this.noCover = noCover;
     this.abilities = abilities;

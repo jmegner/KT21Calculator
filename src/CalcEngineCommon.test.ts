@@ -55,6 +55,9 @@ describe(Common.calcFinalDiceProb.name, () => {
   const p1 = 1 / 6; // fail that can be rerolled by Ceaseless
   const p2 = pf - 1 / 6; // fail that can not be rerolled by Ceaseless
 
+  const justRending = new Set<Ability>([Ability.Rending]);
+  const justFailToNormIfCrit = new Set<Ability>([Ability.FailToNormIfCrit]);
+
   it('basic', () => {
     const actual = Common.calcFinalDiceProb(dieProbs, 1, 0, 0, Ability.None);
     expectClose(actual, pc, 1, 0);
@@ -120,36 +123,36 @@ describe(Common.calcFinalDiceProb.name, () => {
     expectClose(actual, p1*p1*pf*pf + 2*p1*p1*pf*pf + p2*p2*pf, 0, 0);
   });
   it('rending {0c,1n,1f} => {0c,1n,1f}', () => {
-    const actual = Common.calcFinalDiceProb(dieProbs, 0, 1, 1, Ability.None, 0, 0, 0, true);
+    const actual = Common.calcFinalDiceProb(dieProbs, 0, 1, 1, Ability.None, 0, 0, 0, justRending);
     expectClose(actual, pn * pf * 2, 0, 1);
   });
   it('rending {1c,0n,1f} => {1c,0n,1f}', () => {
-    const actual = Common.calcFinalDiceProb(dieProbs, 1, 0, 1, Ability.None, 0, 0, 0, true);
+    const actual = Common.calcFinalDiceProb(dieProbs, 1, 0, 1, Ability.None, 0, 0, 0, justRending);
     expectClose(actual, pc * pf * 2, 1, 0);
   });
   it('rending {1c,1n,0f} => {2c,0n,0f}', () => {
-    const actual = Common.calcFinalDiceProb(dieProbs, 1, 1, 0, Ability.None, 0, 0, 0, true);
+    const actual = Common.calcFinalDiceProb(dieProbs, 1, 1, 0, Ability.None, 0, 0, 0, justRending);
     expectClose(actual, pc * pn * 2, 2, 0);
   });
   it('rending {3c,3n,3f} => {4c, 3n, 2f}', () => {
-    const actual = Common.calcFinalDiceProb(dieProbs, 3, 3, 0, Ability.None, 0, 0, 0, true);
+    const actual = Common.calcFinalDiceProb(dieProbs, 3, 3, 0, Ability.None, 0, 0, 0, justRending);
     expect(actual.crits).toBe(4);
     expect(actual.norms).toBe(2);
   });
   it('starfire {0c,1n,1f} => {0c,1n,1f}', () => {
-    const actual = Common.calcFinalDiceProb(dieProbs, 0, 1, 1, Ability.None, 0, 0, 0, false, true);
+    const actual = Common.calcFinalDiceProb(dieProbs, 0, 1, 1, Ability.None, 0, 0, 0, justFailToNormIfCrit);
     expect(actual).toStrictEqual(new FinalDiceProb(pn * pf * 2, 0, 1));
   });
   it('starfire {1c,0n,1f} => {1c,1n,0f}', () => {
-    const actual = Common.calcFinalDiceProb(dieProbs, 1, 0, 1, Ability.None, 0, 0, 0, false, true);
+    const actual = Common.calcFinalDiceProb(dieProbs, 1, 0, 1, Ability.None, 0, 0, 0, justFailToNormIfCrit);
     expectClose(actual, pc * pf * 2, 1, 1);
   });
   it('starfire {1c,1n,0f} => {1c,1n,0f}', () => {
-    const actual = Common.calcFinalDiceProb(dieProbs, 1, 1, 0, Ability.None, 0, 0, 0, false, true);
+    const actual = Common.calcFinalDiceProb(dieProbs, 1, 1, 0, Ability.None, 0, 0, 0, justFailToNormIfCrit);
     expectClose(actual, pc * pn * 2, 1, 1);
   });
   it('starfire {3c,3n,3f} => {3c,4n,2f}', () => {
-    const actual = Common.calcFinalDiceProb(dieProbs, 3, 3, 3, Ability.None, 0, 0, 0, false, true);
+    const actual = Common.calcFinalDiceProb(dieProbs, 3, 3, 3, Ability.None, 0, 0, 0, justFailToNormIfCrit);
     expect(actual.crits).toBe(3);
     expect(actual.norms).toBe(4);
   });

@@ -11,14 +11,13 @@ Check out [Kill Team Resources](https://github.com/jmegner/KillTeamResources) re
 ## Future Work
 
 Features I plan on implementing...
+* mass analysis tab
 * have option for user to select a relevant operative profile (ex: Necron Immortal with Gauss Blaster and Starfire Core) instead of individually selecting parameters.
-* results tables have different colors for below-median and above-median damage.
 * results tables have checkbox for damage-oriented or remaining-wounds-oriented numbers
 * shoot section
   * Cult Ambush reroll (you roll attack dice and then choose pip type to reroll, like reroll 2s)
 * fight section
   * transition from uninjured to injured (degraded WS) between rounds
-  * [Ecclesiarchy strategic ploy](https://wahapedia.ru/kill-team2/kill-teams/ecclesiarchy/#Strategic-Ploys) Divine Shield (crit triggers balanced)
   * fnp: this one is messy, so is low priority
 
 

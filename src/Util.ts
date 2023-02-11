@@ -1,5 +1,6 @@
 import { range, clone, concat }  from 'lodash';
 import { combinations } from 'mathjs';
+import createUtilityClassName from 'react-bootstrap/esm/createUtilityClasses';
 
 export type Accepter<T> = (arg: T) => void;
 
@@ -100,11 +101,11 @@ export function makeSetChangeHandler<ObjType,ItemType>(
   objChangeHandler: (t: ObjType) => void,
   setName: keyof ObjType,
   mutuallyExclusiveItems: Iterable<ItemType>,
-) : (propName: keyof ObjType) => Accepter<string>
+) : Accepter<string>
 {
-  return (propName: keyof ObjType) => function handler(text: string) {
+  return function handler(text: string) {
     let newObj = clone(obj);
-    const newSet = new Set<ItemType>(newObj[propName] as unknown as Set<ItemType>);
+    const newSet = new Set<ItemType>(newObj[setName] as unknown as Set<ItemType>);
     newObj[setName] = newSet as any;
 
     for(const item of mutuallyExclusiveItems) {
@@ -112,6 +113,30 @@ export function makeSetChangeHandler<ObjType,ItemType>(
     }
 
     newSet.add(text as unknown as ItemType);
+    objChangeHandler(newObj);
+  };
+}
+
+export function makeSetChangeHandlerForSingle<ObjType,ItemType>(
+  obj: ObjType,
+  objChangeHandler: (t: ObjType) => void,
+  setName: keyof ObjType,
+  desiredItem: ItemType,
+) : Accepter<string>
+{
+  return function handler(text: string) {
+    let newObj = clone(obj);
+    const newSet = new Set<ItemType>(newObj[setName] as unknown as Set<ItemType>);
+    newObj[setName] = newSet as any;
+
+    if(text as unknown as ItemType === desiredItem
+      || text === thickCheck) {
+      newSet.add(desiredItem as unknown as ItemType);
+    }
+    else {
+      newSet.delete(desiredItem as unknown as ItemType);
+    }
+
     objChangeHandler(newObj);
   };
 }
@@ -130,6 +155,16 @@ export function makeSetExtractor<ItemType>(
     return defaultItem;
   }
 }
+
+export function extractFromSet<ItemType>(
+  relevantItems: Iterable<ItemType>,
+  defaultItem: ItemType | null = null,
+  theSet: Set<ItemType>
+): ItemType | null
+{
+  return makeSetExtractor(relevantItems, defaultItem)(theSet);
+}
+
 
 export function nameof<TObject>(obj: TObject, key: keyof TObject): string;
 export function nameof<TObject>(key: keyof TObject): string;

@@ -9,10 +9,11 @@ import {
 import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
 import {
   Accepter,
-  boolToCheckX as toCheckX,
+  boolToCheckX,
+  extractFromSet,
   makePropChangeHandlers,
   makeSetChangeHandler,
-  makeSetExtractor,
+  makeSetChangeHandlerForSingle,
   preX,
   rollSpan,
   span,
@@ -37,29 +38,45 @@ const FighterControls: React.FC<Props> = (props: Props) => {
   const atk = props.attacker;
   const [textHandler, numHandler, boolHandler]
     = makePropChangeHandlers(atk, props.changeHandler);
-  const abilitySetHandler = makeSetChangeHandler<Attacker,Ability>(
-    atk,
-    props.changeHandler,
-    'abilities',
-    nicheAbilities,
-  );
-  const abilityExtractor = makeSetExtractor(nicheAbilities, Ability.None);
-  const ability = abilityExtractor(atk.abilities)!;
+
+  function subsetHandler(subset: Iterable<Ability>) {
+    return makeSetChangeHandler<Attacker,Ability>(
+      atk,
+      props.changeHandler,
+      'abilities',
+      subset,
+    );
+  }
+  function singleHandler(ability: Ability) {
+    return makeSetChangeHandlerForSingle<Attacker,Ability>(
+      atk,
+      props.changeHandler,
+      'abilities',
+      ability,
+    );
+  }
+
+  function toYN(ability: Ability) {
+    return boolToCheckX(atk.has(ability));
+  }
+
+  const nicheAbility = extractFromSet(nicheAbilities, Ability.None, atk.abilities)!;
 
   const params: IncProps[] = [
-    //           id/label,          selectedValue,      values,           valueChangeHandler
-    new IncProps('Attacks',      atk.attacks,           span(1, 8),       numHandler('attacks')),
-    new IncProps('WS',           atk.bs + '+',          rollSpan,         numHandler('bs')),
-    new IncProps('Normal Dmg',   atk.normDmg,           span(1, 9),       numHandler('normDmg')),
-    new IncProps('Critical Dmg', atk.critDmg,           span(1, 9),       numHandler('critDmg')),
-    new IncProps('Lethal',       atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),
-    new IncProps(N.Reroll,       atk.reroll,            preX(rerolls),    textHandler('reroll')),
-    // 2nd col
-    new IncProps('Wounds',       atk.wounds,            span(1, 19),      numHandler('wounds')),
-    new IncProps(N.Rending,      toCheckX(atk.rending), xAndCheck,        boolHandler('rending')),
-    new IncProps(N.Brutal,       toCheckX(atk.brutal),  xAndCheck,        boolHandler('brutal')),
-    new IncProps(N.StunMelee,    toCheckX(atk.stun),    xAndCheck,        boolHandler('stun')),
-    new IncProps(N.NicheAbility, ability,               nicheAbilities,   abilitySetHandler('abilities')),
+    //           id/label,           selectedValue,         values,           valueChangeHandler
+    new IncProps('Attacks',          atk.attacks,           span(1, 8),       numHandler('attacks')),
+    new IncProps('WS',               atk.bs + '+',          rollSpan,         numHandler('bs')),
+    new IncProps('Normal Dmg',       atk.normDmg,           span(1, 9),       numHandler('normDmg')),
+    new IncProps('Critical Dmg',     atk.critDmg,           span(1, 9),       numHandler('critDmg')),
+    new IncProps('Lethal',           atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),
+    new IncProps(N.Reroll,           atk.reroll,            preX(rerolls),    textHandler('reroll')),
+    // 2nd     col
+    new IncProps('Wounds',           atk.wounds,            span(1, 19),      numHandler('wounds')),
+    new IncProps(N.Rending,          toYN(Ability.Rending), xAndCheck,        singleHandler(Ability.Rending)),
+    new IncProps(N.Brutal,           toYN(Ability.Brutal),  xAndCheck,        singleHandler(Ability.Brutal)),
+    new IncProps(N.StunMelee,        toYN(Ability.Stun),    xAndCheck,        singleHandler(Ability.Stun)),
+    new IncProps(N.NicheAbility,     nicheAbility,          nicheAbilities,   subsetHandler(nicheAbilities)),
+    new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit),  xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
   ];
 
   const paramElems = params.map(p =>
