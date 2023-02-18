@@ -35,6 +35,7 @@ const ShootSection: React.FC = () => {
     N.Rending,
     N.Starfire,
     N.AutoNormHits,
+    N.AutoNormCrits,
     N.CoverNormSaves,
     N.CoverCritSaves,
     N.NormToCrit,

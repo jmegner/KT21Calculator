@@ -17,8 +17,9 @@ export default class Attacker {
   public wounds: number; // fight only
   public fnp: number; // fight only
   public autoNormHits: number;
+  public autoNormCrits: number;
   public noCover: NoCoverType;
-  public abilities: Set<Ability>; // for {Dueller,StormShield,Hammerhand,CloseAssault,ToxinSacs}; TODO add {rending, starfire, brutal, stun};
+  public abilities: Set<Ability>; // for basically all bool abilities
 
   public constructor(
     attacks: number = 4,
@@ -26,14 +27,6 @@ export default class Attacker {
     normDmg: number = 3,
     critDmg: number = 4,
     mwx: number = 0,
-    apx: number = 0,
-    px: number = 0,
-    reroll: Ability = Ability.None,
-    lethal: number = 0,
-    wounds: number = 12,
-    fnp: number = 0,
-    autoNormHits: number = 0,
-    noCover: NoCoverType = NoCoverType.No,
     abilities: Set<Ability> = new Set<Ability>(),
   ) {
     this.attacks = attacks;
@@ -41,14 +34,15 @@ export default class Attacker {
     this.normDmg = normDmg;
     this.critDmg = critDmg;
     this.mwx = mwx;
-    this.apx = apx;
-    this.px = px;
-    this.reroll = reroll;
-    this.lethal = lethal;
-    this.wounds = wounds;
-    this.fnp = fnp;
-    this.autoNormHits = autoNormHits;
-    this.noCover = noCover;
+    this.apx = 0;
+    this.px = 0;
+    this.reroll = Ability.None;
+    this.lethal = 0;
+    this.wounds = 12;
+    this.fnp = 0;
+    this.autoNormHits = 0;
+    this.autoNormCrits = 0;
+    this.noCover = NoCoverType.No;
     this.abilities = abilities;
   }
 

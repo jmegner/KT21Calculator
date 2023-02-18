@@ -36,6 +36,8 @@ const FightSection: React.FC = () => {
     N.Brutal,
     N.StunMelee,
     N.NicheAbility,
+    N.AutoNormHits,
+    N.AutoNormCrits,
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
 
   return (

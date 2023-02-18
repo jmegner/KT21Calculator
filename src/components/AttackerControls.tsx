@@ -51,6 +51,7 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     new IncProps(N.Rending,      toYN(Ability.Rending),  Util.xAndCheck,        singleHandler(Ability.Rending)),
     new IncProps(N.Starfire,     toYN(Ability.FailToNormIfCrit),  Util.xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
     new IncProps(N.AutoNormHits, atk.autoNormHits,       Util.xspan(1, 9),      numHandler('autoNormHits')),
+    new IncProps(N.AutoNormCrits,atk.autoNormCrits,      Util.xspan(1, 9),      numHandler('autoNormCrits')),
     //new IncProps(N.NoCover,      atk.noCover,            noCoverChoices,        textHandler('noCover')),
   ];
 
