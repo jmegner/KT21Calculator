@@ -16,8 +16,8 @@ export default class Attacker {
   public lethal: number; // 0 means default of crit on 6+; can be 7 to force never-crit
   public wounds: number; // fight only
   public fnp: number; // fight only
-  public autoNormHits: number;
-  public autoNormCrits: number;
+  public autoNorms: number;
+  public autoCrits: number;
   public noCover: NoCoverType;
   public abilities: Set<Ability>; // for basically all bool abilities
 
@@ -40,8 +40,8 @@ export default class Attacker {
     this.lethal = 0;
     this.wounds = 12;
     this.fnp = 0;
-    this.autoNormHits = 0;
-    this.autoNormCrits = 0;
+    this.autoNorms = 0;
+    this.autoCrits = 0;
     this.noCover = NoCoverType.No;
     this.abilities = abilities;
   }

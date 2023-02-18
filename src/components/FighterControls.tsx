@@ -77,8 +77,8 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps(N.StunMelee,        toYN(Ability.Stun),    xAndCheck,        singleHandler(Ability.Stun)),
     new IncProps(N.NicheAbility,     nicheAbility,          nicheAbilities,   subsetHandler(nicheAbilities)),
     new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit),  xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
-    new IncProps(N.AutoNormHits, atk.autoNormHits,          xspan(1, 9),      numHandler('autoNormHits')),
-    new IncProps(N.AutoNormCrits,atk.autoNormCrits,         xspan(1, 9),      numHandler('autoNormCrits')),
+    new IncProps(N.AutoNorms,        atk.autoNorms,         xspan(1, 9),      numHandler('autoNorms')),
+    new IncProps(N.AutoCrits,        atk.autoCrits,         xspan(1, 9),      numHandler('autoCrits')),
   ];
 
   const paramElems = params.map(p =>

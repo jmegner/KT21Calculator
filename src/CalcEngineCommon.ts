@@ -14,8 +14,8 @@ export function calcFinalDiceProbsForAttacker(
     attacker.toDieProbs(),
     attacker.attacks,
     attacker.reroll,
-    attacker.autoNormCrits,
-    attacker.autoNormHits,
+    attacker.autoCrits,
+    attacker.autoNorms,
     0,
     attacker.abilities,
   );
