@@ -40,6 +40,7 @@ const ShootSection: React.FC = () => {
     N.CoverCritSaves,
     N.NormToCrit,
     N.InvulnSave,
+    //N.Durable,
     N.HardyX,
     N.FeelNoPain,
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);

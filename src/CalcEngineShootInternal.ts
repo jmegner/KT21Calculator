@@ -5,7 +5,6 @@ import Defender from "src/Defender";
 import * as Util from 'src/Util';
 import FinalDiceProb from 'src/FinalDiceProb';
 import * as Common from 'src/CalcEngineCommon';
-import Ability from "./Ability";
 
 class DefenderFinalDiceStuff {
   public finalDiceProbs: FinalDiceProb[];

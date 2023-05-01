@@ -2,6 +2,7 @@ import { clone } from "lodash";
 import Die from "src/Die";
 import DieProbs from "src/DieProbs";
 import Ability from "./Ability";
+import * as Util from 'src/Util';
 
 export default class Defender {
   public defense: number;
@@ -14,29 +15,24 @@ export default class Defender {
   public reroll: Ability;
   public hardyx: number; // like Lethal, but for defense
   public normToCritPromotions: number;
+  public abilities: Set<Ability>; // for basically all bool abilities
 
   public constructor(
     defense: number = 3,
     save: number = 3,
     wounds: number = 12,
-    fnp: number = 0,
-    invulnSave: number = 0,
-    coverNormSaves: number = 0,
-    coverCritSaves: number = 0,
-    reroll: Ability = Ability.None,
-    hardyx: number = 0,
-    normToCritPromotions: number = 0,
   ) {
     this.defense = defense;
     this.save = save;
     this.wounds = wounds;
-    this.fnp = fnp;
-    this.invulnSave = invulnSave;
-    this.coverNormSaves = coverNormSaves;
-    this.coverCritSaves = coverCritSaves;
-    this.reroll = reroll;
-    this.hardyx = hardyx;
-    this.normToCritPromotions = normToCritPromotions;
+    this.fnp = 0;
+    this.invulnSave = 0;
+    this.coverNormSaves = 0;
+    this.coverCritSaves = 0;
+    this.reroll = Ability.None;
+    this.hardyx = 0;
+    this.normToCritPromotions = 0;
+    this.abilities = new Set<Ability>();
   }
 
   public usesFnp(): boolean {
@@ -73,4 +69,17 @@ export default class Defender {
   public withAlwaysNonfail(): Defender {
     return this.withProp('save', 1);
   }
+
+  public has(ability: Ability): boolean {
+    if(this.reroll === ability) {
+      return true;
+    }
+    return this.abilities.has(ability);
+  }
+
+  public setAbility(ability: Ability, addIt: boolean): Defender {
+    Util.addOrRemove(this.abilities, ability, addIt);
+    return this;
+  }
+
 }
