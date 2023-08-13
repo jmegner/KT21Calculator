@@ -71,14 +71,15 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps('Lethal',           atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),
     new IncProps(N.Reroll,           atk.reroll,            preX(rerolls),    textHandler('reroll')),
     new IncProps(N.Rending,          toYN(Ability.Rending), xAndCheck,        singleHandler(Ability.Rending)),
+    new IncProps(N.Brutal,           toYN(Ability.Brutal),  xAndCheck,        singleHandler(Ability.Brutal)),
     // 2nd     col
     new IncProps('Wounds',           atk.wounds,            span(1, 19),      numHandler('wounds')),
-    new IncProps(N.Brutal,           toYN(Ability.Brutal),  xAndCheck,        singleHandler(Ability.Brutal)),
     new IncProps(N.StunMelee,        toYN(Ability.Stun),    xAndCheck,        singleHandler(Ability.Stun)),
     new IncProps(N.NicheAbility,     nicheAbility,          nicheAbilities,   subsetHandler(nicheAbilities)),
     new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit),  xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
     new IncProps(N.AutoNorms,        atk.autoNorms,         xspan(1, 9),      numHandler('autoNorms')),
     new IncProps(N.AutoCrits,        atk.autoCrits,         xspan(1, 9),      numHandler('autoCrits')),
+    new IncProps(N.NormsToCrits,     atk.normsToCrits,      xspan(1, 9),      numHandler('normsToCrits')),
   ];
 
   const paramElems = params.map(p =>

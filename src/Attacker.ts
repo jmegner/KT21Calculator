@@ -18,6 +18,7 @@ export default class Attacker {
   public fnp: number; // fight only
   public autoNorms: number;
   public autoCrits: number;
+  public normsToCrits: number;
   public noCover: NoCoverType;
   public abilities: Set<Ability>; // for basically all bool abilities
 
@@ -42,6 +43,7 @@ export default class Attacker {
     this.fnp = 0;
     this.autoNorms = 0;
     this.autoCrits = 0;
+    this.normsToCrits = 0;
     this.noCover = NoCoverType.No;
     this.abilities = abilities;
   }

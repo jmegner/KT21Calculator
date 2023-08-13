@@ -38,7 +38,7 @@ export function calcDefenderFinalDiceStuff(
     defender.reroll,
     defender.coverCritSaves,
     defender.coverNormSaves,
-    defender.normToCritPromotions,
+    defender.normsToCrits,
     );
 
   let defenderFinalDiceProbsWithPx: FinalDiceProb[] = [];
@@ -57,7 +57,7 @@ export function calcDefenderFinalDiceStuff(
       defender.reroll,
       defender.coverCritSaves,
       defender.coverNormSaves,
-      defender.normToCritPromotions,
+      defender.normsToCrits,
     );
   }
 

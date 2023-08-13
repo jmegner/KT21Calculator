@@ -16,7 +16,7 @@ export function calcFinalDiceProbsForAttacker(
     attacker.reroll,
     attacker.autoCrits,
     attacker.autoNorms,
-    0,
+    attacker.normsToCrits,
     attacker.abilities,
   );
 }
@@ -27,7 +27,7 @@ export function calcFinalDiceProbs(
   reroll: Ability,
   autoCrits: number = 0,
   autoNorms: number = 0,
-  normToCritPromotions: number = 0,
+  normsToCrits: number = 0,
   abilities: Set<Ability> = new Set<Ability>(),
 ): FinalDiceProb[]
 {
@@ -50,7 +50,7 @@ export function calcFinalDiceProbs(
         reroll,
         autoCrits,
         autoNorms,
-        normToCritPromotions,
+        normsToCrits,
         abilities,
       );
 
@@ -71,7 +71,7 @@ export function calcFinalDiceProb(
   reroll: Ability = Ability.None, // really just care if Balanced or CeaselessPlusBalanced
   autoCrits: number = 0,
   autoNorms: number = 0,
-  normToCritPromotions: number = 0,
+  normsToCrits: number = 0,
   abilities: Set<Ability> = new Set<Ability>(),
 ): FinalDiceProb
 {
@@ -138,7 +138,7 @@ export function calcFinalDiceProb(
     }
   }
 
-  const actualPromotions = Math.min(normToCritPromotions, norms);
+  const actualPromotions = Math.min(normsToCrits, norms);
   crits += actualPromotions;
   norms -= actualPromotions;
 

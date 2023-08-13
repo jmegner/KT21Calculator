@@ -14,7 +14,7 @@ export default class Defender {
   public coverCritSaves: number;
   public reroll: Ability;
   public hardyx: number; // like Lethal, but for defense
-  public normToCritPromotions: number;
+  public normsToCrits: number;
   public abilities: Set<Ability>; // for basically all bool abilities
 
   public constructor(
@@ -31,7 +31,7 @@ export default class Defender {
     this.coverCritSaves = 0;
     this.reroll = Ability.None;
     this.hardyx = 0;
-    this.normToCritPromotions = 0;
+    this.normsToCrits = 0;
     this.abilities = new Set<Ability>();
   }
 

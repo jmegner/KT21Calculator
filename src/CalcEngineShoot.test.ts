@@ -622,7 +622,7 @@ describe(calcDmgProbs.name + ', defender cover saves', () => {
   });
   it('save promotions, 1 always-crit-hit vs 1 cover norm save + 1 promotion (always cancel)', () => {
     const atk = newTestAttacker(1).withAlwaysCritHit();
-    const def = new Defender(1, 6).setProp('coverNormSaves', 1).setProp('normToCritPromotions', 1);
+    const def = new Defender(1, 6).setProp('coverNormSaves', 1).setProp('normsToCrits', 1);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(1, requiredPrecision);
@@ -630,7 +630,7 @@ describe(calcDmgProbs.name + ', defender cover saves', () => {
   });
   it('save promotions, 2 always-crit-hit vs 1 cover norm save + 2 promotions (always cancel 1 of the 2)', () => {
     const atk = newTestAttacker(2).withAlwaysCritHit();
-    const def = new Defender(1, 6).setProp('coverNormSaves', 1).setProp('normToCritPromotions', 1);
+    const def = new Defender(1, 6).setProp('coverNormSaves', 1).setProp('normsToCrits', 1);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(atk.critDmg)).toBeCloseTo(1, requiredPrecision);

@@ -27,6 +27,10 @@ export const AutoCrits = new Note(
   `AutoCrits`,
   `How many attack dice can be automatically retained as a crit success. Much like cover saves but for attack dice.`,
 );
+export const NormsToCrits = new Note(
+  `NormsToCrits`,
+  `How many normal successes can be modified to critical successes.`,
+);
 export const Rending = new Note(
   `Rending`,
   `If you roll >=1 crit, you can modify a norm to a crit.`,
@@ -46,10 +50,6 @@ export const CoverNormSaves = new Note(
 export const CoverCritSaves = new Note(
   `CoverCritSaves`,
   `How many saves can be automatically retained as a critical success. High enough APx/Px can limit these auto-saves.`,
-);
-export const NormToCrit = new Note(
-  `NormToCrit`,
-  `How many normal successes can be modified to critical successes.`,
 );
 export const InvulnSave = new Note(
   `InvulnSave`,

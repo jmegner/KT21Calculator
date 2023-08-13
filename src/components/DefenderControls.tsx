@@ -37,7 +37,7 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
     new IncProps('Wounds',         def.wounds,               span(1, 20),      numHandler('wounds')),
     new IncProps(N.CoverNormSaves, def.coverNormSaves,       xspan(1, 4),      numHandler('coverNormSaves')),
     new IncProps(N.CoverCritSaves, def.coverCritSaves,       xspan(1, 4),      numHandler('coverCritSaves')),
-    new IncProps(N.NormToCrit,     def.normToCritPromotions, xspan(1, 4),      numHandler('normToCritPromotions')),
+    new IncProps(N.NormsToCrits,   def.normsToCrits,         xspan(1, 4),      numHandler('normsToCrits')),
     new IncProps(N.InvulnSave,     def.invulnSave + '+',     xrollSpan,        numHandler('invulnSave')),
     new IncProps(N.HardyX,         def.hardyx + '+',         xspan(5, 2, '+'), numHandler('hardyx')),
     new IncProps(N.FeelNoPain,     def.fnp + '+',            xspan(6, 2, '+'), numHandler('fnp')),
