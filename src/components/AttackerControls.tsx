@@ -7,7 +7,9 @@ import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
 import {
   Accepter,
   boolToCheckX,
+  extractFromSet,
   makePropChangeHandlers,
+  makeSetChangeHandler,
   makeSetChangeHandlerForSingle,
   preX,
   rollSpan,
@@ -16,7 +18,10 @@ import {
   xspan,
 } from 'src/Util';
 import Attacker from 'src/Attacker';
-import Ability, {rerollAbilities as rerolls} from 'src/Ability';
+import Ability, {
+  eliteAbilities,
+  rerollAbilities as rerolls
+} from 'src/Ability';
 import * as N from 'src/Notes';
 import NoCoverType from 'src/NoCoverType';
 
@@ -32,6 +37,14 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     = makePropChangeHandlers(atk, props.changeHandler);
   const noCoverChoices = Object.values(NoCoverType);
 
+  function subsetHandler(subset: Iterable<Ability>) {
+    return makeSetChangeHandler<Attacker,Ability>(
+      atk,
+      props.changeHandler,
+      'abilities',
+      subset,
+    );
+  }
   function singleHandler(ability: Ability) {
     return makeSetChangeHandlerForSingle<Attacker,Ability>(
       atk,
@@ -45,23 +58,26 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     return boolToCheckX(atk.has(ability));
   }
 
+  const eliteAbility = extractFromSet(eliteAbilities, Ability.None, atk.abilities)!;
+
   const params: IncProps[] = [
-    //           id/label,       selectedValue,          values,                valueChangeHandler
-    new IncProps('Attacks',      atk.attacks,            span(1, 9),       numHandler('attacks')),
-    new IncProps('BS',           atk.bs + '+',           rollSpan,         numHandler('bs')),
-    new IncProps('Normal Dmg',   atk.normDmg,            span(0, 9),       numHandler('normDmg')),
-    new IncProps('Crit Dmg',     atk.critDmg,            span(0, 10),      numHandler('critDmg')),
-    new IncProps('MWx',          atk.mwx,                xspan(1, 9),      numHandler('mwx')),
-    new IncProps('Lethal',       atk.lethal + '+',       xspan(5, 2, '+'), numHandler('lethal')),
-    new IncProps(N.Reroll,       atk.reroll,             preX(rerolls),    textHandler('reroll')),
+    //           id/label,       selectedValue,         values,                valueChangeHandler
+    new IncProps('Attacks',      atk.attacks,           span(1, 9),       numHandler('attacks')),
+    new IncProps('BS',           atk.bs + '+',          rollSpan,         numHandler('bs')),
+    new IncProps('Normal Dmg',   atk.normDmg,           span(0, 9),       numHandler('normDmg')),
+    new IncProps('Crit Dmg',     atk.critDmg,           span(0, 10),      numHandler('critDmg')),
+    new IncProps('MWx',          atk.mwx,               xspan(1, 9),      numHandler('mwx')),
+    new IncProps('APx',          atk.apx,               xspan(1, 4),      numHandler('apx')),
+    new IncProps('Px',           atk.px,                xspan(1, 4),      numHandler('px')),
+    new IncProps(N.Reroll,       atk.reroll,            preX(rerolls),    textHandler('reroll')),
     // 2nd column
-    new IncProps('APx',          atk.apx,                xspan(1, 4),      numHandler('apx')),
-    new IncProps('Px',           atk.px,                 xspan(1, 4),      numHandler('px')),
-    new IncProps(N.Rending,      toYN(Ability.Rending),  xAndCheck,        singleHandler(Ability.Rending)),
+    new IncProps('Lethal',       atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),
+    new IncProps(N.Rending,      toYN(Ability.Rending), xAndCheck,        singleHandler(Ability.Rending)),
     new IncProps(N.Starfire,     toYN(Ability.FailToNormIfCrit),  xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
-    new IncProps(N.AutoNorms,    atk.autoNorms,          xspan(1, 9),      numHandler('autoNorms')),
-    new IncProps(N.AutoCrits,    atk.autoCrits,          xspan(1, 9),      numHandler('autoCrits')),
-    new IncProps(N.NormsToCrits, atk.normsToCrits,       xspan(1, 9),      numHandler('normsToCrits')),
+    new IncProps(N.AutoNorms,    atk.autoNorms,         xspan(1, 9),      numHandler('autoNorms')),
+    new IncProps(N.AutoCrits,    atk.autoCrits,         xspan(1, 9),      numHandler('autoCrits')),
+    new IncProps(N.NormsToCrits, atk.normsToCrits,      xspan(1, 9),      numHandler('normsToCrits')),
+    new IncProps('ElitePoints*',  eliteAbility,          eliteAbilities,   subsetHandler(eliteAbilities)),
     //new IncProps(N.NoCover,      atk.noCover,            noCoverChoices,        textHandler('noCover')),
   ];
 

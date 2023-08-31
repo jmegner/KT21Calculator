@@ -22,6 +22,7 @@ import {
 } from 'src/Util';
 import Attacker from 'src/Attacker';
 import Ability, {
+  eliteAbilities,
   mutuallyExclusiveFightAbilities as nicheAbilities,
   rerollAbilities as rerolls
 } from 'src/Ability';
@@ -61,6 +62,7 @@ const FighterControls: React.FC<Props> = (props: Props) => {
   }
 
   const nicheAbility = extractFromSet(nicheAbilities, Ability.None, atk.abilities)!;
+  const eliteAbility = extractFromSet(eliteAbilities, Ability.None, atk.abilities)!;
 
   const params: IncProps[] = [
     //           id/label,           selectedValue,         values,           valueChangeHandler
@@ -80,6 +82,7 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps(N.AutoNorms,        atk.autoNorms,         xspan(1, 9),      numHandler('autoNorms')),
     new IncProps(N.AutoCrits,        atk.autoCrits,         xspan(1, 9),      numHandler('autoCrits')),
     new IncProps(N.NormsToCrits,     atk.normsToCrits,      xspan(1, 9),      numHandler('normsToCrits')),
+    new IncProps('ElitePoints*',     eliteAbility,          eliteAbilities,   subsetHandler(eliteAbilities)),
   ];
 
   const paramElems = params.map(p =>

@@ -43,6 +43,9 @@ const ShootSection: React.FC = () => {
     //N.Durable,
     N.HardyX,
     N.FeelNoPain,
+    N.EliteModerate,
+    N.EliteExtreme,
+    N.FireTeamRules,
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
 
   return (

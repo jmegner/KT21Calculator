@@ -14,6 +14,8 @@ export enum Ability {
     Rending = "Rending", // if have crit, promote one normal hit to crit
     CloseAssault = "CloseAssault", // >=2 norms triggers promotion of fail to norm; Imperial Navy Breachers
     FailToNormIfCrit = "FailToNormIfCrit", // crit triggers promotion of fail to norm; Starfire, DakkaDakkaDakka, Toxin Sacs
+    EliteModerate = "EliteModerate", // promote miss to norm or norm to crit
+    EliteExtreme = "EliteExtreme", // promote miss to crit
 
     // fight stuff
     Brutal = "Brutal", // opponent can only parry with crit
@@ -36,6 +38,12 @@ export const mutuallyExclusiveFightAbilities = [
   Ability.Dueller,
   Ability.Hammerhand,
   Ability.StormShield,
+];
+
+export const eliteAbilities = [
+  Ability.None,
+  Ability.EliteModerate,
+  Ability.EliteExtreme,
 ];
 
 export function extractAbility(desiredAbility: Ability, abilities: Set<Ability>): Ability | null {

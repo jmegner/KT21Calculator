@@ -31,6 +31,14 @@ export const NormsToCrits = new Note(
   `NormsToCrits`,
   `How many normal successes can be modified to critical successes.`,
 );
+export const EliteModerate = new Note(
+  `EliteModerate`,
+  `In spending of Kasrkin Elite points, upgrade a fail to a norm or a norm to a crit.`,
+);
+export const EliteExtreme = new Note(
+  `EliteExtreme`,
+  `In spending of Kasrkin Elite points, upgrade a fail to a crit.`,
+);
 export const Rending = new Note(
   `Rending`,
   `If you roll >=1 crit, you can modify a norm to a crit.`,

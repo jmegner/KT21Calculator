@@ -10,10 +10,9 @@ Check out [Kill Team Resources](https://github.com/jmegner/KillTeamResources) re
 
 ## Future Work
 
-Features I plan on implementing...
+Features that would be nice for me to get around to implementing ...
 * mass analysis tab
 * have option for user to select a relevant operative profile (ex: Necron Immortal with Gauss Blaster and Starfire Core) instead of individually selecting parameters.
-* results tables have checkbox for damage-oriented or remaining-wounds-oriented numbers
 * shoot section
   * Cult Ambush reroll (you roll attack dice and then choose pip type to reroll, like reroll 2s)
 * fight section
