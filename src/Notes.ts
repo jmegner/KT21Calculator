@@ -33,7 +33,7 @@ export const NormsToCrits = new Note(
 );
 export const CloseAssault = new Note(
   `CloseAssault`,
-  `If you have two or more sucesses, promote a fail to a normal success.`,
+  `If you have two or more sucesses, promote a fail to a normal success.  Imperial Navy Breachers strategic ploy.`,
 );
 export const EliteModerate = new Note(
   `EliteModerate`,
@@ -47,13 +47,9 @@ export const Rending = new Note(
   `Rending`,
   `If you roll >=1 crit, you can modify a norm to a crit.`,
 );
-export const Starfire = new Note(
-  `Starfire/DakkaDakkaDakka`,
-  `Necron equipment Starfire Core and Kommando strategic ploy "Dakka! Dakka! Dakka!" allow you to modify a failed hit into a normal hit if you had at least one critical hit.`,
-);
 export const FailToNormIfCrit = new Note(
   `FailToNormIfCrit`,
-  `Necron equipment Starfire Core, Kommando strategic ploy "Dakka! Dakka! Dakka!", and Hive Fleet equipment Toxin Sacs allow you to modify a failed hit into a normal hit if you had at least one critical hit.`,
+  `Modify a failed hit into a normal hit if you had at least one critical hit; Necron equipment Starfire Core, Kommando strategic ploy "Dakka! Dakka! Dakka!", Hive Fleet equipment Toxin Sacs, Corsair Voidscarred strategic ploy Outcasts.`,
 );
 export const CoverNormSaves = new Note(
   `CoverNormSaves`,
