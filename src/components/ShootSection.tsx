@@ -28,12 +28,13 @@ const ShootSection: React.FC = () => {
 
   const saveToDmgToProb = new Map<number,Map<number,number>>(SaveRange.map(save =>
     [save, calcDmgProbs(attacker, defender.withProp('save', save), shootOptions)]));
-  
+
   const noteListItems: JSX.Element[] = [
     N.AvgDamageUnbounded,
     N.Reroll,
     N.Rending,
     N.Starfire,
+    N.CloseAssault,
     N.AutoNorms,
     N.AutoCrits,
     N.CoverNormSaves,

@@ -38,6 +38,7 @@ const FightSection: React.FC = () => {
     N.NicheAbility,
     N.AutoNorms,
     N.AutoCrits,
+    N.CloseAssault,
     N.EliteModerate,
     N.EliteExtreme,
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
@@ -81,7 +82,7 @@ const FightSection: React.FC = () => {
             Notes:
             <ul>
               <li>
-                All strategies will do certain no-downside actions, with the consequence that 
+                All strategies will do certain no-downside actions, with the consequence that
                 "Strike" will still sometimes parry and "Parry" will still sometimes strike.
                 <ul>
                   <li>If fighter can kill enemy in next strike, they will do so.</li>

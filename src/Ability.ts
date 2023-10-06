@@ -12,8 +12,8 @@ export enum Ability {
 
     // fail/norm/crit manipulation
     Rending = "Rending", // if have crit, promote one normal hit to crit
-    CloseAssault = "CloseAssault", // >=2 norms triggers promotion of fail to norm; Imperial Navy Breachers
     FailToNormIfCrit = "FailToNormIfCrit", // crit triggers promotion of fail to norm; Starfire, DakkaDakkaDakka, Toxin Sacs
+    FailToNormIfAtLeastTwoSuccesses = "CloseAssault", // if at least two successes, promote fail to norm; from Imperial Navy Breachers Close Assault
     EliteModerate = "EliteModerate", // promote miss to norm or norm to crit
     EliteExtreme = "EliteExtreme", // promote miss to crit
 
@@ -35,6 +35,7 @@ export const rerollAbilities = [
 
 export const mutuallyExclusiveFightAbilities = [
   Ability.None,
+  Ability.FailToNormIfAtLeastTwoSuccesses,
   Ability.Dueller,
   Ability.Hammerhand,
   Ability.StormShield,

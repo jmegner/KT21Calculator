@@ -73,11 +73,12 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     // 2nd column
     new IncProps('Lethal',       atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),
     new IncProps(N.Rending,      toYN(Ability.Rending), xAndCheck,        singleHandler(Ability.Rending)),
-    new IncProps(N.Starfire,     toYN(Ability.FailToNormIfCrit),  xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
+    new IncProps(N.Starfire,     toYN(Ability.FailToNormIfCrit),                xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
+    new IncProps(N.CloseAssault, toYN(Ability.FailToNormIfAtLeastTwoSuccesses), xAndCheck, singleHandler(Ability.FailToNormIfAtLeastTwoSuccesses)),
     new IncProps(N.AutoNorms,    atk.autoNorms,         xspan(1, 9),      numHandler('autoNorms')),
     new IncProps(N.AutoCrits,    atk.autoCrits,         xspan(1, 9),      numHandler('autoCrits')),
     new IncProps(N.NormsToCrits, atk.normsToCrits,      xspan(1, 9),      numHandler('normsToCrits')),
-    new IncProps('ElitePoints*',  eliteAbility,          eliteAbilities,   subsetHandler(eliteAbilities)),
+    new IncProps('ElitePoints*', eliteAbility,          eliteAbilities,   subsetHandler(eliteAbilities)),
     //new IncProps(N.NoCover,      atk.noCover,            noCoverChoices,        textHandler('noCover')),
   ];
 

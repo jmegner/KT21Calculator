@@ -138,6 +138,13 @@ export function calcFinalDiceProb(
     }
   }
 
+  if (abilities.has(Ability.FailToNormIfAtLeastTwoSuccesses)) {
+    if (crits + norms >= 2 && fails > 0) {
+      norms++;
+      fails--;
+    }
+  }
+
   const actualNormToCritPromotions = Math.min(normsToCrits, norms);
   crits += actualNormToCritPromotions;
   norms -= actualNormToCritPromotions;
