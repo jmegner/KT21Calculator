@@ -39,6 +39,7 @@ const FightSection: React.FC = () => {
     N.AutoNorms,
     N.AutoCrits,
     N.CloseAssault,
+    N.Waaagh,
     N.EliteModerate,
     N.EliteExtreme,
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);

@@ -35,6 +35,10 @@ export const CloseAssault = new Note(
   `CloseAssault`,
   `If you have two or more sucesses, promote a fail to a normal success.  Imperial Navy Breachers strategic ploy.`,
 );
+export const Waaagh = new Note(
+  `Waaagh`,
+  `If you have two or more normal sucesses, promote a norm to a crit.  Kommandos strategic ploy.`,
+);
 export const EliteModerate = new Note(
   `EliteModerate`,
   `In spending of Kasrkin Elite points, upgrade a fail to a norm or a norm to a crit.`,

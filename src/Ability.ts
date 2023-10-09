@@ -19,11 +19,12 @@ export enum Ability {
 
     // fight stuff
     Brutal = "Brutal", // opponent can only parry with crit
+    Stun = "Stun", // effect different between shoot and fight
     StormShield = "StormShield", // each parry cancels two successes
     Hammerhand = "Hammerhand", // first strike does one extra dmg
     Dueller = "Dueller", // each crit parry cancels extra normal success
-    Stun = "Stun", // effect different between shoot and fight
-}
+    NormToCritIfAtLeastTwoNorms = "Waaagh", // if at least two norms, promote norm to crit; from Kommandos Waaagh; fight only
+};
 
 export const rerollAbilities = [
   Ability.Ceaseless,
@@ -39,6 +40,7 @@ export const mutuallyExclusiveFightAbilities = [
   Ability.Dueller,
   Ability.Hammerhand,
   Ability.StormShield,
+  Ability.NormToCritIfAtLeastTwoNorms,
 ];
 
 export const eliteAbilities = [
