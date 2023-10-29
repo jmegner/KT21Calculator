@@ -101,6 +101,9 @@ export function resolveFight(
   let currentGuy = guy1State;
   let nextGuy = guy2State;
 
+  handleDuelist(guy1State, guy2State);
+  handleDuelist(guy2State, guy1State);
+
   while(currentGuy.crits + currentGuy.norms + nextGuy.crits + nextGuy.norms > 0
     && currentGuy.currentWounds > 0 && nextGuy.currentWounds > 0)
   {
@@ -340,4 +343,39 @@ export function wiseParry(chooser: FighterState, enemy: FighterState): FightChoi
   }
   // remaining scenario is chooser has only norm successes and {enemy has only crit successes or brutal}
   return FightChoice.NormStrike;
+}
+
+export function handleDuelist(
+  guy1State: FighterState,
+  guy2State: FighterState,
+): void
+{
+  if (
+    !guy1State.profile.abilities.has(Ability.Duelist)
+    || guy1State.successes() === 0
+    || guy2State.successes() === 0
+  ) {
+    return;
+  }
+
+  let parryChoice: FightChoice;
+
+  if (guy1State.crits && guy2State.crits) {
+    parryChoice = FightChoice.CritParry;
+  }
+  else if (
+    guy1State.profile.has(Ability.Duelist)
+    && guy1State.crits
+    && guy2State.successes() >= 2
+  ){
+    parryChoice = FightChoice.CritParry;
+  }
+  else if (guy1State.norms === 0) {
+    parryChoice = FightChoice.CritParry;
+  }
+  else {
+    parryChoice = FightChoice.NormParry;
+  }
+
+  resolveDieChoice(parryChoice, guy1State, guy2State);
 }

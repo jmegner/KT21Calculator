@@ -31,6 +31,10 @@ export default class FighterState {
     this.hasDoneHammerhand = hasDoneHammerhand;
   }
 
+  public successes() {
+    return this.crits + this.norms;
+  }
+
   public applyDmg(dmg: number) {
     this.currentWounds = Math.max(0, this.currentWounds - dmg);
   }

@@ -23,6 +23,7 @@ export enum Ability {
     StormShield = "StormShield", // each parry cancels two successes
     Hammerhand = "Hammerhand", // first strike does one extra dmg
     Dueller = "Dueller", // each crit parry cancels extra normal success
+    Duelist = "Duelist", // parry before usual dice resolution
     NormToCritIfAtLeastTwoNorms = "Waaagh", // if at least two norms, promote norm to crit; from Kommandos Waaagh; fight only
 };
 

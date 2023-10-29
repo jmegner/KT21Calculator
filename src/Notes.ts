@@ -104,6 +104,10 @@ export const NicheAbility = new Note(
     + `  Hammerhand is Grey Knights psychic power; first strike deals +1 dmg.`
     + `  Storm Shield is a Custodes ability; each parry discards two successes of opponent instead of 1.`
 );
+export const Duelist = new Note(
+  `Duelist`,
+  `Do one parry before usual dice resolution.`,
+);
 export const Dummy = new Note(
   ``,
   ``,
