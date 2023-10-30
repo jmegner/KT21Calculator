@@ -215,6 +215,23 @@ export function resolveDieChoice(
     chooser.crits--;
     enemy.applyDmg(chooser.profile.critDmg);
 
+    if (
+      chooser.successes()
+      && chooser.profile.has(Ability.MurderousEntrance)
+      && !chooser.hasDoneMurderousEntrance
+    ) {
+      chooser.hasDoneMurderousEntrance = true;
+
+      if(chooser.crits > 0) {
+        chooser.crits--;
+        enemy.applyDmg(chooser.profile.critDmg);
+      }
+      else {
+        chooser.norms--;
+        enemy.applyDmg(chooser.profile.normDmg);
+      }
+    }
+
     if(chooser.profile.has(Ability.Stun) && !chooser.hasDoneStun) {
       chooser.hasDoneStun = true;
       enemy.norms = Math.max(0, enemy.norms - 1); // stun ability can only cancel an enemy norm success

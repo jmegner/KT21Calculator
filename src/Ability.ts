@@ -25,6 +25,7 @@ export enum Ability {
     Dueller = "Dueller", // each crit parry cancels extra normal success
     Duelist = "Duelist", // parry before usual dice resolution
     NormToCritIfAtLeastTwoNorms = "Waaagh", // if at least two norms, promote norm to crit; from Kommandos Waaagh; fight only
+    MurderousEntrance = "MurderousEntrance", // after a crit strike, do another strike (tactical ploy, so just once)
 };
 
 export const rerollAbilities = [
@@ -42,6 +43,7 @@ export const mutuallyExclusiveFightAbilities = [
   Ability.Hammerhand,
   Ability.StormShield,
   Ability.NormToCritIfAtLeastTwoNorms,
+  Ability.MurderousEntrance,
 ];
 
 export const eliteAbilities = [

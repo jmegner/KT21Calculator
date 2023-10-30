@@ -12,6 +12,7 @@ export default class FighterState {
   public currentWounds: number;
   public hasDoneStun: boolean;
   public hasDoneHammerhand: boolean;
+  public hasDoneMurderousEntrance: boolean;
 
   public constructor(
     profile: Attacker,
@@ -21,6 +22,7 @@ export default class FighterState {
     currentWounds: number = -1,
     hasDoneStun: boolean = false,
     hasDoneHammerhand: boolean = false,
+    hasDoneMurderousEntrance: boolean = false,
   ) {
     this.profile = profile;
     this.crits = crits;
@@ -29,6 +31,7 @@ export default class FighterState {
     this.currentWounds = currentWounds > 0 ? currentWounds : this.profile.wounds;
     this.hasDoneStun = hasDoneStun;
     this.hasDoneHammerhand = hasDoneHammerhand;
+    this.hasDoneMurderousEntrance = hasDoneMurderousEntrance;
   }
 
   public successes() {
@@ -64,6 +67,10 @@ export default class FighterState {
 
     if (this.crits > 0) {
       dmg += this.profile.critDmg;
+
+      if (this.profile.has(Ability.MurderousEntrance) && !this.hasDoneMurderousEntrance) {
+        dmg += this.profile.critDmg;
+      }
     }
     else if (this.norms > 0) {
       dmg += this.profile.normDmg;

@@ -103,6 +103,7 @@ export const NicheAbility = new Note(
   `Dueller is Intercession Squad chapter tactic; each crit parry discards additional 1 norm success of opponent.`
     + `  Hammerhand is Grey Knights psychic power; first strike deals +1 dmg.`
     + `  Storm Shield is a Custodes ability; each parry discards two successes of opponent instead of 1.`
+    + `  Murderous Entrance is a Void Troupe tactical ploy to strike again after a crit strike.`
 );
 export const Duelist = new Note(
   `Duelist`,
