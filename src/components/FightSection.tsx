@@ -20,13 +20,15 @@ const FightSection: React.FC = () => {
   const [fighterB, setFighterB] = React.useState(new Attacker());
   const [fightOptions, setFightOptions] = React.useState(new FightOptions());
   const aFirst = fightOptions.firstFighter === 'A';
-  const [fighter1WoundProbs, fighter2WoundProbs] = calcRemainingWounds(
-    aFirst ? fighterA : fighterB,
-    aFirst ? fighterB : fighterA,
-    aFirst ? fightOptions.strategyFighterA : fightOptions.strategyFighterB,
-    aFirst ? fightOptions.strategyFighterB : fightOptions.strategyFighterA,
-    fightOptions.numRounds,
-  );
+  const [fighter1WoundProbs, fighter2WoundProbs] = React.useMemo(
+    () => calcRemainingWounds(
+      aFirst ? fighterA : fighterB,
+      aFirst ? fighterB : fighterA,
+      aFirst ? fightOptions.strategyFighterA : fightOptions.strategyFighterB,
+      aFirst ? fightOptions.strategyFighterB : fightOptions.strategyFighterA,
+      fightOptions.numRounds,
+    ),
+    [fighterA, fighterB, fightOptions, aFirst]);
   const fighterAWoundProbs = aFirst ? fighter1WoundProbs : fighter2WoundProbs;
   const fighterBWoundProbs = aFirst ? fighter2WoundProbs : fighter1WoundProbs;
 
@@ -46,6 +48,10 @@ const FightSection: React.FC = () => {
 
   return (
     <Container style={{width: '800'}}>
+      <Row>
+        Kill Team 2021 Edition, Fighting
+        <a href='https://www.warhammer-community.com/wp-content/uploads/2022/08/ekD0GG2pTHlYba0G.pdf'>[Lite Rules]</a>
+      </Row>
       <Row>
         <Col className={Util.centerHoriz + ' p-0 border'}>
           <FighterControls title="Fighter A" attacker={fighterA} changeHandler={setFighterA} />

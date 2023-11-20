@@ -5,6 +5,7 @@ import Ability from "src/Ability";
 import Attacker from "src/Attacker";
 import DieProbs from "src/DieProbs";
 import FinalDiceProb from 'src/FinalDiceProb';
+import { addToMapValue } from 'src/Util';
 
 export function calcFinalDiceProbsForAttacker(
   attacker: Attacker,
@@ -242,4 +243,27 @@ export function calcFinalDiceProbBalanced(
   }
 
   return prob;
+}
+
+export function calcMultiRoundDamage(
+  dmgsSingleRound: Map<number,number>,
+  numRounds: number,
+): Map<number, number>
+{
+  let dmgsCumulative = new Map<number,number>(dmgsSingleRound);
+
+  // eslint-disable-next-line
+  for(let _ of range(1, numRounds)) {
+    const dmgsPrevRounds = dmgsCumulative;
+    dmgsCumulative = new Map<number,number>();
+
+    for(let [dmgPrevRounds, probPrevRounds] of dmgsPrevRounds) {
+      for(let [dmgSingleRound, probSingleRound] of dmgsSingleRound) {
+        const dmgCumulative = dmgPrevRounds + dmgSingleRound;
+        addToMapValue(dmgsCumulative, dmgCumulative, probPrevRounds * probSingleRound);
+      }
+    }
+  }
+
+  return dmgsCumulative;
 }

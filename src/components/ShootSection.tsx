@@ -24,10 +24,10 @@ const ShootSection: React.FC = () => {
   const [defender, setDefender] = React.useState(new Defender());
   const [shootOptions, setShootOptions] = React.useState(new ShootOptions());
 
-  //const damageToProb = calcDmgProbs(attacker, defender, shootOptions);
-
-  const saveToDmgToProb = new Map<number,Map<number,number>>(SaveRange.map(save =>
-    [save, calcDmgProbs(attacker, defender.withProp('save', save), shootOptions)]));
+  const saveToDmgToProb = React.useMemo(
+    () => new Map<number,Map<number,number>>(SaveRange.map(save =>
+      [save, calcDmgProbs(attacker, defender.withProp('save', save), shootOptions)])),
+    [attacker, defender, shootOptions]);
 
   const noteListItems: JSX.Element[] = [
     N.AvgDamageUnbounded,
@@ -51,6 +51,10 @@ const ShootSection: React.FC = () => {
 
   return (
     <Container style={{width: '510px'}}>
+      <Row>
+        Kill Team 2021 Edition, Shooting
+        <a href='https://www.warhammer-community.com/wp-content/uploads/2022/08/ekD0GG2pTHlYba0G.pdf'>[Lite Rules]</a>
+      </Row>
       <Row>
         <Col className={Util.centerHoriz + ' p-0'} xs='auto'>
           <Container>

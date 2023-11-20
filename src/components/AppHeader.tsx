@@ -6,6 +6,7 @@ import ktFightIcon from 'src/images/KtFightIcon.svg';
 import ktShootIcon from 'src/images/KtShootIcon.svg';
 import ktShootMassAnalysisIcon from 'src/images/ShootMultipleTargetsIcon.svg';
 import wotIcon from 'src/images/WorldOfTanksIcon.svg';
+import dzIcon from 'src/images/dz.png';
 
 type AppHeaderProps = {
   currentView: CalculatorViewChoice;
@@ -32,6 +33,7 @@ const AppHeader = (props: AppHeaderProps) => {
   }
 
   return <nav className='AppHeader'>
+    <a href="/KT21Calculator/">Home</a>&nbsp;&nbsp;
     {makeButton(
       CalculatorViewChoice.KtShoot,
       'Kill Team Shoot Calculator',
@@ -49,6 +51,11 @@ const AppHeader = (props: AppHeaderProps) => {
       'World Of Tanks Shoot Calculator',
       wotIcon,
       'World Of Tanks logo',
+    )} {makeButton(
+      CalculatorViewChoice.Deadzone,
+      'Deadzone Calculator',
+      dzIcon,
+      'Deadzone logo',
     )}
     {/*makeButton(
       CalculatorViewChoice.KtShootMassAnalysis,

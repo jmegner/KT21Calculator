@@ -2,6 +2,8 @@ import DieProbs from 'src/DieProbs';
 import FinalDiceProb from 'src/FinalDiceProb';
 import * as Common from 'src/CalcEngineCommon';
 import Ability from 'src/Ability';
+import { calcMultiRoundDamage } from 'src/CalcEngineCommon';
+import { weightedAverage } from 'src/Util';
 
 export const requiredPrecision = 10;
 
@@ -40,6 +42,62 @@ function expectClose(
   }
   expect(actual.prob).toBeCloseTo(expectedProb, requiredPrecision)
 }
+
+describe(calcMultiRoundDamage.name, () => {
+  it('rounds=1 means no change', () => {
+    const dmgsSingleRound = new Map<number, number>([
+      [0, 0.5],
+      [10, 0.375],
+      [100, 0.125],
+    ]);
+    const dmgsMultiRound = calcMultiRoundDamage(dmgsSingleRound, 1);
+    expect(dmgsMultiRound).toStrictEqual(dmgsSingleRound);
+  });
+  it('rounds=2', () => {
+    const [d0, d3, d6] = [0,   3,   6];
+    const [p0, p3, p6] = [0.5, 0.25, 0.25];
+    const dmgsSingleRound = new Map<number, number>([
+      [d0, p0],
+      [d3, p3],
+      [d6, p6],
+    ]);
+    const numRounds = 2;
+    const dmgsMultiRound = calcMultiRoundDamage(dmgsSingleRound, numRounds);
+
+    expect(dmgsMultiRound.get(d0)).toBeCloseTo(p0 * p0, requiredPrecision);
+    expect(dmgsMultiRound.get(d3)).toBeCloseTo(p0 * p3 * 2, requiredPrecision);
+    expect(dmgsMultiRound.get(d6)).toBeCloseTo(p0 * p6 * 2 + p3 * p3, requiredPrecision);
+    expect(dmgsMultiRound.get(d3 + d6)).toBeCloseTo(p3 * p6 * 2, requiredPrecision);
+    expect(dmgsMultiRound.get(d6 + d6)).toBeCloseTo(p6 * p6, requiredPrecision);
+    expect(dmgsMultiRound.size).toBe(5);
+
+    expect(weightedAverage(dmgsMultiRound))
+      .toBeCloseTo(weightedAverage(dmgsSingleRound) * numRounds, requiredPrecision);
+  });
+  it('rounds=3', () => {
+    const [d0, d3, d6] = [0,   3,   6];
+    const [p0, p3, p6] = [0.5, 0.25, 0.25];
+    const dmgsSingleRound = new Map<number, number>([
+      [d0, p0],
+      [d3, p3],
+      [d6, p6],
+    ]);
+    const numRounds = 3;
+    const dmgsMultiRound = calcMultiRoundDamage(dmgsSingleRound, numRounds);
+
+    expect(dmgsMultiRound.get(d0)).toBeCloseTo(p0 * p0 * p0, requiredPrecision);
+    expect(dmgsMultiRound.get(d3)).toBeCloseTo(p0 * p0 * p3 * 3, requiredPrecision);
+    expect(dmgsMultiRound.get(d6)).toBeCloseTo(p0 * p3 * p3 * 3 + p0 * p0 * p6 * 3, requiredPrecision);
+    expect(dmgsMultiRound.get(d3 + d6)).toBeCloseTo(p0 * p3 * p6 * 6 + p3 * p3 * p3, requiredPrecision);
+    expect(dmgsMultiRound.get(d6 + d6)).toBeCloseTo(p0 * p6 * p6 * 3 + p3 * p3 * p6 * 3, requiredPrecision);
+    expect(dmgsMultiRound.get(d6 + d6 + d3)).toBeCloseTo(p3 * p6 * p6 * 3, requiredPrecision);
+    expect(dmgsMultiRound.get(d6 + d6 + d6)).toBeCloseTo(p6 * p6 * p6, requiredPrecision);
+    expect(dmgsMultiRound.size).toBe(7);
+
+    expect(weightedAverage(dmgsMultiRound))
+      .toBeCloseTo(weightedAverage(dmgsSingleRound) * numRounds, requiredPrecision);
+  });
+});
 
 describe(Common.calcFinalDiceProb.name, () => {
   const pc = 1 / 6; // crit probability

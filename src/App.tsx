@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { StrictMode, useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { useSearchParams } from 'react-router-dom';
 
@@ -9,28 +9,39 @@ import ShootSection from 'src/components/ShootSection';
 import FightSection from 'src/components/FightSection';
 import ShootMassAnalysisSection from 'src/components/ShootMassAnalysisSection';
 import WorldOfTanksSection from 'src/components/WorldOfTanks/WorldOfTanksSection';
+import { DeadzoneSection } from 'src/components/Deadzone/DeadzoneSection';
+
+const _viewToAdditionalTexts: Map<CalculatorViewChoice, string[]> = new Map([
+  [CalculatorViewChoice.KtShoot, ['shoot']],
+  [CalculatorViewChoice.KtFight, ['fight']],
+  [CalculatorViewChoice.KtShootMassAnalysis, ['mass']],
+  [CalculatorViewChoice.WorldOfTanks, ['wot']],
+  [CalculatorViewChoice.Deadzone, ['dz']],
+]);
+
+const _textToView = new Map<string,CalculatorViewChoice>();
+for(const [view, texts] of _viewToAdditionalTexts) {
+  _textToView.set(view, view);
+  _textToView.set(view.toLowerCase(), view);
+  for(const text of texts) {
+    _textToView.set(text, view);
+  }
+}
 
 const App = () => {
   const [currentView, setCurrentView] = useState<CalculatorViewChoice>(CalculatorViewChoice.KtShoot);
   const [urlParams, setUrlParams] = useSearchParams();
-  const [urlQueryActedOn, setUrlQueryActedOn] = useState<string>("");
 
   useEffect( () => {
-    if(urlQueryActedOn === urlParams.toString()) {
-      return;
-    }
-
-    setUrlQueryActedOn(urlParams.toString());
-
     const viewText = urlParams.get('view')
     if(viewText !== null) {
-      const viewChoice = CalculatorViewChoice[viewText as keyof typeof CalculatorViewChoice];
-      if(viewChoice !== undefined) {
-        setCurrentView(viewChoice);
+      const chosenView = _textToView.get(viewText);
+      if(chosenView !== undefined) {
+        setCurrentView(chosenView);
       }
     }
-
-  });
+  },
+  [urlParams]);
 
   function sectionDiv(
     view: CalculatorViewChoice,
@@ -57,6 +68,7 @@ const App = () => {
             {sectionDiv(CalculatorViewChoice.KtFight, <FightSection/>)}
             {sectionDiv(CalculatorViewChoice.KtShootMassAnalysis, <ShootMassAnalysisSection/>)}
             {sectionDiv(CalculatorViewChoice.WorldOfTanks, <WorldOfTanksSection/>)}
+            {sectionDiv(CalculatorViewChoice.Deadzone, <DeadzoneSection/>)}
           </Col>
         </Row>
     </>

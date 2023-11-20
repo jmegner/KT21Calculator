@@ -1,8 +1,8 @@
 import FinalDiceProb from 'src/FinalDiceProb';
 import Tank from "./Tank";
-import { calcMultiRoundDamage } from 'src/CalcEngineShootInternal';
 import { addToDmgProbs, calcFinalDiceProbs } from 'src/WorldOfTanks/CalcEngineWorldOfTanksInternal';
 import { fillInProbForZero } from 'src/Util';
+import { calcMultiRoundDamage } from 'src/CalcEngineCommon';
 
 export function calcDmgAndCritProbs(
   attacker: Tank,

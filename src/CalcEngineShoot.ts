@@ -7,7 +7,6 @@ import ShootOptions from "src/ShootOptions";
 import {
   calcDamage,
   calcDefenderFinalDiceStuff,
-  calcMultiRoundDamage,
   calcPostFnpDamages,
 } from 'src/CalcEngineShootInternal'
 
@@ -64,7 +63,7 @@ export function calcDmgProbs(
   Util.fillInProbForZero(damageToProb);
 
   if(shootOptions.numRounds > 1) {
-    damageToProb = calcMultiRoundDamage(damageToProb, shootOptions.numRounds);
+    damageToProb = Common.calcMultiRoundDamage(damageToProb, shootOptions.numRounds);
   }
 
   return damageToProb;

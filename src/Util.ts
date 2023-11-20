@@ -226,6 +226,19 @@ export function addMapValues<T>(mapToChange: Map<T,number>, mapToAdd: Map<T,numb
   }
 }
 
+export function normalizeMapValues<T>(map: Map<T,number>, denominator = NaN): void {
+  if(isNaN(denominator)) {
+    denominator = 0;
+    for(let val of map.values()) {
+      denominator += val;
+    }
+  }
+
+  for(let [key, val] of map) {
+    map.set(key, val / denominator);
+  }
+}
+
 export function toPercentString(val: number, digitsPastDecimal: number = 2) {
   return (val * 100).toFixed(digitsPastDecimal);
 }

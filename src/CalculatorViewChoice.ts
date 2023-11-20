@@ -3,4 +3,5 @@ export enum CalculatorViewChoice {
   KtFight = 'KtFight',
   KtShootMassAnalysis = 'KtShootMassAnalysis',
   WorldOfTanks = "WorldOfTanks",
+  Deadzone = "Deadzone",
 }
