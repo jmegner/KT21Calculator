@@ -4,7 +4,7 @@ import "src/components/AppHeader.css"
 import { CalculatorViewChoice } from 'src/CalculatorViewChoice';
 import ktFightIcon from 'src/images/KtFightIcon.svg';
 import ktShootIcon from 'src/images/KtShootIcon.svg';
-import ktShootMassAnalysisIcon from 'src/images/ShootMultipleTargetsIcon.svg';
+//import ktShootMassAnalysisIcon from 'src/images/ShootMultipleTargetsIcon.svg';
 import wotIcon from 'src/images/WorldOfTanksIcon.svg';
 import dzIcon from 'src/images/dz.png';
 
