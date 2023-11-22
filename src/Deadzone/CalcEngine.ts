@@ -1,6 +1,5 @@
-import { at } from "lodash";
 import Model from "./Model";
-import { random } from "mathjs";
+import { randomInt } from "mathjs";
 import {
   addToMapValue,
   binomialPmf,
@@ -108,7 +107,7 @@ function simulatedSfFromSingleRoll(diceStat: number): Sf {
   const sf = new Sf();
   let pipOutcome: number;
   do {
-    pipOutcome = random(pipLo, pipHi);
+    pipOutcome = randomInt(pipLo, pipHi + 1);
     if(pipOutcome >= diceStat) {
       sf.s++;
     }
