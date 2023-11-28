@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^4.6.0",
+    "dice_sim": "file:src/DiceSim/pkg",
     "lodash": "^4.17.21",
     "mathjs": "^10.0.2",
     "react": "^17.0.2",
@@ -16,6 +17,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:wasm": "cd src/DiceSim && wasm-pack build --target web",
+    "build:all": "npm run build && npm run build:wasm",
     "test": "react-scripts test",
     "testq": "react-scripts test --watchAll=false --watch=false",
     "eject": "react-scripts eject",

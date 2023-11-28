@@ -108,3 +108,7 @@ dist
 
 # seems to be generated every "npm start"
 src/react-app-env.d.ts
+
+# rust-wasm stuff
+target/
+pkg/

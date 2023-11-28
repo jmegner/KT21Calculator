@@ -1,4 +1,4 @@
-import React, { StrictMode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { useSearchParams } from 'react-router-dom';
 
@@ -10,6 +10,7 @@ import FightSection from 'src/components/FightSection';
 import ShootMassAnalysisSection from 'src/components/ShootMassAnalysisSection';
 import WorldOfTanksSection from 'src/components/WorldOfTanks/WorldOfTanksSection';
 import { DeadzoneSection } from 'src/components/Deadzone/DeadzoneSection';
+import init, { get_a_number } from 'dice_sim';
 
 const _viewToAdditionalTexts: Map<CalculatorViewChoice, string[]> = new Map([
   [CalculatorViewChoice.KtShoot, ['shoot']],

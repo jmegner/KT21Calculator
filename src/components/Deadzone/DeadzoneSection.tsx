@@ -1,4 +1,9 @@
-import React from 'react';
+import {
+  FC,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   Col,
   Container,
@@ -15,13 +20,22 @@ import { CombatOptions } from 'src/Deadzone/CombatOptions';
 import ModelControls from './ModelControls';
 import ResultsDisplay from './ResultsDisplay';
 import CombatOptionControls from './CombatOptionControls';
+import init, { get_a_number } from 'dice_sim';
 
-export const DeadzoneSection: React.FC = () => {
-  const [attacker, setAttacker] = React.useState(new Model());
-  const [defender, setDefender] = React.useState(new Model());
-  const [combatOptions, setCombatOptions] = React.useState(new CombatOptions());
+export const DeadzoneSection: FC = () => {
+  const [attacker, setAttacker] = useState(new Model());
+  const [defender, setDefender] = useState(new Model());
+  const [combatOptions, setCombatOptions] = useState(new CombatOptions());
+  const [wasmNumber, setWasmNumber] = useState(0);
+  useEffect(
+    () => {
+      init().then(() => {
+        setWasmNumber(get_a_number());
+      })
+    },
+    []);
 
-  const dmgToProb = React.useMemo(
+  const dmgToProb = useMemo(
     () => calcDmgProbs(attacker, defender, combatOptions),
     [attacker, defender, combatOptions]);
 
@@ -35,6 +49,8 @@ export const DeadzoneSection: React.FC = () => {
         Deadzone, Third Edition
         <a href='https://companion.manticgames.com/deadzone-rules/'>[Rules]</a>
         <a href='https://boardgamegeek.com/filepage/239614/esoteric-order-gamers-deadzone-3rd-edition-rules-r'>[Reference]</a>
+        <br/>
+        Attempt at using wasm: '{wasmNumber}'
       </Row>
       <Row>
         <Col className={Util.centerHoriz + ' p-0 border'}>
