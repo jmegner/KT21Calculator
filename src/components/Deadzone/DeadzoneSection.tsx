@@ -1,6 +1,5 @@
 import {
   FC,
-  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -20,13 +19,14 @@ import { CombatOptions } from 'src/Deadzone/CombatOptions';
 import ModelControls from './ModelControls';
 import ResultsDisplay from './ResultsDisplay';
 import CombatOptionControls from './CombatOptionControls';
-import init, { get_a_number } from 'dice_sim';
+import { get_a_number } from 'dice_sim';
 
 export const DeadzoneSection: FC = () => {
   const [attacker, setAttacker] = useState(new Model());
   const [defender, setDefender] = useState(new Model());
   const [combatOptions, setCombatOptions] = useState(new CombatOptions());
-  const [wasmNumber, setWasmNumber] = useState(0);
+  /*
+  const [wasmNumber, setWasmNumber] = useState(get_a_number());
   useEffect(
     () => {
       init().then(() => {
@@ -34,6 +34,7 @@ export const DeadzoneSection: FC = () => {
       })
     },
     []);
+  */
 
   const dmgToProb = useMemo(
     () => calcDmgProbs(attacker, defender, combatOptions),
@@ -49,8 +50,9 @@ export const DeadzoneSection: FC = () => {
         Deadzone, Third Edition
         <a href='https://companion.manticgames.com/deadzone-rules/'>[Rules]</a>
         <a href='https://boardgamegeek.com/filepage/239614/esoteric-order-gamers-deadzone-3rd-edition-rules-r'>[Reference]</a>
-        <br/>
-        Attempt at using wasm: '{wasmNumber}'
+      </Row>
+      <Row>
+        Attempt at using wasm: '{get_a_number()}'
       </Row>
       <Row>
         <Col className={Util.centerHoriz + ' p-0 border'}>
