@@ -15,7 +15,7 @@ export default class Model {
     numDice: number = 3,
     diceStat: number = 5,
     numRerolls: number = 0,
-    apx: number = 0,
+    ap: number = 0,
     armor: number = 0,
     numShieldDice: number = 0,
     toxicDmg: number = 0,
@@ -24,7 +24,7 @@ export default class Model {
     this.numDice = numDice;
     this.diceStat = diceStat;
     this.numRerolls = numRerolls;
-    this.ap = apx;
+    this.ap = ap;
     this.armor = armor;
     this.numShieldDice = numShieldDice;
     this.toxicDmg = toxicDmg;

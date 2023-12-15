@@ -2,7 +2,7 @@ import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import App from 'src/App';
-import init from 'dice_sim';
+import wasmBindgenInit from 'dice_sim';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -19,7 +19,7 @@ above linked post suggests doing something like this ...
   and that appears to make sure everything in the app is done after wasm initialization is done.
 */
 
-init().then((wasm) => {
+wasmBindgenInit().then((wasm) => {
   ReactDOM.render(
     <StrictMode>
       <BrowserRouter>
