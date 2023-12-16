@@ -5,7 +5,8 @@ use wasm_bindgen::prelude::*;
 
 use super::model::Model;
 use super::options::Options;
-use crate::common::{add_to_map_value, binomial_pmf, ToJsMap};
+use crate::common::ts_types::ToJsMap;
+use crate::common::{add_to_map_value, binomial_pmf, calc_multi_round_damage};
 
 #[derive(Default)]
 struct Sf {
@@ -37,6 +38,11 @@ pub fn fiddle() {
 }
 
 #[wasm_bindgen]
+pub fn ugh() -> js_sys::Map {
+    HashMap::<i32, f64>::new().to_js_map()
+}
+
+#[wasm_bindgen]
 pub fn calc_dmg_probs(attacker: Model, defender: Model, options: Options) -> js_sys::Map {
     let mut rng = rand::thread_rng();
     let die_distribution = rand::distributions::Uniform::new(PIP_LO, PIP_HI + 1);
@@ -44,19 +50,23 @@ pub fn calc_dmg_probs(attacker: Model, defender: Model, options: Options) -> js_
         &die_distribution,
         &mut rng,
         &attacker,
-        options.numSimulations,
+        options.num_simulations,
     );
     let def_success_probs = make_success_probs(
         &die_distribution,
         &mut rng,
         &defender,
-        options.numSimulations,
+        options.num_simulations,
     );
     let mut dmg_probs = HashMap::<i32, f64>::new();
 
     for (atk_successes, atk_prob) in atk_success_probs.iter() {
         for (def_successes, def_prob) in def_success_probs.iter() {
-            let orig_dmg = atk_successes - def_successes;
+            let mut orig_dmg = atk_successes - def_successes;
+
+            if !options.attacker_can_be_damaged {
+                orig_dmg = std::cmp::max(0, orig_dmg);
+            }
 
             let (dmg_giver, dmg_receiver) = if orig_dmg >= 0 {
                 (&attacker, &defender)
@@ -67,7 +77,7 @@ pub fn calc_dmg_probs(attacker: Model, defender: Model, options: Options) -> js_
             let num_shield_dice = if orig_dmg == 0 {
                 0
             } else {
-                dmg_receiver.numShieldDice
+                dmg_receiver.num_shield_dice
             };
             let atk_and_def_prob = atk_prob * def_prob;
 
@@ -79,7 +89,7 @@ pub fn calc_dmg_probs(attacker: Model, defender: Model, options: Options) -> js_
                 };
                 let post_shield_dmg = std::cmp::max(0, orig_dmg.abs() - shield_successes);
                 let post_armor_dmg = std::cmp::max(0, post_shield_dmg - net_armor);
-                let post_toxic_dmg = post_armor_dmg + dmg_giver.toxicDmg;
+                let post_toxic_dmg = post_armor_dmg + dmg_giver.toxic_dmg;
                 add_to_map_value(
                     &mut dmg_probs,
                     &(orig_dmg.signum() * post_toxic_dmg),
@@ -88,8 +98,8 @@ pub fn calc_dmg_probs(attacker: Model, defender: Model, options: Options) -> js_
             }
         }
     }
-    if options.numRounds > 1 {
-        dmg_probs = crate::common::calc_multi_round_damage(&dmg_probs, options.numRounds);
+    if options.num_rounds > 1 {
+        dmg_probs = calc_multi_round_damage(&dmg_probs, options.num_rounds);
     }
     return dmg_probs.to_js_map();
 }
@@ -105,9 +115,9 @@ fn make_success_probs(
         let num_successes = simulated_num_successes_from_multi_roll(
             die_distribution,
             rng,
-            model.numDice,
-            model.diceStat,
-            model.numRerolls,
+            model.num_dice,
+            model.dice_stat,
+            model.num_rerolls,
         );
         add_to_map_value(&mut success_counts, &num_successes, 1);
     }
@@ -204,15 +214,15 @@ export function calcDmgProbs(
   options: CombatOptions = new CombatOptions(),
 ): Map<number, number> // damage to prob
 {
-  const atkSuccessProbs = makeSuccessProbs(attacker, options.numSimulations);
-  const defSuccessProbs = makeSuccessProbs(defender, options.numSimulations);
+  const atkSuccessProbs = makeSuccessProbs(attacker, options.num_simulations);
+  const defSuccessProbs = makeSuccessProbs(defender, options.num_simulations);
   let dmgProbs = new Map<number, number>();
 
   for (const [atkSuccesses, atkProb] of atkSuccessProbs) {
     for (const [defSuccesses, defProb] of defSuccessProbs) {
       let origDmg = atkSuccesses - defSuccesses;
 
-      if(!options.attackerCanBeDamaged) {
+      if(!options.attacker_can_be_damaged) {
         origDmg = Math.max(0, origDmg);
       }
       const [dmgGiver, dmgReceiver] = origDmg >= 0 ? [attacker, defender] : [defender, attacker];
@@ -232,37 +242,37 @@ export function calcDmgProbs(
       }
     }
   }
-  if(options.numRounds > 1) {
-    dmgProbs = calcMultiRoundDamage(dmgProbs, options.numRounds);
+  if(options.num_rounds > 1) {
+    dmgProbs = calcMultiRoundDamage(dmgProbs, options.num_rounds);
   }
   return dmgProbs;
 }
 
 function makeSuccessProbs(
   model: Model,
-  numSimulations: number,
+  num_simulations: number,
 ): Map<number, number> {
   const successCounts = new Map<number, number>();
-  for(let i = 0; i < numSimulations; i++) {
+  for(let i = 0; i < num_simulations; i++) {
     const numSuccesses = simulatedNumSuccessesFromMultiRoll(
-      model.numDice,
+      model.num_dice,
       model.diceStat,
       model.numRerolls,
     );
     addToMapValue(successCounts, numSuccesses, 1);
   }
-  normalizeMapValues(successCounts, numSimulations);
+  normalizeMapValues(successCounts, num_simulations);
   return successCounts;
 }
 
 function simulatedNumSuccessesFromMultiRoll(
-  numDice: number,
+  num_dice: number,
   diceStat: number,
   numRerolls: number = 0,
 ): number {
   const sf = new Sf();
 
-  for(let dieIdx = 0; dieIdx < numDice; dieIdx++) {
+  for(let dieIdx = 0; dieIdx < num_dice; dieIdx++) {
     sf.add(simulatedSfFromSingleRoll(diceStat));
   }
 

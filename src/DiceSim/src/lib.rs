@@ -12,13 +12,3 @@ extern "C" {
 pub fn greet() {
     alert("Hello from DiceSim.");
 }
-
-#[wasm_bindgen]
-pub fn get_a_number() -> i32 {
-    3
-}
-
-#[wasm_bindgen]
-pub struct WasmFiddleStruct {
-    pub x: i32,
-}

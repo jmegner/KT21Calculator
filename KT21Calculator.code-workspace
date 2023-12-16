@@ -1,10 +1,10 @@
 {
   "folders": [
     {
-      "path": "."
+      "path": "src/DiceSim"
     },
     {
-      "path": "src/DiceSim"
+      "path": "."
     }
   ],
   "settings": {

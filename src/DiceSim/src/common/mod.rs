@@ -1,38 +1,8 @@
 use core::hash::Hash;
 use num::traits::Num;
 use std::collections::HashMap;
-use wasm_bindgen::JsValue;
 
-pub trait ToJsMap {
-    fn to_js_map(&self) -> js_sys::Map;
-}
-
-impl<KeyType, ValType> ToJsMap for HashMap<KeyType, ValType>
-where
-    JsValue: From<KeyType> + From<ValType>,
-    KeyType: Copy,
-    ValType: Copy,
-{
-    fn to_js_map(&self) -> js_sys::Map {
-        let js_map = js_sys::Map::new();
-        for (key, val) in self.iter() {
-            js_map.set(&JsValue::from(*key), &JsValue::from(*val));
-        }
-        js_map
-    }
-}
-
-/*
-impl ToJsMap for HashMap<i32, f64> {
-    fn to_js_map(&self) -> js_sys::Map {
-        let js_map = js_sys::Map::new();
-        for (key, val) in self.iter() {
-            js_map.set(&JsValue::from(*key), &JsValue::from(*val));
-        }
-        js_map
-    }
-}
-*/
+pub mod ts_types;
 
 pub fn add_to_map_value<KeyType: Eq + PartialEq + Hash + Copy, ValType: Num + Copy>(
     map: &mut HashMap<KeyType, ValType>,
