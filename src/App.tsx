@@ -30,7 +30,7 @@ for(const [view, texts] of _viewToAdditionalTexts) {
 
 const App = () => {
   const [currentView, setCurrentView] = useState<CalculatorViewChoice>(CalculatorViewChoice.KtShoot);
-  const [urlParams, setUrlParams] = useSearchParams();
+  const [urlParams, setUrlParams] = useSearchParams(); // eslint-disable-line no-unused-vars
 
   useEffect( () => {
     const viewText = urlParams.get('view')

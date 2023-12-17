@@ -5,9 +5,7 @@ import Col from 'react-bootstrap/Col';
 
 import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
 import * as Util from 'src/Util';
-import { boolToCheckX as toCheckX } from 'src/Util';
 import Model from 'src/Deadzone/Model';
-import * as N from 'src/Notes';
 
 
 export interface Props {

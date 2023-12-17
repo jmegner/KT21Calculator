@@ -34,8 +34,8 @@ export function calcDmgProbs(
   options: CombatOptions = new CombatOptions(),
 ): Map<number, number> // damage to prob
 {
-  const coarseBeginTime = new Date();
-  console.debug(`calcDmgProbs at ${coarseBeginTime.toISOString()}`);
+  // const coarseBeginTime = new Date();
+  // console.debug(`calcDmgProbs at ${coarseBeginTime.toISOString()}`);
 
   // let tsAnswer: Map<number, number> = new Map<number, number>();
   // executeAndMeasureMs(
@@ -50,7 +50,7 @@ export function calcDmgProbs(
   let wasmAnswer: Map<number, number> = new Map<number, number>();
   executeAndMeasureMs(
     () => {wasmAnswer = deadzone_calc_dmg_probs(wasmAttacker, wasmDefender, wasmOptions);},
-    `calcDmgProbsWasm     sims=${options.numSimulations}`,
+    `calcDmgProbsWasm sims=${options.numSimulations}`,
   );
 
   return wasmAnswer;

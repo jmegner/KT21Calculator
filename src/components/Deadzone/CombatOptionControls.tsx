@@ -11,6 +11,7 @@ import {
   span,
   xAndCheck,
   boolToCheckX,
+  makeIncDecPropsFromLookup,
 } from 'src/Util';
 
 export interface Props {
@@ -24,13 +25,23 @@ const CombatOptionControls: React.FC<Props> = (props: Props) => {
   const [textHandler, numHandler, boolHandler]
     = makePropChangeHandlers(opts, props.changeHandler);
 
-  const simsChoices = [1, 1e2, 1e3, 1e4, 1e5, 1e6];
+  const simCountToDisplayTexts = new Map<number,string>([
+    [1, '1'],
+    [1e2, '100'],
+    [1e3, '1K'],
+    [1e4, '10K recommended'],
+    [1e5, '100K pretty accurate'],
+    [1e6, '1M excessive'],
+  ]);
+  const simCountIncProps = makeIncDecPropsFromLookup('Num Simulations', opts, props.changeHandler, 'numSimulations', simCountToDisplayTexts);
+
   const fightBackVal = boolToCheckX(opts.attackerCanBeDamaged);
 
   const params: IncProps[] = [
     //           id,              selectedValue,          values,      valueChangeHandler
     new IncProps('FightBack?',    fightBackVal,           xAndCheck,   boolHandler('attackerCanBeDamaged')),
-    new IncProps('Simulations',   opts.numSimulations,    simsChoices, numHandler('numSimulations')),
+    //new IncProps('Simulations',   opts.numSimulations,    simsChoices, numHandler('numSimulations')),
+    simCountIncProps,
     new IncProps('Rounds',        opts.numRounds,         span(1, 9),  numHandler('numRounds')),
   ];
 

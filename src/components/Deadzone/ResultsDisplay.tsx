@@ -14,7 +14,7 @@ export interface Props {
 }
 
 const ResultsDisplay: React.FC<Props> = (props: Props) => {
-  const digitsPastDecimalForDamage = 1;
+  const digitsPastDecimalForDamage = 2;
   function toPercent(prob: number) {
     return Util.toPercentString(prob, 1);
   }

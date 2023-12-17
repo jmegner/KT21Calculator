@@ -18,7 +18,6 @@ const ResultsDisplay: React.FC<Props> = (props: Props) => {
   const digitsPastDecimalForNondamage = 2;
 
   let avgDmgUnbounded = 0;
-  let avgDmgBounded = 0;
   let killProb = 0;
   const tableBody: JSX.Element[] = [];
 
@@ -30,7 +29,6 @@ const ResultsDisplay: React.FC<Props> = (props: Props) => {
 
   ascendingDmgToProb.forEach((prob, dmg) => {
      avgDmgUnbounded += dmg * prob;
-     avgDmgBounded += Math.min(dmg, props.defender.hp) * prob;
 
      if(dmg >= props.defender.hp) {
        killProb += prob;

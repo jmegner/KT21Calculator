@@ -1,6 +1,7 @@
 import { range, clone, concat }  from 'lodash';
 import { combinations } from 'mathjs';
-import createUtilityClassName from 'react-bootstrap/esm/createUtilityClasses';
+import {Props as IncProps} from 'src/components/IncDecSelect';
+import Note from 'src/Notes';
 
 export type Accepter<T> = (arg: T) => void;
 
@@ -53,6 +54,41 @@ export const xrollSpan = preX(rollSpan);
 
 export function preX(vals: string[]) : string[] {
   return concat([thickX], vals);
+}
+
+export function makePropChangeHandlerFromLookup<ObjType,PropType>(
+  obj: ObjType,
+  objChangeHandler: (t: ObjType) => void,
+  propName: keyof ObjType,
+  internalValueToDisplayValue: Map<PropType,string>,
+) : Accepter<string>
+{
+  return function handler(chosenText: string) {
+    for(let [internalValue, displayValue] of internalValueToDisplayValue.entries()) {
+      if(displayValue === chosenText) {
+        let newObj = clone(obj);
+        newObj[propName] = internalValue as any;
+        objChangeHandler(newObj);
+        return;
+      }
+    }
+  };
+}
+
+export function makeIncDecPropsFromLookup<ObjType,PropType>(
+  titleOrNote: string | Note,
+  obj: ObjType,
+  objChangeHandler: (t: ObjType) => void,
+  propName: keyof ObjType,
+  internalValueToDisplayValue: Map<PropType,string>,
+): IncProps
+{
+  return new IncProps(
+    titleOrNote,
+    internalValueToDisplayValue.get(obj[propName] as unknown as PropType)!,
+    Array.from(internalValueToDisplayValue.values()),
+    makePropChangeHandlerFromLookup(obj, objChangeHandler, propName, internalValueToDisplayValue),
+  );
 }
 
 export function makePropChangeHandler<T>(
