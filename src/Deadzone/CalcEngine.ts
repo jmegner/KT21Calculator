@@ -3,10 +3,13 @@ import { randomInt } from "mathjs";
 import {
   addToMapValue,
   binomialPmf,
+  executeAndMeasureMs,
+  forceTo,
   normalizeMapValues,
 } from 'src/Util';
 import { CombatOptions } from "./CombatOptions";
 import { calcMultiRoundDamage } from "src/CalcEngineCommon";
+import { DeadzoneModel, DeadzoneOptions, deadzone_calc_dmg_probs } from "src/DiceSim/pkg/dice_sim";
 
 const singleShieldProb = 0.375;
 
@@ -31,6 +34,34 @@ export function calcDmgProbs(
   options: CombatOptions = new CombatOptions(),
 ): Map<number, number> // damage to prob
 {
+  const coarseBeginTime = new Date();
+  console.debug(`calcDmgProbs at ${coarseBeginTime.toISOString()}`);
+
+  // let tsAnswer: Map<number, number> = new Map<number, number>();
+  // executeAndMeasureMs(
+  //   () => {tsAnswer = calcDmgProbsInternal(attacker, defender, options)},
+  //   `calcDmgProbsInternal sims=${options.numSimulations}`,
+  // );
+
+  const wasmAttacker = forceTo(attacker, DeadzoneModel);
+  const wasmDefender = forceTo(defender, DeadzoneModel);
+  const wasmOptions = forceTo(options, DeadzoneOptions);
+
+  let wasmAnswer: Map<number, number> = new Map<number, number>();
+  executeAndMeasureMs(
+    () => {wasmAnswer = deadzone_calc_dmg_probs(wasmAttacker, wasmDefender, wasmOptions);},
+    `calcDmgProbsWasm     sims=${options.numSimulations}`,
+  );
+
+  return wasmAnswer;
+}
+
+function calcDmgProbsInternal(
+  attacker: Model,
+  defender: Model,
+  options: CombatOptions = new CombatOptions(),
+): Map<number, number> // damage to prob
+{
   const atkSuccessProbs = makeSuccessProbs(attacker, options.numSimulations);
   const defSuccessProbs = makeSuccessProbs(defender, options.numSimulations);
   let dmgProbs = new Map<number, number>();
@@ -43,7 +74,7 @@ export function calcDmgProbs(
         origDmg = Math.max(0, origDmg);
       }
       const [dmgGiver, dmgReceiver] = origDmg >= 0 ? [attacker, defender] : [defender, attacker];
-      const netArmor = Math.max(dmgReceiver.armor - dmgGiver.ap);
+      const netArmor = Math.max(0, dmgReceiver.armor - dmgGiver.ap);
       const numShieldDice = origDmg === 0 ? 0 : dmgReceiver.numShieldDice;
       const atkAndDefProb = atkProb * defProb;
 

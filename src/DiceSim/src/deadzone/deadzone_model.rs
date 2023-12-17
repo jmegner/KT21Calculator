@@ -1,8 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-#[allow(/*non_snake_case,*/ dead_code,)]
-pub struct Model {
+pub struct DeadzoneModel {
     pub hp: i32,
     #[wasm_bindgen(js_name = numDice)]
     pub num_dice: i32,
@@ -19,10 +18,10 @@ pub struct Model {
 }
 
 #[wasm_bindgen]
-impl Model {
+impl DeadzoneModel {
     #[wasm_bindgen(constructor)]
-    pub fn new() -> Model {
-        Model {
+    pub fn new() -> DeadzoneModel {
+        DeadzoneModel {
             hp: 2,
             num_dice: 3,
             dice_stat: 5,

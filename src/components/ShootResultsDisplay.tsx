@@ -6,7 +6,6 @@ import Table from 'react-bootstrap/Table';
 
 import Defender from 'src/Defender';
 import { toAscendingMap, weightedAverage, killProb, standardDeviation, } from 'src/Util';
-import { range } from 'lodash';
 import { MaxWounds, WoundRange } from 'src/KtMisc';
 
 export interface Props {
@@ -37,7 +36,7 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
     );
   }
 
-  const killChanceTable = 
+  const killChanceTable =
     <>
       <span style={{ fontSize: '13px' }}>KillChances for various Sv&amp;W...</span>
       <Table bordered={true} striped={true} style={{ fontSize: '11px' }}>

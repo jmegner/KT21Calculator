@@ -5,17 +5,16 @@ import Col from 'react-bootstrap/Col';
 
 import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
 import Defender from 'src/Defender';
-import * as Util from 'src/Util';
 import {rerollAbilities as rerolls} from 'src/Ability';
 import * as N from 'src/Notes';
 import { SaveRange } from 'src/KtMisc';
 import {
   Accepter,
-  makePropChangeHandlers, 
-  preX, 
-  span, 
-  withPlus, 
-  xrollSpan, 
+  makePropChangeHandlers,
+  preX,
+  span,
+  withPlus,
+  xrollSpan,
   xspan,
 } from 'src/Util';
 

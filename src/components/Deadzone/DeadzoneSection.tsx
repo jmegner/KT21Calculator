@@ -19,22 +19,12 @@ import { CombatOptions } from 'src/Deadzone/CombatOptions';
 import ModelControls from './ModelControls';
 import ResultsDisplay from './ResultsDisplay';
 import CombatOptionControls from './CombatOptionControls';
-import { get_a_number } from 'dice_sim';
+import { get_a_number } from "src/DiceSim/pkg/dice_sim";
 
 export const DeadzoneSection: FC = () => {
   const [attacker, setAttacker] = useState(new Model());
   const [defender, setDefender] = useState(new Model());
   const [combatOptions, setCombatOptions] = useState(new CombatOptions());
-  /*
-  const [wasmNumber, setWasmNumber] = useState(get_a_number());
-  useEffect(
-    () => {
-      init().then(() => {
-        setWasmNumber(get_a_number());
-      })
-    },
-    []);
-  */
 
   const dmgToProb = useMemo(
     () => calcDmgProbs(attacker, defender, combatOptions),

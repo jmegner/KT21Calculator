@@ -271,3 +271,25 @@ export function addOrRemove<T>(theSet: Set<T>, item: T, wantAdd: boolean): void 
     theSet.delete(item);
   }
 }
+
+export function executeAndMeasureMs(
+  func: () => void,
+  msg: string = '',
+): number {
+  const startTimeMs = performance.now();
+  func();
+  const endTimeMs = performance.now();
+  const durationMs = endTimeMs - startTimeMs;
+  if(msg) {
+    console.debug(`${msg}: ${durationMs} ms`);
+  }
+  return endTimeMs - startTimeMs;
+}
+
+export function forceTo<InType extends {},OutType>(input: InType, outClass: {new(): OutType;}): OutType {
+  const output = new outClass();
+  Object.keys(input).forEach((key) => {
+    output[key as keyof OutType] = input[key as keyof InType] as any;
+  });
+  return output;
+}

@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use rand::prelude::*;
 use wasm_bindgen::prelude::*;
 
-use super::model::Model;
-use super::options::Options;
+use super::deadzone_model::DeadzoneModel;
+use super::deadzone_options::DeadzoneOptions;
 use crate::common::ts_types::ToJsMap;
 use crate::common::{add_to_map_value, binomial_pmf, calc_multi_round_damage};
 
@@ -27,23 +27,14 @@ impl Sf {
 
 const PIP_LO: i32 = 1;
 const PIP_HI: i32 = 8;
+const SHIELD_SUCCESS_PROB: f64 = 0.375;
 
 #[wasm_bindgen]
-pub fn fiddle() {
-    let mut rng = rand::thread_rng();
-    let die_distribution = rand::distributions::Uniform::new(PIP_LO, PIP_HI + 1);
-    simulated_sf_from_single_roll(&die_distribution, &mut rng, 3);
-    simulated_num_successes_from_multi_roll(&die_distribution, &mut rng, 5, 1, 3);
-    ()
-}
-
-#[wasm_bindgen]
-pub fn ugh() -> js_sys::Map {
-    HashMap::<i32, f64>::new().to_js_map()
-}
-
-#[wasm_bindgen]
-pub fn calc_dmg_probs(attacker: Model, defender: Model, options: Options) -> js_sys::Map {
+pub fn deadzone_calc_dmg_probs(
+    attacker: DeadzoneModel,
+    defender: DeadzoneModel,
+    options: DeadzoneOptions,
+) -> js_sys::Map {
     let mut rng = rand::thread_rng();
     let die_distribution = rand::distributions::Uniform::new(PIP_LO, PIP_HI + 1);
     let atk_success_probs = make_success_probs(
@@ -85,7 +76,7 @@ pub fn calc_dmg_probs(attacker: Model, defender: Model, options: Options) -> js_
                 let shield_prob = if num_shield_dice == 0 {
                     1.0
                 } else {
-                    binomial_pmf(num_shield_dice, shield_successes, 0.375)
+                    binomial_pmf(num_shield_dice, shield_successes, SHIELD_SUCCESS_PROB)
                 };
                 let post_shield_dmg = std::cmp::max(0, orig_dmg.abs() - shield_successes);
                 let post_armor_dmg = std::cmp::max(0, post_shield_dmg - net_armor);
@@ -107,7 +98,7 @@ pub fn calc_dmg_probs(attacker: Model, defender: Model, options: Options) -> js_
 fn make_success_probs(
     die_distribution: &rand::distributions::Uniform<i32>,
     rng: &mut ThreadRng,
-    model: &Model,
+    model: &DeadzoneModel,
     num_simulations: i32,
 ) -> HashMap<i32, f64> {
     let mut success_counts = HashMap::<i32, i32>::new();

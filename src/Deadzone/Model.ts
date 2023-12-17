@@ -45,4 +45,12 @@ export default class Model {
     return (9.0 - this.diceStat) / 8.0;
   }
 
+  /*
+  public toWasmModel() : DeadzoneModel {
+    const wasmModel = new DeadzoneModel();
+    Object.keys(this).forEach((key) => { wasmModel[key as keyof DeadzoneModel] = this[key as keyof Model]; });
+    return wasmModel;
+  }
+  */
+
 }

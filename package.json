@@ -18,7 +18,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "build:wasm": "cd src/DiceSim && wasm-pack build --target web",
-    "build:all": "npm run build && npm run build:wasm",
+    "build:all": "npm run build:wasm && npm run build",
     "test": "react-scripts test",
     "testq": "react-scripts test --watchAll=false --watch=false",
     "eject": "react-scripts eject",
@@ -26,7 +26,22 @@
     "lintf": "eslint --fix src/**/*.ts src/**/*.tsx"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "rules": {
+    },
+    "overrides": [
+      {
+        "files": [
+          "**/pkg/*.js"
+        ],
+        "rules": {
+          "eqeqeq": "off",
+          "no-new-func": "off",
+          "no-restricted-globals": "off",
+          "no-undef": "off"
+        }
+      }
+    ]
   },
   "browserslist": {
     "production": [

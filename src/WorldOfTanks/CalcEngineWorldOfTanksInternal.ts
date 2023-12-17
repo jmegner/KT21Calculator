@@ -6,7 +6,6 @@ import Tank from "src/WorldOfTanks/Tank";
 import Reroll, { toAbility } from "src/WorldOfTanks/Reroll";
 import { factorial } from 'mathjs';
 import { sum, zip } from 'lodash';
-import Ability from 'src/Ability';
 
 export function calcFinalDiceProbs(tank: Tank): FinalDiceProb[] {
   const dieProbs = new DieProbs(

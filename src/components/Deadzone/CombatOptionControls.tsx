@@ -5,7 +5,6 @@ import Col from 'react-bootstrap/Col';
 
 import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
 import { CombatOptions } from 'src/Deadzone/CombatOptions';
-import * as N from 'src/Notes';
 import {
   Accepter,
   makePropChangeHandlers,
