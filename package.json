@@ -16,9 +16,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "npm run build:wasm && npm run build:react",
+    "build:react": "react-scripts build",
     "build:wasm": "cd src/DiceSim && wasm-pack build --target web",
-    "build:all": "npm run build:wasm && npm run build",
     "test": "react-scripts test",
     "testq": "react-scripts test --watchAll=false --watch=false",
     "eject": "react-scripts eject",
