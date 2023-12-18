@@ -27,6 +27,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: jetli/wasm-pack-action@v0.4.0
       - uses: actions/checkout@v4
       - run: npm ci
       - run: npm run build
