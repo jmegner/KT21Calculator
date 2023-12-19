@@ -12,4 +12,3 @@ type RenderResult = Test.RenderResult<typeof Test.queries, HTMLElement>;
 it('app renders without crashing', () => {
   Test.render(<BrowserRouter><App /></BrowserRouter>);
 });
-
