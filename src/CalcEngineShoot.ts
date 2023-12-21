@@ -30,6 +30,7 @@ export function calcDmgProbs(
 
     const damage = calcDamage(
       attacker,
+      defender,
       atk.crits,
       atk.norms,
       def.crits,

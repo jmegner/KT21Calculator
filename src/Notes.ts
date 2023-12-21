@@ -63,6 +63,10 @@ export const CoverCritSaves = new Note(
   `CoverCritSaves`,
   `How many saves can be automatically retained as a critical success. High enough APx/Px can limit these auto-saves.`,
 );
+export const JustAScratch = new Note(
+  `JustAScratch`,
+  `Kommandos Tactical Ploy to ignore damage from a chosen attack die.`,
+);
 export const InvulnSave = new Note(
   `InvulnSave`,
   `Save value that ignores APx/Px.  If you choose a valid value, InvulnSave will be used even if using Save would be better.`,

@@ -84,6 +84,7 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps(N.NormsToCrits,     atk.normsToCrits,      xspan(1, 9),      numHandler('normsToCrits')),
     new IncProps('ElitePoints*',     eliteAbility,          eliteAbilities,   subsetHandler(eliteAbilities)),
     new IncProps(N.Duelist,          toYN(Ability.Duelist), xAndCheck,        singleHandler(Ability.Duelist)),
+    new IncProps(N.JustAScratch,     toYN(Ability.JustAScratch), xAndCheck,   singleHandler(Ability.JustAScratch)),
   ];
 
   const paramElems = params.map(p =>

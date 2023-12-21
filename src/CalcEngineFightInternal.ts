@@ -204,16 +204,21 @@ export function resolveDieChoice(
   chooser: FighterState,
   enemy: FighterState,
 ): void {
-  function handleHammerhand() {
-    if(chooser.profile.abilities.has(Ability.Hammerhand) && !chooser.hasDoneHammerhand) {
-      chooser.hasDoneHammerhand = true;
-      enemy.applyDmg(1);
+  function applyFirstStrikeDmg(dmg: number) {
+    if(!chooser.hasStruck) {
+      if(enemy.profile.abilities.has(Ability.JustAScratch)) {
+        dmg = 0;
+      } else if(chooser.profile.abilities.has(Ability.Hammerhand)) {
+        dmg++;
+      }
+      chooser.hasStruck = true;
     }
+    enemy.applyDmg(dmg);
   }
 
   if(choice === FightChoice.CritStrike) {
     chooser.crits--;
-    enemy.applyDmg(chooser.profile.critDmg);
+    applyFirstStrikeDmg(chooser.profile.critDmg);
 
     if (
       chooser.successes()
@@ -236,13 +241,10 @@ export function resolveDieChoice(
       chooser.hasDoneStun = true;
       enemy.norms = Math.max(0, enemy.norms - 1); // stun ability can only cancel an enemy norm success
     }
-
-    handleHammerhand();
   }
   else if(choice === FightChoice.NormStrike) {
     chooser.norms--;
-    enemy.applyDmg(chooser.profile.normDmg);
-    handleHammerhand();
+    applyFirstStrikeDmg(chooser.profile.normDmg);
   }
   else if(choice === FightChoice.CritParry) {
     chooser.crits--;

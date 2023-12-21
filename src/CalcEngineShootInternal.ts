@@ -3,6 +3,8 @@ import Defender from "src/Defender";
 import * as Util from 'src/Util';
 import FinalDiceProb from 'src/FinalDiceProb';
 import * as Common from 'src/CalcEngineCommon';
+import Ability from "src/Ability";
+import { e } from "mathjs";
 
 class DefenderFinalDiceStuff {
   public finalDiceProbs: FinalDiceProb[];
@@ -88,6 +90,7 @@ export function calcPostFnpDamages(
 
 export function calcDamage(
   attacker: Attacker,
+  defender: Defender,
   critHits: number,
   normHits: number,
   critSaves: number,
@@ -116,6 +119,14 @@ export function calcDamage(
     const numCancels = Math.min((normSaves / numNormalSavesToCancelCritHit) >> 0, critHits);
     normSaves -= numCancels * numNormalSavesToCancelCritHit;
     critHits -= numCancels;
+  }
+
+  if (defender.has(Ability.JustAScratch)) {
+    if (critHits > 0) {
+      critHits--;
+    } else if (normHits > 0) {
+      normHits--;
+    }
   }
 
   if(isFireTeamRules) {

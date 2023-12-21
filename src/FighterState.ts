@@ -11,7 +11,7 @@ export default class FighterState {
   public strategy: FightStrategy;
   public currentWounds: number;
   public hasDoneStun: boolean;
-  public hasDoneHammerhand: boolean;
+  public hasStruck: boolean;
   public hasDoneMurderousEntrance: boolean;
 
   public constructor(
@@ -30,7 +30,7 @@ export default class FighterState {
     this.strategy = strategy;
     this.currentWounds = currentWounds > 0 ? currentWounds : this.profile.wounds;
     this.hasDoneStun = hasDoneStun;
-    this.hasDoneHammerhand = hasDoneHammerhand;
+    this.hasStruck = hasDoneHammerhand;
     this.hasDoneMurderousEntrance = hasDoneMurderousEntrance;
   }
 
@@ -42,6 +42,10 @@ export default class FighterState {
     this.currentWounds = Math.max(0, this.currentWounds - dmg);
   }
 
+  public isFullHealth() {
+    return this.currentWounds === this.profile.wounds;
+  }
+
   public hammerhandDmg(
     crits: number | undefined = undefined,
     norms: number | undefined = undefined,
@@ -49,7 +53,7 @@ export default class FighterState {
     crits = crits || this.crits;
     norms = norms || this.norms;
     return this.profile.abilities.has(Ability.Hammerhand)
-      && !this.hasDoneHammerhand
+      && !this.hasStruck
       && (crits > 0 || norms > 0)
       ? 1 : 0;
   }

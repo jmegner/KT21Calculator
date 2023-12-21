@@ -16,6 +16,7 @@ export enum Ability {
     FailToNormIfAtLeastTwoSuccesses = "CloseAssault", // if at least two successes, promote fail to norm; from Imperial Navy Breachers Close Assault
     EliteModerate = "EliteModerate", // promote miss to norm or norm to crit
     EliteExtreme = "EliteExtreme", // promote miss to crit
+    JustAScratch = "JustAScratch", // cancel one attack die just before damage; both shoot and fight
 
     // fight stuff
     Brutal = "Brutal", // opponent can only parry with crit
@@ -26,6 +27,7 @@ export enum Ability {
     Duelist = "Duelist", // parry before usual dice resolution
     NormToCritIfAtLeastTwoNorms = "Waaagh", // if at least two norms, promote norm to crit; from Kommandos Waaagh; fight only
     MurderousEntrance = "MurderousEntrance", // after a crit strike, do another strike (tactical ploy, so just once)
+
 };
 
 export const rerollAbilities = [

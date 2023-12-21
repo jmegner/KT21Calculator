@@ -25,36 +25,37 @@ describe(calcDamage.name + ', typical dmgs (norm < crit < 2 * norm)', () => {
   const dc = 7; // critical damage
   const dmw = 100; // mortal wound damage
   const atker = new Attacker(0, 0, dn, dc, dmw);
+  const def = new Defender();
 
   it('0ch 0nh vs 0cs 0ns => 0', () => {
-    expect(calcDamage(atker, 0, 0, 0, 0)).toBe(0);
+    expect(calcDamage(atker, def, 0, 0, 0, 0)).toBe(0);
   });
   it('0ch 2nh vs 0cs 0ns => 2dn', () => {
-    expect(calcDamage(atker, 0, 2, 0, 0)).toBe(2 * dn);
+    expect(calcDamage(atker, def, 0, 2, 0, 0)).toBe(2 * dn);
   });
   it('0ch 2nh vs 0cs 1ns => 1dn', () => {
-    expect(calcDamage(atker, 0, 2, 0, 1)).toBe(dn);
+    expect(calcDamage(atker, def, 0, 2, 0, 1)).toBe(dn);
   });
   it('0ch 2nh vs 1cs 1ns => 0', () => {
-    expect(calcDamage(atker, 0, 2, 1, 1)).toBe(0);
+    expect(calcDamage(atker, def, 0, 2, 1, 1)).toBe(0);
   });
   it('0ch 2nh vs 3cs 3ns => 0', () => {
-    expect(calcDamage(atker, 0, 2, 3, 3)).toBe(0);
+    expect(calcDamage(atker, def, 0, 2, 3, 3)).toBe(0);
   });
   it('1ch 0nh vs 0cs 1ns => 1dmw + 1dc', () => {
-    expect(calcDamage(atker, 1, 0, 0, 1)).toBe(dmw + dc);
+    expect(calcDamage(atker, def, 1, 0, 0, 1)).toBe(dmw + dc);
   });
   it('1ch 0nh vs 0cs 2ns => 1dmw', () => {
-    expect(calcDamage(atker, 1, 0, 0, 2)).toBe(dmw);
+    expect(calcDamage(atker, def, 1, 0, 0, 2)).toBe(dmw);
   });
   it('1ch 1nh vs 0cs 2ns => 1dmw + 1dn', () => {
-    expect(calcDamage(atker, 1, 1, 0, 2)).toBe(dmw + dn);
+    expect(calcDamage(atker, def, 1, 1, 0, 2)).toBe(dmw + dn);
   });
   it('2ch 2nh vs 0cs 3ns => 2dmw + 1dc + 1dn', () => {
-    expect(calcDamage(atker, 2, 2, 0, 3)).toBe(2 * dmw + dc + dn);
+    expect(calcDamage(atker, def, 2, 2, 0, 3)).toBe(2 * dmw + dc + dn);
   });
   it('3ch 2nh vs 1cs 3ns => 3dmw + 1dc + 1dn', () => {
-    expect(calcDamage(atker, 3, 2, 1, 3)).toBe(3 * dmw + dc + dn);
+    expect(calcDamage(atker, def, 3, 2, 1, 3)).toBe(3 * dmw + dc + dn);
   });
 });
 
@@ -64,30 +65,31 @@ describe(calcDamage.name + ', bigCrit (2 * norm < crit)', () => {
   const dc = 100; // critical damage
   const dmw = 1000; // mortal wound damage
   const atker = new Attacker(0, 0, dn, dc, dmw);
+  const def = new Defender();
 
   it('bigCrit, 0ch 0nh vs 0cs 0ns => 0', () => {
-    expect(calcDamage(atker, 0, 0, 0, 0)).toBe(0);
+    expect(calcDamage(atker, def, 0, 0, 0, 0)).toBe(0);
   });
   it('bigCrit, 0ch 2nh vs 0cs 1ns => 1dn', () => {
-    expect(calcDamage(atker, 0, 2, 0, 1)).toBe(dn);
+    expect(calcDamage(atker, def, 0, 2, 0, 1)).toBe(dn);
   });
   it('bigCrit, 0ch 2nh vs 1cs 1ns => 0', () => {
-    expect(calcDamage(atker, 0, 2, 1, 1)).toBe(0);
+    expect(calcDamage(atker, def, 0, 2, 1, 1)).toBe(0);
   });
   it('bigCrit, 0ch 2nh vs 3cs 3ns => 0', () => {
-    expect(calcDamage(atker, 0, 2, 3, 3)).toBe(0);
+    expect(calcDamage(atker, def, 0, 2, 3, 3)).toBe(0);
   });
   it('bigtCrit, 1ch 0nh vs 0cs 1ns => 1dmw + 1dc', () => {
-    expect(calcDamage(atker, 1, 0, 0, 1)).toBe(dmw + dc);
+    expect(calcDamage(atker, def, 1, 0, 0, 1)).toBe(dmw + dc);
   });
   it('bigtCrit, 1ch 0nh vs 0cs 2ns => 1dmw', () => {
-    expect(calcDamage(atker, 1, 0, 0, 2)).toBe(dmw);
+    expect(calcDamage(atker, def, 1, 0, 0, 2)).toBe(dmw);
   });
   it('bigtCrit, 1ch 2nh vs 0cs 2ns => 1dmw + 2dn', () => {
-    expect(calcDamage(atker, 1, 2, 0, 2)).toBe(dmw + 2 * dn);
+    expect(calcDamage(atker, def, 1, 2, 0, 2)).toBe(dmw + 2 * dn);
   });
   it('bigtCrit, 2ch 2nh vs 0cs 3ns => 2dmw + 1dc + 1dn', () => {
-    expect(calcDamage(atker, 2, 2, 0, 3)).toBe(2 * dmw + dc + dn);
+    expect(calcDamage(atker, def, 2, 2, 0, 3)).toBe(2 * dmw + dc + dn);
   });
 });
 
@@ -97,30 +99,31 @@ describe(calcDamage.name + ', smallCrit (crit < norm)', () => {
   const dc = 10; // critical damage
   const dmw = 1000; // mortal wound damage
   const atker = new Attacker(0, 0, dn, dc, dmw);
+  const def = new Defender();
 
   it('smallCrit, 0ch 0nh vs 0cs 0ns => 0', () => {
-    expect(calcDamage(atker, 0, 0, 0, 0)).toBe(0);
+    expect(calcDamage(atker, def, 0, 0, 0, 0)).toBe(0);
   });
   it('smallCrit, 0ch 2nh vs 0cs 1ns => 1dn', () => {
-    expect(calcDamage(atker, 0, 2, 0, 1)).toBe(dn);
+    expect(calcDamage(atker, def, 0, 2, 0, 1)).toBe(dn);
   });
   it('smallCrit, 0ch 2nh vs 1cs 1ns => 0', () => {
-    expect(calcDamage(atker, 0, 2, 1, 1)).toBe(0);
+    expect(calcDamage(atker, def, 0, 2, 1, 1)).toBe(0);
   });
   it('smallCrit, 0ch 2nh vs 3cs 3ns => 0', () => {
-    expect(calcDamage(atker, 0, 2, 3, 3)).toBe(0);
+    expect(calcDamage(atker, def, 0, 2, 3, 3)).toBe(0);
   });
   it('smallCrit, 1ch 0nh vs 0cs 1ns => 1dmw + 1dc', () => {
-    expect(calcDamage(atker, 1, 0, 0, 1)).toBe(dmw + dc);
+    expect(calcDamage(atker, def, 1, 0, 0, 1)).toBe(dmw + dc);
   });
   it('smallCrit, 1ch 0nh vs 0cs 2ns => 1dmw', () => {
-    expect(calcDamage(atker, 1, 0, 0, 2)).toBe(dmw);
+    expect(calcDamage(atker, def, 1, 0, 0, 2)).toBe(dmw);
   });
   it('smallCrit, 1ch 2nh vs 0cs 2ns => 1dmw + 2dn', () => {
-    expect(calcDamage(atker, 1, 2, 0, 2)).toBe(dmw + dc);
+    expect(calcDamage(atker, def, 1, 2, 0, 2)).toBe(dmw + dc);
   });
   it('smallCrit, 2ch 2nh vs 0cs 3ns => 2dmw + 2dc', () => {
-    expect(calcDamage(atker, 2, 2, 0, 3)).toBe(2 * dmw + 2 * dc);
+    expect(calcDamage(atker, def, 2, 2, 0, 3)).toBe(2 * dmw + 2 * dc);
   });
 });
 
@@ -130,21 +133,22 @@ describe(calcDamage.name + ', Fire Team rules', () => {
   const dc = 7; // critical damage
   const dmw = 100; // mortal wound damage
   const atker = new Attacker(0, 0, dn, dc, dmw);
+  const def = new Defender();
 
   it('0ch 0nh vs 0cs 0ns => 0', () => {
-    expect(calcDamage(atker, 0, 0, 0, 0, true)).toBe(0);
+    expect(calcDamage(atker, def, 0, 0, 0, 0, true)).toBe(0);
   });
   it('0ch 2nh vs 0cs 0ns => 2dn', () => {
-    expect(calcDamage(atker, 0, 2, 0, 0, true)).toBe(2 * dn);
+    expect(calcDamage(atker, def, 0, 2, 0, 0, true)).toBe(2 * dn);
   });
-  it('0ch 2nh vs 0cs 1ns => 1dn', () => {
-    expect(calcDamage(atker, 0, 2, 0, 1, true)).toBe(dn);
+  it('0ch 2nh vs 0cs 1ns  => 1dn', () => {
+    expect(calcDamage(atker, def, 0, 2, 0, 1, true)).toBe(dn);
   });
   it('2ch 2nh vs 3cs 0ns => 1dc', () => {
-    expect(calcDamage(atker, 2, 2, 3, 0, true)).toBe(dc + 2 * dmw);
+    expect(calcDamage(atker, def, 2, 2, 3, 0, true)).toBe(dc + 2 * dmw);
   });
   it('2ch 2nh vs 0cs 3ns => 1dc', () => {
-    expect(calcDamage(atker, 2, 2, 3, 0, true)).toBe(dc + 2 * dmw);
+    expect(calcDamage(atker, def, 2, 2, 3, 0, true)).toBe(dc + 2 * dmw);
   });
 });
 
