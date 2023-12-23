@@ -245,6 +245,57 @@ export function calcFinalDiceProbBalanced(
   return prob;
 }
 
+export function calcFinalDiceProbTedious(
+  dieProbs: DieProbs,
+  finalCrits: number,
+  finalNorms: number,
+  finalFails: number,
+  balancedFactor: number,
+): number {
+  let prob = 0;
+  const numDice = finalCrits + finalNorms + finalFails;
+
+  // loops...
+  //   number of rerolls; min(1, finalFails) to total dice
+  //   number of crits from those rerolls
+  //   number of norms from those rerolls
+  //
+  // prob is (original roll prob) * (prob of number of rerolls) * (prob of reroll outcome)
+  // could we reuse calcFinalDiceProbBalanced for (original roll prob) * (prob of reroll outcome) and we simply need to multiply by (prob of number of rerolls)?
+  // then, loops are...
+  //   number of rerolls; min(1, finalFails) to total dice
+  //   calculate prob of (number of rerolls)
+  //   mult by calcFinalDiceProbBalanced
+
+  for(const rerolls of range(Math.min(finalFails, balancedFactor), balancedFactor + 1)) {
+    for(const balancedCrits of range(Math.min(finalCrits, rerolls) + 1)) {
+      for(const balancedNorms of range(Math.min(finalNorms, rerolls - balancedCrits) + 1)) {
+        const balancedFails = rerolls - balancedCrits - balancedNorms;
+        if(balancedFails > finalFails) {
+          continue;
+        }
+        // if rerolling less than able, must be because didn't have many fails
+        if(rerolls < balancedFactor && balancedCrits + balancedNorms + finalFails > rerolls) {
+          continue;
+        }
+        const preBalancedProb = calcMultiRollProb(
+          dieProbs,
+          finalCrits - balancedCrits,
+          finalNorms - balancedNorms,
+          finalFails + balancedCrits + balancedNorms);
+        const balancedRollsProb = calcMultiRollProb(
+          dieProbs,
+          balancedCrits,
+          balancedNorms,
+          balancedFails);
+        prob += preBalancedProb * balancedRollsProb;
+      }
+    }
+  }
+
+  return prob;
+}
+
 export function calcMultiRoundDamage(
   dmgsSingleRound: Map<number,number>,
   numRounds: number,

@@ -2,8 +2,7 @@ import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import App from 'src/App';
-import wasmBindgenInit from 'dice_sim';
-
+import wasmBindgenInit from "src/DiceSim/pkg/dice_sim";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 /*
