@@ -29,7 +29,7 @@ const PIP_LO: i32 = 1;
 const PIP_HI: i32 = 8;
 const SHIELD_SUCCESS_PROB: f64 = 0.375;
 
-#[wasm_bindgen]
+#[wasm_bindgen(js_name = "deadzoneCalcDmgProbs")]
 pub fn deadzone_calc_dmg_probs(
     attacker: DeadzoneModel,
     defender: DeadzoneModel,

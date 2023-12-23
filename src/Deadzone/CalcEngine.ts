@@ -9,7 +9,7 @@ import {
 } from 'src/Util';
 import { CombatOptions } from "./CombatOptions";
 import { calcMultiRoundDamage } from "src/CalcEngineCommon";
-import { DeadzoneModel, DeadzoneOptions, deadzone_calc_dmg_probs } from "src/DiceSim/pkg/dice_sim";
+import { DeadzoneModel, DeadzoneOptions, deadzoneCalcDmgProbs } from "src/DiceSim/pkg/dice_sim";
 
 const singleShieldProb = 0.375;
 
@@ -49,8 +49,8 @@ export function calcDmgProbs(
 
   let wasmAnswer: Map<number, number> = new Map<number, number>();
   executeAndMeasureMs(
-    () => {wasmAnswer = deadzone_calc_dmg_probs(wasmAttacker, wasmDefender, wasmOptions);},
-    `calcDmgProbsWasm sims=${options.numSimulations}`,
+    () => {wasmAnswer = deadzoneCalcDmgProbs(wasmAttacker, wasmDefender, wasmOptions);},
+    `deadzoneCalcDmgProbs sims=${options.numSimulations}`,
   );
 
   return wasmAnswer;
