@@ -5,7 +5,6 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^4.6.0",
-    "dice_sim": "file:src/DiceSim/pkg",
     "lodash": "^4.17.21",
     "mathjs": "^12.2.0",
     "react": "^17.0.2",
