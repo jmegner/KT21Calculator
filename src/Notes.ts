@@ -13,6 +13,7 @@ export const Reroll = new Note(
   `Ceaseless rerolls 1s.  Balanced rerolls 1 die.  Relentless rerolls whatever you want.`
     + `  DoubleBalanced rerolls 2 dice.`
     + `  BothCeaselessAndBalanced rerolls 1s and then rerolls 1 die that hasn't already been rerolled.`
+    + `  MostCommonFail rerolls most common fail result (ex: reroll 2s).`
     ,
 );
 export const NoCover = new Note(

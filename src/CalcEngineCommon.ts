@@ -1,4 +1,4 @@
-import { range } from 'lodash';
+import { max, range, } from 'lodash';
 import { factorial, } from 'mathjs';
 
 import Ability from "src/Ability";
@@ -83,6 +83,9 @@ export function calcFinalDiceProb(
   }
   else if (reroll === Ability.DoubleBalanced) {
     prob = calcFinalDiceProbBalanced(dieProbs, crits, norms, fails, 2);
+  }
+  else if (reroll === Ability.Tedious) {
+    prob = calcFinalDiceProbTedious(dieProbs, crits, norms, fails);
   }
   else {
     prob = calcMultiRollProb(dieProbs, crits, norms, fails);
@@ -209,34 +212,45 @@ export function calcMultiRollProb(
 
 export function calcFinalDiceProbBalanced(
   dieProbs: DieProbs,
-  crits: number,
-  norms: number,
-  fails: number,
-  balancedFactor: number,
+  finalCrits: number,
+  finalNorms: number,
+  finalFails: number,
+  balancedCount: number,
 ): number {
   let prob = 0;
 
-  for(const rerolls of range(Math.min(fails, balancedFactor), balancedFactor + 1)) {
-    for(const balancedCrits of range(Math.min(crits, rerolls) + 1)) {
-      for(const balancedNorms of range(Math.min(norms, rerolls - balancedCrits) + 1)) {
-        const balancedFails = rerolls - balancedCrits - balancedNorms;
-        if(balancedFails > fails) {
-          continue;
-        }
-        // if rerolling less than able, must be because didn't have many fails
-        if(rerolls < balancedFactor && balancedCrits + balancedNorms + fails > rerolls) {
-          continue;
-        }
+  const minRerolls = Math.min(finalFails, balancedCount);
+  const maxRerolls = balancedCount;
+
+  // NOTE: variable names like "rerolledCrits" are how many originally-failed dice were rerolled and became crits
+
+  for(const rerolls of range(minRerolls, maxRerolls + 1)) {
+    const maxRerolledCrits = Math.min(finalCrits, rerolls);
+    for(const rerolledCrits of range(maxRerolledCrits + 1)) {
+      // you can't have so few new norms that you have more orig fails than final fails
+      const minRerolledNorms = Math.max(0, rerolls - rerolledCrits - finalFails);
+      // firstly, can't have more new norms than final norms
+      // secondly, can't have more new crits and norms than rerolls
+      // and the ternary is to prevent (rerolls < balancedFactor && rerolls < origFails)
+      const maxRerolledNorms = Math.min(
+        finalNorms,
+        rerolls - rerolledCrits - (rerolls < balancedCount ? finalFails : 0));
+      for(let rerolledNorms = minRerolledNorms; rerolledNorms <= maxRerolledNorms; rerolledNorms++) {
+        const rerolledFails = rerolls - rerolledCrits - rerolledNorms;
+        const origCrits = finalCrits - rerolledCrits;
+        const origNorms = finalNorms - rerolledNorms;
+        const origFails = finalFails + rerolledNorms + rerolledCrits;
+
         const preBalancedProb = calcMultiRollProb(
           dieProbs,
-          crits - balancedCrits,
-          norms - balancedNorms,
-          fails + balancedCrits + balancedNorms);
+          origCrits,
+          origNorms,
+          origFails);
         const balancedRollsProb = calcMultiRollProb(
           dieProbs,
-          balancedCrits,
-          balancedNorms,
-          balancedFails);
+          rerolledCrits,
+          rerolledNorms,
+          rerolledFails);
         prob += preBalancedProb * balancedRollsProb;
       }
     }
@@ -250,50 +264,148 @@ export function calcFinalDiceProbTedious(
   finalCrits: number,
   finalNorms: number,
   finalFails: number,
-  balancedFactor: number,
 ): number {
   let prob = 0;
+  const numFailFaces = Math.round(dieProbs.fail * 6);
   const numDice = finalCrits + finalNorms + finalFails;
 
-  // loops...
-  //   number of rerolls; min(1, finalFails) to total dice
-  //   number of crits from those rerolls
-  //   number of norms from those rerolls
-  //
-  // prob is (original roll prob) * (prob of number of rerolls) * (prob of reroll outcome)
-  // could we reuse calcFinalDiceProbBalanced for (original roll prob) * (prob of reroll outcome) and we simply need to multiply by (prob of number of rerolls)?
-  // then, loops are...
-  //   number of rerolls; min(1, finalFails) to total dice
-  //   calculate prob of (number of rerolls)
-  //   mult by calcFinalDiceProbBalanced
+  // lowest number of possible rerolls is min(finalFails, ceil(finalFails / numFailFaces)) because...
+  //   if finalFails is 0, then rerolls is 0
+  //   given finalFails, the worst case scenario of evenly split fails, thus ceil(finalFails / numFailFaces)
+  const minRerolls = Math.min(finalFails, Math.ceil(finalFails / numFailFaces));
+  const maxRerolls = numDice;
 
-  for(const rerolls of range(Math.min(finalFails, balancedFactor), balancedFactor + 1)) {
-    for(const balancedCrits of range(Math.min(finalCrits, rerolls) + 1)) {
-      for(const balancedNorms of range(Math.min(finalNorms, rerolls - balancedCrits) + 1)) {
-        const balancedFails = rerolls - balancedCrits - balancedNorms;
-        if(balancedFails > finalFails) {
-          continue;
-        }
-        // if rerolling less than able, must be because didn't have many fails
-        if(rerolls < balancedFactor && balancedCrits + balancedNorms + finalFails > rerolls) {
-          continue;
-        }
-        const preBalancedProb = calcMultiRollProb(
+  for(const rerolls of range(minRerolls, maxRerolls + 1)) {
+    const maxRerolledCrits = Math.min(finalCrits, rerolls);
+    for(const rerolledCrits of range(maxRerolledCrits + 1)) {
+      // you can't have so few new norms that you have more orig fails than final fails
+      const minRerolledNorms = Math.max(0, rerolls - rerolledCrits - finalFails);
+      // firstly, can't have more new norms than final norms
+      // secondly, can't have more new crits and norms than rerolls
+      const maxRerolledNorms = Math.min(
+        finalNorms,
+        rerolls - rerolledCrits);
+      for(let rerolledNorms = minRerolledNorms; rerolledNorms <= maxRerolledNorms; rerolledNorms++) {
+        const rerolledFails = rerolls - rerolledCrits - rerolledNorms;
+        const origCrits = finalCrits - rerolledCrits;
+        const origNorms = finalNorms - rerolledNorms;
+        const origFails = finalFails + rerolledNorms + rerolledCrits;;
+        const probOfNumRerolls = getProbOfNumTediousRerolls(numFailFaces, origFails, rerolls);
+
+        const preRerollProb = calcMultiRollProb(
           dieProbs,
-          finalCrits - balancedCrits,
-          finalNorms - balancedNorms,
-          finalFails + balancedCrits + balancedNorms);
-        const balancedRollsProb = calcMultiRollProb(
+          origCrits,
+          origNorms,
+          origFails);
+        const rerollProb = calcMultiRollProb(
           dieProbs,
-          balancedCrits,
-          balancedNorms,
-          balancedFails);
-        prob += preBalancedProb * balancedRollsProb;
+          rerolledCrits,
+          rerolledNorms,
+          rerolledFails);
+        prob += probOfNumRerolls * preRerollProb * rerollProb;
       }
     }
   }
-
   return prob;
+}
+
+// indices in order: number of fail typer (from BS), number of original fails, number of rerolls
+// final value is probability of that many rerolls given the other info
+const TediousRerollCountProbs = new Map<number, Map<number, Array<number>>>();
+
+export function getProbOfNumTediousRerolls(
+  numFailTypes: number,
+  numOrigFails: number,
+  numRerolls: number,
+): number {
+  let probsForNumFailType = TediousRerollCountProbs.get(numFailTypes);
+
+  if(probsForNumFailType === undefined) {
+    probsForNumFailType = new Map<number, Array<number>>();
+    TediousRerollCountProbs.set(numFailTypes, probsForNumFailType);
+  }
+
+  let rerollCountProbs = probsForNumFailType.get(numOrigFails);
+
+  if(rerollCountProbs !== undefined) {
+    return rerollCountProbs[numRerolls];
+  }
+
+  rerollCountProbs = new Array<number>(numOrigFails + 1).fill(0);
+  probsForNumFailType.set(numOrigFails, rerollCountProbs);
+
+  const failTypeCounts = new Array<number>(numFailTypes).fill(0);
+  failTypeCounts[0] = numOrigFails;
+
+  // the overall probability is the following multiplicative factors...
+  // probability of rolling each fail type in a particular order
+  //   numFailTypes^-numOrigFails
+  // number of permutations of how orig fails were rolled
+  //   fact(numOrigFails) / fact(numFailType1) / fact(numFailType2) / ...
+  // number of permutations of counts of fail types
+  //   fact(numFailTypes) / fact(how many fail types had 0 dice) / fact(how many fail types had 1 dice) / ...
+
+  const commonProbFactor
+    = Math.pow(numFailTypes, -numOrigFails) // chance of rolling each fail type in a particular order
+    * factorial(numOrigFails) // from permutations of how orig fails were rolled
+    * factorial(numFailTypes); // from permutations of counts of fail types
+
+  do {
+    let divisor = 1;
+    for(const failTypeCount of failTypeCounts) {
+      divisor *= factorial(failTypeCount);
+    }
+
+    const failTypeCountHistogram = calcHistogramArray(failTypeCounts);
+    for(const numFailTypesWithCertainNumDice of failTypeCountHistogram) {
+      divisor *= factorial(numFailTypesWithCertainNumDice);
+    }
+
+    const maxFailTypeCount = max(failTypeCounts)!; // how many rerolls we get
+    rerollCountProbs[maxFailTypeCount] += commonProbFactor / divisor;
+  } while(changeToNextDescendingSequenceWithSameSum(failTypeCounts));
+
+  return rerollCountProbs[numRerolls];
+}
+
+export function calcHistogramArray(vals: number[]): number[] {
+  const histogram = new Array<number>(max(vals)! + 1).fill(0);
+  for(const val of vals) {
+    histogram[val]++;
+  }
+  return histogram;
+}
+
+// examples with length 3 and sum 9 ...
+// [9, 0, 0] -> [8, 1, 0]
+// [8, 1, 0] -> [7, 2, 0]
+// [5, 4, 0] -> [7, 1, 1]
+// [7, 1, 1] -> [6, 2, 1]
+// [4, 3, 2] -> [3, 3, 3]
+// returns true if there was a next sequence, false if not
+export function changeToNextDescendingSequenceWithSameSum(vals: number[]): boolean {
+  // optimization of common case
+  if(vals[1] + 1 < vals[0]) {
+    vals[0]--;
+    vals[1]++;
+    return true;
+  }
+  // `i` is index we are hoping to increment
+  for(let i = 2; i < vals.length; i++) {
+    // can we increment at i?
+    if(vals[i] < vals[i - 1] && vals[i] + 1 < vals[0]) {
+      const commonVal = ++vals[i]; // then increment at i
+      // and "lopside" everything before i; so vals[0] is big and vals[1..i-1] == vals[i]
+      let val0Increment = -1;
+      for(let j = 1; j < i; j++) {
+        val0Increment += vals[j] - commonVal;
+        vals[j] = commonVal;
+      }
+      vals[0] += val0Increment;
+      return true;
+    }
+  }
+  return false;
 }
 
 export function calcMultiRoundDamage(
