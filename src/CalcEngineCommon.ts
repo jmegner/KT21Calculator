@@ -309,7 +309,7 @@ export function calcFinalDiceProbTedious(
   return prob;
 }
 
-// indices in order: number of fail typer (from BS), number of original fails, number of rerolls
+// indices in order: number of fail types (from BS), number of original fails, number of rerolls
 // final value is probability of that many rerolls given the other info
 const TediousRerollCountProbs = new Map<number, Map<number, Array<number>>>();
 
