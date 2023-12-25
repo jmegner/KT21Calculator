@@ -13,8 +13,6 @@ Check out [Kill Team Resources](https://github.com/jmegner/KillTeamResources) re
 Features that would be nice for me to get around to implementing ...
 - mass analysis tab
 - have option for user to select a relevant operative profile (ex: Necron Immortal with Gauss Blaster and Starfire Core) instead of individually selecting parameters.
-- shoot section
-  - Cult Ambush reroll (you roll attack dice and then choose pip type to reroll, like reroll 2s)
 - fight section
   - transition from uninjured to injured (degraded WS) between rounds
   - fnp: this one is messy, so is low priority
