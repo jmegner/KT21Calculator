@@ -137,13 +137,14 @@ fn simulated_num_successes_from_multi_roll(
     }
 
     let num_original_successes = sf.s;
-    let num_rerolled_successes = if num_rerolls == 0 {
+    let num_rerolled_successes = if num_rerolls == 0 || sf.f == 0 {
         0
     } else {
+        let num_actual_rerolls = std::cmp::min(num_rerolls, sf.f);
         simulated_num_successes_from_multi_roll(
             die_distribution,
             rng,
-            std::cmp::min(num_rerolls, sf.f),
+            num_actual_rerolls,
             dice_stat,
             0,
         )

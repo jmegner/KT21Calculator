@@ -1,24 +1,19 @@
 use core::hash::Hash;
-use num::traits::Num;
+use num::traits::NumAssignRef;
 use std::collections::HashMap;
 
 pub mod ts_types;
 
-pub fn add_to_map_value<KeyType: Eq + PartialEq + Hash + Copy, ValType: Num + Copy>(
+pub fn add_to_map_value<KeyType: Eq + Hash + Copy, ValType: NumAssignRef>(
     map: &mut HashMap<KeyType, ValType>,
     key: &KeyType,
     val: ValType,
 ) {
-    let zero = ValType::zero();
-    let old_map_val = map.get(key).unwrap_or(&zero);
-    map.insert(*key, *old_map_val + val);
+    *map.entry(*key).or_insert(ValType::zero()) += val;
 }
 
 #[allow(dead_code)]
-pub fn normalize_map_values<
-    KeyType: Eq + PartialEq + Hash + Copy,
-    ValType: std::ops::DivAssign + Copy,
->(
+pub fn normalize_map_values<KeyType: Eq + Hash + Copy, ValType: std::ops::DivAssign + Copy>(
     map: &mut HashMap<KeyType, ValType>,
     divisor: ValType,
 ) {
@@ -29,14 +24,12 @@ pub fn normalize_map_values<
 
 pub fn binomial_pmf(num_trials: i32, num_successes: i32, prob_success: f64) -> f64 {
     // often the variables are named numTrials=n, numSuccesses=k, probSuccess=p
-    return
-        // combinations(num_trials, num_successes) as f64
-        n_choose_k(num_trials, num_successes) as f64
+    return n_choose_k(num_trials, num_successes) as f64
         * prob_success.powf(num_successes.into())
         * (1.0 - prob_success).powf((num_trials - num_successes).into());
 }
 
-// can only handle up to num_trials=29 (29*28*..*16 < max i64 < 30*29*..*16)
+// can only handle up to num_trials=29 (29*28*..*16 < max_i64 < 30*29*..*16)
 //
 // with s=min(k, n-k), this does 2*s-1 multiplications and 1 division;
 // other implementations do way more operations to handle bigger numbers ...

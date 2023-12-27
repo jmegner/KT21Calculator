@@ -18,7 +18,7 @@ const ModelControls: React.FC<Props> = (props: Props) => {
   const model = props.model;
   const [textHandler, numHandler, boolHandler]
     = Util.makePropChangeHandlers(model, props.changeHandler);
-  const diceSpan = Util.span(1, 10);
+  const diceSpan = Util.span(props.isAttacker ? 1 : 0, 9);
   const intSpan = Util.span(0, 9);
 
   let params: IncProps[] = [
