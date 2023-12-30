@@ -377,16 +377,16 @@ export function handleDuelist(
     return;
   }
 
+  if(guy2State.profile.has(Ability.Brutal)) {
+    if(guy1State.crits) {
+      resolveDieChoice(FightChoice.CritParry, guy1State, guy2State);
+    }
+    return;
+  }
+
   let parryChoice: FightChoice;
 
   if (guy1State.crits && guy2State.crits) {
-    parryChoice = FightChoice.CritParry;
-  }
-  else if (
-    guy1State.profile.has(Ability.Duelist)
-    && guy1State.crits
-    && guy2State.successes() >= 2
-  ){
     parryChoice = FightChoice.CritParry;
   }
   else if (guy1State.norms === 0) {
@@ -396,8 +396,5 @@ export function handleDuelist(
     parryChoice = FightChoice.NormParry;
   }
 
-  // if guy2 has brutal, then guy1 can only parry with crits
-  if(!guy2State.profile.has(Ability.Brutal) || parryChoice === FightChoice.CritParry) {
-    resolveDieChoice(parryChoice, guy1State, guy2State);
-  }
+  resolveDieChoice(parryChoice, guy1State, guy2State);
 }
