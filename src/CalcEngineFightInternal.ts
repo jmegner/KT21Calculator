@@ -396,5 +396,8 @@ export function handleDuelist(
     parryChoice = FightChoice.NormParry;
   }
 
-  resolveDieChoice(parryChoice, guy1State, guy2State);
+  // if guy2 has brutal, then guy1 can only parry with crits
+  if(!guy2State.profile.has(Ability.Brutal) || parryChoice === FightChoice.CritParry) {
+    resolveDieChoice(parryChoice, guy1State, guy2State);
+  }
 }

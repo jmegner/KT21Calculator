@@ -5,7 +5,7 @@ import Ability from "src/Ability";
 import Attacker from "src/Attacker";
 import DieProbs from "src/DieProbs";
 import FinalDiceProb from 'src/FinalDiceProb';
-import { addToMapValue } from 'src/Util';
+import { addToMapValue, upTo } from 'src/Util';
 
 export function calcFinalDiceProbsForAttacker(
   attacker: Attacker,
@@ -224,9 +224,8 @@ export function calcFinalDiceProbBalanced(
 
   // NOTE: variable names like "rerolledCrits" are how many originally-failed dice were rerolled and became crits
 
-  for(const rerolls of range(minRerolls, maxRerolls + 1)) {
-    const maxRerolledCrits = Math.min(finalCrits, rerolls);
-    for(const rerolledCrits of range(maxRerolledCrits + 1)) {
+  for(const rerolls of upTo(minRerolls, maxRerolls)) {
+    for(const rerolledCrits of upTo(Math.min(finalCrits, rerolls))) {
       // you can't have so few new norms that you have more orig fails than final fails
       const minRerolledNorms = Math.max(0, rerolls - rerolledCrits - finalFails);
       // firstly, can't have more new norms than final norms
@@ -235,7 +234,7 @@ export function calcFinalDiceProbBalanced(
       const maxRerolledNorms = Math.min(
         finalNorms,
         rerolls - rerolledCrits - (rerolls < balancedCount ? finalFails : 0));
-      for(let rerolledNorms = minRerolledNorms; rerolledNorms <= maxRerolledNorms; rerolledNorms++) {
+      for(const rerolledNorms of upTo(minRerolledNorms, maxRerolledNorms)) {
         const rerolledFails = rerolls - rerolledCrits - rerolledNorms;
         const origCrits = finalCrits - rerolledCrits;
         const origNorms = finalNorms - rerolledNorms;
@@ -269,15 +268,12 @@ export function calcFinalDiceProbTedious(
   const numFailFaces = Math.round(dieProbs.fail * 6);
   const numDice = finalCrits + finalNorms + finalFails;
 
-  // lowest number of possible rerolls is min(finalFails, ceil(finalFails / numFailFaces)) because...
-  //   if finalFails is 0, then rerolls is 0
-  //   given finalFails, the worst case scenario of evenly split fails, thus ceil(finalFails / numFailFaces)
-  const minRerolls = Math.min(finalFails, Math.ceil(finalFails / numFailFaces));
+  // given finalFails, the lowest-reroll scenario is evenly-split-as-possible fails
+  const minRerolls = Math.ceil(finalFails / numFailFaces);
   const maxRerolls = numDice;
 
-  for(const rerolls of range(minRerolls, maxRerolls + 1)) {
-    const maxRerolledCrits = Math.min(finalCrits, rerolls);
-    for(const rerolledCrits of range(maxRerolledCrits + 1)) {
+  for(const rerolls of upTo(minRerolls, maxRerolls)) {
+    for(const rerolledCrits of upTo(Math.min(finalCrits, rerolls))) {
       // you can't have so few new norms that you have more orig fails than final fails
       const minRerolledNorms = Math.max(0, rerolls - rerolledCrits - finalFails);
       // firstly, can't have more new norms than final norms
@@ -285,7 +281,7 @@ export function calcFinalDiceProbTedious(
       const maxRerolledNorms = Math.min(
         finalNorms,
         rerolls - rerolledCrits);
-      for(let rerolledNorms = minRerolledNorms; rerolledNorms <= maxRerolledNorms; rerolledNorms++) {
+      for(const rerolledNorms of upTo(minRerolledNorms, maxRerolledNorms)) {
         const rerolledFails = rerolls - rerolledCrits - rerolledNorms;
         const origCrits = finalCrits - rerolledCrits;
         const origNorms = finalNorms - rerolledNorms;
@@ -416,7 +412,7 @@ export function calcMultiRoundDamage(
   let dmgsCumulative = new Map<number,number>(dmgsSingleRound);
 
   // eslint-disable-next-line
-  for(let _ of range(1, numRounds)) {
+  for(let _ of range(numRounds - 1)) {
     const dmgsPrevRounds = dmgsCumulative;
     dmgsCumulative = new Map<number,number>();
 

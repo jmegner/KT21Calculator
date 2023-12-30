@@ -36,6 +36,16 @@ export function boolToCheckX(val: boolean) : string {
   return val ? thickCheck : thickX;
 }
 
+export function upTo(first: number, last?: number) : number[] {
+  if (last === undefined) {
+    return range(0, first + 1);
+  }
+  if(first > last) {
+    return [];
+  }
+  return range(first, last + 1);
+}
+
 export function span(first: number, last: number, suffix?: string) : string[] {
   const delta = first <= last ? 1 : -1;
   return range(first, last + delta, delta).map(x => x.toString() + (suffix ? suffix : ''));
