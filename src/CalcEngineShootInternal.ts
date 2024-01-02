@@ -39,6 +39,7 @@ export function calcDefenderFinalDiceStuff(
     defender.coverCritSaves,
     defender.coverNormSaves,
     defender.normsToCrits,
+    defender.abilities,
     );
 
   let defenderFinalDiceProbsWithPx: FinalDiceProb[] = [];

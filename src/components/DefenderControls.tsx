@@ -53,6 +53,7 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
     new IncProps(N.CoverNormSaves, def.coverNormSaves,       xspan(1, 4),      numHandler('coverNormSaves')),
     new IncProps(N.CoverCritSaves, def.coverCritSaves,       xspan(1, 4),      numHandler('coverCritSaves')),
     new IncProps(N.NormsToCrits,   def.normsToCrits,         xspan(1, 4),      numHandler('normsToCrits')),
+    new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit), xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
     new IncProps(N.InvulnSave,     def.invulnSave + '+',     xrollSpan,        numHandler('invulnSave')),
     new IncProps(N.HardyX,         def.hardyx + '+',         xspan(5, 2, '+'), numHandler('hardyx')),
     new IncProps(N.FeelNoPain,     def.fnp + '+',            xspan(6, 2, '+'), numHandler('fnp')),
@@ -64,12 +65,18 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
     <Row key={p.id}><Col className='pr-0'><IncDecSelect {...p}/></Col></Row>);
 
   return (
+    // TODO: change width to ~310px so it is actually 2 cols but doesn't go below attacker section
     <Container style={{width: '150px'}}>
       <Row>Defender</Row>
       <Row>
         <Col>
           <Container className='p-0'>
-            {paramElems}
+            {paramElems.slice(0, paramElems.length / 2)}
+          </Container>
+        </Col>
+        <Col>
+          <Container className='p-0'>
+            {paramElems.slice(paramElems.length / 2)}
           </Container>
         </Col>
       </Row>
