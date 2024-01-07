@@ -1,11 +1,11 @@
 import { clone } from "lodash";
-import Attacker from "src/Attacker";
+import Model from "src/Model";
 import FightStrategy from 'src/FightStrategy';
 import FightChoice from "src/FightChoice";
 import Ability from "./Ability";
 
 export default class FighterState {
-  public profile: Attacker;
+  public profile: Model;
   public crits: number;
   public norms: number;
   public strategy: FightStrategy;
@@ -15,7 +15,7 @@ export default class FighterState {
   public hasDoneMurderousEntrance: boolean;
 
   public constructor(
-    profile: Attacker,
+    profile: Model,
     crits: number,
     norms: number,
     strategy: FightStrategy,

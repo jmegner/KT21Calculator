@@ -1,5 +1,4 @@
-import Attacker from 'src/Attacker';
-import Defender from 'src/Defender';
+import Model from 'src/Model';
 import * as Util from 'src/Util';
 import { range } from 'lodash';
 import Ability from 'src/Ability';
@@ -11,11 +10,11 @@ import {
 } from 'src/CalcEngineShootInternal';
 import { requiredPrecision } from 'src/CalcEngineCommon.test';
 
-function newTestAttacker(attacks: number = 1, bs: number = 4) : Attacker {
-  return new Attacker(attacks, bs, 11, 13);
+function newTestAttacker(attacks: number = 1, bs: number = 4) : Model {
+  return new Model(attacks, bs, 11, 13);
 }
 
-function avgDmg(attacker: Attacker, defender: Defender, numRounds: number = 1, isFireTeamRules: boolean = false): number {
+function avgDmg(attacker: Model, defender: Model, numRounds: number = 1, isFireTeamRules: boolean = false): number {
   return Util.weightedAverage(calcDmgProbs(attacker, defender, new ShootOptions(numRounds, isFireTeamRules)));
 }
 
@@ -24,8 +23,8 @@ describe(calcDamage.name + ', typical dmgs (norm < crit < 2 * norm)', () => {
   const dn = 5; // normal damage
   const dc = 7; // critical damage
   const dmw = 100; // mortal wound damage
-  const atker = new Attacker(0, 0, dn, dc, dmw);
-  const def = new Defender();
+  const atker = new Model(0, 0, dn, dc, dmw);
+  const def = new Model();
 
   it('0ch 0nh vs 0cs 0ns => 0', () => {
     expect(calcDamage(atker, def, 0, 0, 0, 0)).toBe(0);
@@ -64,8 +63,8 @@ describe(calcDamage.name + ', bigCrit (2 * norm < crit)', () => {
   const dn = 10; // normal damage
   const dc = 100; // critical damage
   const dmw = 1000; // mortal wound damage
-  const atker = new Attacker(0, 0, dn, dc, dmw);
-  const def = new Defender();
+  const atker = new Model(0, 0, dn, dc, dmw);
+  const def = new Model();
 
   it('bigCrit, 0ch 0nh vs 0cs 0ns => 0', () => {
     expect(calcDamage(atker, def, 0, 0, 0, 0)).toBe(0);
@@ -98,8 +97,8 @@ describe(calcDamage.name + ', smallCrit (crit < norm)', () => {
   const dn = 100; // normal damage
   const dc = 10; // critical damage
   const dmw = 1000; // mortal wound damage
-  const atker = new Attacker(0, 0, dn, dc, dmw);
-  const def = new Defender();
+  const atker = new Model(0, 0, dn, dc, dmw);
+  const def = new Model();
 
   it('smallCrit, 0ch 0nh vs 0cs 0ns => 0', () => {
     expect(calcDamage(atker, def, 0, 0, 0, 0)).toBe(0);
@@ -132,8 +131,8 @@ describe(calcDamage.name + ', Fire Team rules', () => {
   const dn = 5; // normal damage
   const dc = 7; // critical damage
   const dmw = 100; // mortal wound damage
-  const atker = new Attacker(0, 0, dn, dc, dmw);
-  const def = new Defender();
+  const atker = new Model(0, 0, dn, dc, dmw);
+  const def = new Model();
 
   it('0ch 0nh vs 0cs 0ns => 0', () => {
     expect(calcDamage(atker, def, 0, 0, 0, 0, true)).toBe(0);
@@ -203,10 +202,10 @@ describe(calcDmgProbs.name + ', few dice, no abilities', () => {
   const pf = 1/2; // fail probability
   const dc = 13;
   const dn = 11;
-  const atk1 = new Attacker(1, bs, dn, dc);
-  const atk2 = new Attacker(2, bs, dn, dc);
-  const def0 = new Defender(0, bs);
-  const def1 = new Defender(1, bs);
+  const atk1 = new Model(1, bs, dn, dc);
+  const atk2 = new Model(2, bs, dn, dc);
+  const def0 = new Model(0, bs);
+  const def1 = new Model(1, bs);
 
   it('test coherency', () => {
     expect(pc + pn + pf).toBeCloseTo(1, requiredPrecision);
@@ -293,7 +292,7 @@ describe(calcDmgProbs.name + ', mwx', () => {
     const pc = 1 / 6;
     const pn = 5 / 6;
     const atk = newTestAttacker(1, 1).setProp('mwx', dmw);
-    const def = new Defender(1, 1).withProp('invulnSave', 1);
+    const def = new Model(1, 1).withProp('invulnSave', 1);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(pn, requiredPrecision); // norm hit, any save
@@ -305,13 +304,13 @@ describe(calcDmgProbs.name + ', mwx', () => {
 
 describe(calcDmgProbs.name + ', APx & invuln', () => {
   it('APx vs fewer defense dice', () => {
-    const atkApx0 = new Attacker().setProp('apx', 0);
-    const atkApx1 = new Attacker().setProp('apx', 1);
-    const atkApx2 = new Attacker().setProp('apx', 2);
-    const def0 = new Defender().setProp('defense', 0);
-    const def1 = new Defender().setProp('defense', 1);
-    const def2 = new Defender().setProp('defense', 2);
-    const def3 = new Defender().setProp('defense', 3);
+    const atkApx0 = new Model().setProp('apx', 0);
+    const atkApx1 = new Model().setProp('apx', 1);
+    const atkApx2 = new Model().setProp('apx', 2);
+    const def0 = new Model().setProp('numDice', 0);
+    const def1 = new Model().setProp('numDice', 1);
+    const def2 = new Model().setProp('numDice', 2);
+    const def3 = new Model().setProp('numDice', 3);
 
     // scenarios with 0 defense dice (0-0, 1-1,);
     const dmgs0Minus0DefDice = calcDmgProbs(atkApx0, def0);
@@ -340,8 +339,8 @@ describe(calcDmgProbs.name + ', APx & invuln', () => {
     expect(dmgs1Minus1DefDice).toStrictEqual(dmgs1Minus2DefDice);
   });
   it('invuln used when valid', () => {
-    const atk = newTestAttacker(1).withAlwaysNormHit();
-    const def = new Defender(1, 1); // never rolls fails
+    const atk = newTestAttacker(1).withAlwaysNorm();
+    const def = new Model(1, 1); // never rolls fails
     const defInvuln = def.withProp('invulnSave', 4); // fails half the time
 
     const dmg = avgDmg(atk, def);
@@ -353,8 +352,8 @@ describe(calcDmgProbs.name + ', APx & invuln', () => {
   it('APx has no effect against invuln', () => {
     const atkApx0 = newTestAttacker(3).setProp('apx', 0);
     const atkApx1 = newTestAttacker(3).setProp('apx', 1);
-    const def = new Defender(3, 3);
-    const defInvuln = new Defender().setProp('invulnSave', 6);
+    const def = new Model(3, 3);
+    const defInvuln = new Model().setProp('invulnSave', 6);
 
     const dmgsApx0Invuln = calcDmgProbs(atkApx0, defInvuln);
     const dmgsApx1Invuln = calcDmgProbs(atkApx1, defInvuln);
@@ -370,7 +369,7 @@ describe(calcDmgProbs.name + ', px and lethal', () => {
   it('px gets rid of def dice on crit', () => {
     const atk = newTestAttacker(1, 1).setProp('px', 4).setProp('lethal', 5);
     const pc = (7 - atk.critSkill()) / 6;
-    const def = new Defender(4, 1);
+    const def = new Model(4, 1);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(1 - pc, requiredPrecision);
@@ -379,8 +378,8 @@ describe(calcDmgProbs.name + ', px and lethal', () => {
 
   it('0 < apx < px, apx used when no crit', () => {
     const atk = newTestAttacker(1, 1).setProp('apx', 1).setProp('px', 2).setProp('lethal', 5);
-    const def = new Defender(2, 1);
-    const [pc, pn, ] = atk.toDieProbs().toCritNormFail();
+    const def = new Model(2, 1);
+    const [pc, pn, ] = atk.toAttackerDieProbs().toCritNormFail();
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(pn, requiredPrecision);
@@ -392,8 +391,8 @@ describe(calcDmgProbs.name + ', px and lethal', () => {
 describe(calcDmgProbs.name + ', balanced', () => {
   it('balanced with 1 atk die', () => {
     const atk = newTestAttacker(1).setProp('reroll', Ability.Balanced);
-    const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
-    const def = new Defender(0);
+    const [pc, pn, pf] = atk.toAttackerDieProbs().toCritNormFail();
+    const def = new Model(0);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(pf * pf, requiredPrecision);
@@ -410,7 +409,7 @@ describe(calcDmgProbs.name + ', ceaseless', () => {
     const pn = 2 / 6;
     const pf = 3 / 6;
     const p1 = 1 / 6; // probability of rolling exactly a 1
-    const def = new Defender(0);
+    const def = new Model(0);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo((pf - p1) + p1 * pf, requiredPrecision);
@@ -421,7 +420,7 @@ describe(calcDmgProbs.name + ', ceaseless', () => {
   it('ceaseless damage', () => {
     const atk = newTestAttacker(3);
     const atkCeaseless = atk.withProp('reroll', Ability.Ceaseless);
-    const def = new Defender(0);
+    const def = new Model(0);
 
     const dmg = avgDmg(atk, def);
     const dmgCeaseless = avgDmg(atkCeaseless, def);
@@ -435,7 +434,7 @@ describe(calcDmgProbs.name + ', relentless', () => {
     const pc = 1 / 6;
     const pn = 2 / 6;
     const pf = 3 / 6;
-    const def = new Defender(0);
+    const def = new Model(0);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(pf * pf, requiredPrecision);
@@ -446,7 +445,7 @@ describe(calcDmgProbs.name + ', relentless', () => {
   it('relentless damage', () => {
     const atk = newTestAttacker(3, 4);
     const atkRelentless = atk.withProp('reroll', Ability.Relentless);
-    const def = new Defender(0);
+    const def = new Model(0);
 
     const dmg = avgDmg(atk, def);
     const dmgRelentless = avgDmg(atkRelentless, def);
@@ -457,16 +456,16 @@ describe(calcDmgProbs.name + ', relentless', () => {
 describe(calcDmgProbs.name + ', rending & starfire', () => {
   it('rending, 2 atk dice, probability 2 crits', () => {
     const atk = newTestAttacker(2).setAbility(Ability.Rending, true);
-    const [pc, pn, ] = atk.toDieProbs().toCritNormFail();
-    const def = new Defender(0);
+    const [pc, pn, ] = atk.toAttackerDieProbs().toCritNormFail();
+    const def = new Model(0);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(2 * atk.critDmg)).toBeCloseTo(pc * pc + 2 * pc * pn, requiredPrecision);
   });
   it('starfire, 2 atk dice, probability 1 crit + 1 norm', () => {
     const atk = newTestAttacker(2).setAbility(Ability.FailToNormIfCrit, true);
-    const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
-    const def = new Defender(0);
+    const [pc, pn, pf] = atk.toAttackerDieProbs().toCritNormFail();
+    const def = new Model(0);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(atk.critDmg + atk.normDmg))
@@ -482,8 +481,8 @@ describe(calcDmgProbs.name + ', defender fnp', () => {
     const pa = 1 / 3; // probability avoided the damage
     const p1 = 1 / 2; // probability of prefnp damage = 1
     const p2 = 1 / 6; // probability of prefnp damage = 2
-    const atk = new Attacker(1, 3, 1, 2);
-    const def = new Defender(0).setProp('fnp', fnp);
+    const atk = new Model(1, 3, 1, 2);
+    const def = new Model(0).setProp('fnp', fnp);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(1)).toBeCloseTo(p2 * pd * pa * 2 + p1 * pd, requiredPrecision);
@@ -494,41 +493,41 @@ describe(calcDmgProbs.name + ', defender fnp', () => {
 
 describe(calcDmgProbs.name + ', defender cover saves', () => {
   it('cover, 1 always-norm-hit vs 1 cover norm save (always cancel)', () => {
-    const atk = newTestAttacker(1).withAlwaysNormHit();
-    const def = new Defender(1, 6).setProp('coverNormSaves', 1);
+    const atk = newTestAttacker(1).withAlwaysNorm();
+    const def = new Model(1, 6).setProp('autoNorms', 1);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(1, requiredPrecision);
     expect(dmgs.size).toBe(1);
   });
   it('cover, 1 always-crit-hit vs 1 cover norm save (never cancel)', () => {
-    const atk = newTestAttacker(1).withAlwaysCritHit();
-    const def = new Defender(1, 6).setProp('coverNormSaves', 1);
+    const atk = newTestAttacker(1).withAlwaysCrit();
+    const def = new Model(1, 6).setProp('autoNorms', 1);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(atk.critDmg)).toBeCloseTo(1, requiredPrecision);
     expect(dmgs.size).toBe(1);
   });
   it('cover, 1 always-crit-hit vs 2 cover norm save (cancel)', () => {
-    const atk = newTestAttacker(1).withAlwaysCritHit();
-    const def = new Defender(2, 6).setProp('coverNormSaves', 2);
+    const atk = newTestAttacker(1).withAlwaysCrit();
+    const def = new Model(2, 6).setProp('autoNorms', 2);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(1, requiredPrecision);
     expect(dmgs.size).toBe(1);
   });
   it('cover, 3 always-norm-hit vs 2 cover norm save (cancel 2 norm hits)', () => {
-    const atk = newTestAttacker(3).withAlwaysNormHit();
-    const def = new Defender(2, 6).setProp('coverNormSaves', 2);
+    const atk = newTestAttacker(3).withAlwaysNorm();
+    const def = new Model(2, 6).setProp('autoNorms', 2);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(atk.normDmg)).toBeCloseTo(1, requiredPrecision);
     expect(dmgs.size).toBe(1);
   });
   it('cover, 2 always-norm-hit vs 1 cover norm save and 1 def roll (sometimes cancelled)', () => {
-    const atk = newTestAttacker(2).withAlwaysNormHit();
-    const def = new Defender(2, 3).setProp('coverNormSaves', 1);
-    const [pc, pn, pf] = def.toDieProbs().toCritNormFail();
+    const atk = newTestAttacker(2).withAlwaysNorm();
+    const def = new Model(2, 3).setProp('autoNorms', 1);
+    const [pc, pn, pf] = def.toDefenderDieProbs().toCritNormFail();
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(pc + pn, requiredPrecision);
@@ -536,48 +535,48 @@ describe(calcDmgProbs.name + ', defender cover saves', () => {
     expect(dmgs.size).toBe(2);
   });
   it('cover, 1 always-norm-hit vs 1 cover crit save (always cancel)', () => {
-    const atk = newTestAttacker(1).withAlwaysNormHit();
-    const def = new Defender(1, 6).setProp('coverCritSaves', 1);
+    const atk = newTestAttacker(1).withAlwaysNorm();
+    const def = new Model(1, 6).setProp('autoCrits', 1);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(1, requiredPrecision);
     expect(dmgs.size).toBe(1);
   });
   it('cover, 1 always-crit-hit vs 1 cover crit save (always cancel)', () => {
-    const atk = newTestAttacker(1).withAlwaysCritHit();
-    const def = new Defender(1, 6).setProp('coverCritSaves', 1);
+    const atk = newTestAttacker(1).withAlwaysCrit();
+    const def = new Model(1, 6).setProp('autoCrits', 1);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(1, requiredPrecision);
     expect(dmgs.size).toBe(1);
   });
   it('cover, 2 always-norm-hit vs 1 cover crit save (always cancel 1 norm hit)', () => {
-    const atk = newTestAttacker(2).withAlwaysNormHit();
-    const def = new Defender(1, 6).setProp('coverCritSaves', 1);
+    const atk = newTestAttacker(2).withAlwaysNorm();
+    const def = new Model(1, 6).setProp('autoCrits', 1);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(atk.normDmg)).toBeCloseTo(1, requiredPrecision);
     expect(dmgs.size).toBe(1);
   });
   it('enough apx means not even a cover success', () => {
-    const atk = newTestAttacker(1).withAlwaysNormHit().setProp('apx', 3);
-    const def = new Defender(3);
+    const atk = newTestAttacker(1).withAlwaysNorm().setProp('apx', 3);
+    const def = new Model(3);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(atk.normDmg)).toBeCloseTo(1, requiredPrecision);
     expect(dmgs.size).toBe(1);
   });
   it('save promotions, 1 always-crit-hit vs 1 cover norm save + 1 promotion (always cancel)', () => {
-    const atk = newTestAttacker(1).withAlwaysCritHit();
-    const def = new Defender(1, 6).setProp('coverNormSaves', 1).setProp('normsToCrits', 1);
+    const atk = newTestAttacker(1).withAlwaysCrit();
+    const def = new Model(1, 6).setProp('autoNorms', 1).setProp('normsToCrits', 1);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(0)).toBeCloseTo(1, requiredPrecision);
     expect(dmgs.size).toBe(1);
   });
   it('save promotions, 2 always-crit-hit vs 1 cover norm save + 2 promotions (always cancel 1 of the 2)', () => {
-    const atk = newTestAttacker(2).withAlwaysCritHit();
-    const def = new Defender(1, 6).setProp('coverNormSaves', 1).setProp('normsToCrits', 1);
+    const atk = newTestAttacker(2).withAlwaysCrit();
+    const def = new Model(1, 6).setProp('autoNorms', 1).setProp('normsToCrits', 1);
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(atk.critDmg)).toBeCloseTo(1, requiredPrecision);
@@ -587,8 +586,8 @@ describe(calcDmgProbs.name + ', defender cover saves', () => {
 describe(calcDmgProbs.name + ', defender chitin', () => {
   it('chitin, 1 atk die & 1 def die', () => {
     const atk = newTestAttacker(1, 4);
-    const def = new Defender(1, 4).setProp('reroll', Ability.Balanced);
-    const [pc, pn, pf] = atk.toDieProbs().toCritNormFail();
+    const def = Model.basicDefender(1, 4).setProp('reroll', Ability.Balanced);
+    const [pc, pn, pf] = atk.toAttackerDieProbs().toCritNormFail();
 
     const dmgs = calcDmgProbs(atk, def);
     expect(dmgs.get(atk.critDmg)).toBeCloseTo(pc * (pf * (1 - pc) + pn), requiredPrecision);
@@ -601,7 +600,7 @@ describe(calcDmgProbs.name + ', defender chitin', () => {
 describe(calcDmgProbs.name + ', multiple rounds', () => {
   it('damage should scale linearly', () => {
     const atk = newTestAttacker(3);
-    const def = new Defender();
+    const def = Model.basicDefender();
     const dmgHist = [];
 
     for(const numRounds of range(1, 6)) {

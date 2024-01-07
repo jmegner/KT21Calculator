@@ -14,7 +14,6 @@ import ShootResultsDisplay from 'src/components/ShootResultsDisplay';
 import Credits from 'src/components/Credits';
 
 import Attacker from 'src/Attacker';
-import Defender from 'src/Defender';
 import * as Util from "src/Util";
 import { calcDmgProbs } from 'src/CalcEngineShoot';
 import * as N from 'src/Notes';

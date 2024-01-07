@@ -12,21 +12,20 @@ import ShootOptionControls from 'src/components/ShootOptionControls';
 import ShootResultsDisplay from 'src/components/ShootResultsDisplay';
 import Credits from 'src/components/Credits';
 
-import Attacker from 'src/Attacker';
-import Defender from 'src/Defender';
+import Model from 'src/Model';
 import * as Util from "src/Util";
 import { calcDmgProbs } from 'src/CalcEngineShoot';
 import * as N from 'src/Notes';
 import { SaveRange } from 'src/KtMisc';
 
 const ShootSection: React.FC = () => {
-  const [attacker, setAttacker] = React.useState(new Attacker());
-  const [defender, setDefender] = React.useState(new Defender());
+  const [attacker, setAttacker] = React.useState(new Model());
+  const [defender, setDefender] = React.useState(Model.basicDefender());
   const [shootOptions, setShootOptions] = React.useState(new ShootOptions());
 
   const saveToDmgToProb = React.useMemo(
     () => new Map<number,Map<number,number>>(SaveRange.map(save =>
-      [save, calcDmgProbs(attacker, defender.withProp('save', save), shootOptions)])),
+      [save, calcDmgProbs(attacker, defender.withProp('diceStat', save), shootOptions)])),
     [attacker, defender, shootOptions]);
 
   const noteListItems: JSX.Element[] = [

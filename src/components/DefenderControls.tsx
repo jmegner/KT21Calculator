@@ -4,7 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
-import Defender from 'src/Defender';
+import Model from 'src/Model';
 import Ability, {rerollAbilities as rerolls} from 'src/Ability';
 import * as N from 'src/Notes';
 import { SaveRange } from 'src/KtMisc';
@@ -22,8 +22,8 @@ import {
 } from 'src/Util';
 
 export interface Props {
-  defender: Defender;
-  changeHandler: Accepter<Defender>;
+  defender: Model;
+  changeHandler: Accepter<Model>;
 }
 
 
@@ -33,7 +33,7 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
     = makePropChangeHandlers(def, props.changeHandler);
 
   function singleHandler(ability: Ability) {
-    return makeSetChangeHandlerForSingle<Defender,Ability>(
+    return makeSetChangeHandlerForSingle<Model,Ability>(
       def,
       props.changeHandler,
       'abilities',
@@ -47,11 +47,11 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
 
   const params: IncProps[] = [
     //           id,               selectedValue,            values,           valueChangeHandler
-    new IncProps('Defense',        def.defense,              span(0, 4),       numHandler('defense')),
-    new IncProps('Save',           def.save + '+',           withPlus(SaveRange), numHandler('save')),
+    new IncProps('Defense',        def.numDice,              span(0, 4),       numHandler('numDice')),
+    new IncProps('Save',           def.diceStat + '+',       withPlus(SaveRange), numHandler('diceStat')),
     new IncProps('Wounds',         def.wounds,               span(1, 20),      numHandler('wounds')),
-    new IncProps(N.CoverNormSaves, def.coverNormSaves,       xspan(1, 4),      numHandler('coverNormSaves')),
-    new IncProps(N.CoverCritSaves, def.coverCritSaves,       xspan(1, 4),      numHandler('coverCritSaves')),
+    new IncProps(N.CoverNormSaves, def.autoNorms,            xspan(1, 4),      numHandler('autoNorms')),
+    new IncProps(N.CoverCritSaves, def.autoCrits,            xspan(1, 4),      numHandler('autoCrits')),
     new IncProps(N.NormsToCrits,   def.normsToCrits,         xspan(1, 4),      numHandler('normsToCrits')),
     new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit), xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
     new IncProps(N.InvulnSave,     def.invulnSave + '+',     xrollSpan,        numHandler('invulnSave')),
@@ -67,7 +67,7 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
   return (
     // TODO: change width to ~310px so it is actually 2 cols but doesn't go below attacker section
     <Container style={{width: '150px'}}>
-      <Row>Defender</Row>
+      <Row>Model</Row>
       <Row>
         <Col>
           <Container className='p-0'>

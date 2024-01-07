@@ -2,21 +2,22 @@ import { max, range, } from 'lodash';
 import { factorial, } from 'mathjs';
 
 import Ability from "src/Ability";
-import Attacker from "src/Attacker";
+import Model from "src/Model";
 import DieProbs from "src/DieProbs";
 import FinalDiceProb from 'src/FinalDiceProb';
 import { addToMapValue, upTo } from 'src/Util';
 
 export function calcFinalDiceProbsForAttacker(
-  attacker: Attacker,
+  attacker: Model,
 ): FinalDiceProb[]
 {
   return calcFinalDiceProbs(
-    attacker.toDieProbs(),
-    attacker.attacks,
+    attacker.toAttackerDieProbs(),
+    attacker.numDice,
     attacker.reroll,
     attacker.autoCrits,
     attacker.autoNorms,
+    attacker.failsToNorms,
     attacker.normsToCrits,
     attacker.abilities,
   );
@@ -28,6 +29,7 @@ export function calcFinalDiceProbs(
   reroll: Ability,
   autoCrits: number = 0,
   autoNorms: number = 0,
+  failsToNorms: number = 0,
   normsToCrits: number = 0,
   abilities: Set<Ability> = new Set<Ability>(),
 ): FinalDiceProb[]
@@ -51,6 +53,7 @@ export function calcFinalDiceProbs(
         reroll,
         autoCrits,
         autoNorms,
+        failsToNorms,
         normsToCrits,
         abilities,
       );
@@ -72,6 +75,7 @@ export function calcFinalDiceProb(
   reroll: Ability = Ability.None, // really just care if Balanced or CeaselessPlusBalanced
   autoCrits: number = 0,
   autoNorms: number = 0,
+  failsToNorms: number = 0,
   normsToCrits: number = 0,
   abilities: Set<Ability> = new Set<Ability>(),
 ): FinalDiceProb
@@ -155,6 +159,10 @@ export function calcFinalDiceProb(
       norms--;
     }
   }
+
+  const actualFailToNormPromotions = Math.min(failsToNorms, fails);
+  norms += actualFailToNormPromotions;
+  fails -= actualFailToNormPromotions;
 
   const actualNormToCritPromotions = Math.min(normsToCrits, norms);
   crits += actualNormToCritPromotions;

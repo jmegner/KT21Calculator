@@ -28,6 +28,10 @@ export const AutoCrits = new Note(
   `AutoCrits`,
   `How many attack dice can be automatically retained as a crit success. Much like cover saves but for attack dice.`,
 );
+export const FailsToNorms = new Note(
+  `FailsToNorms`,
+  `How many fails can be modified to normal successes.`,
+);
 export const NormsToCrits = new Note(
   `NormsToCrits`,
   `How many normal successes can be modified to critical successes.`,

@@ -17,7 +17,7 @@ import {
   xAndCheck,
   xspan,
 } from 'src/Util';
-import Attacker from 'src/Attacker';
+import Model from 'src/Model';
 import Ability, {
   eliteAbilities,
   rerollAbilities as rerolls
@@ -27,8 +27,8 @@ import NoCoverType from 'src/NoCoverType';
 
 
 export interface Props {
-  attacker: Attacker;
-  changeHandler: Accepter<Attacker>;
+  attacker: Model;
+  changeHandler: Accepter<Model>;
 }
 
 const AttackerControls: React.FC<Props> = (props: Props) => {
@@ -38,7 +38,7 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
   const noCoverChoices = Object.values(NoCoverType);
 
   function subsetHandler(subset: Iterable<Ability>) {
-    return makeSetChangeHandler<Attacker,Ability>(
+    return makeSetChangeHandler<Model,Ability>(
       atk,
       props.changeHandler,
       'abilities',
@@ -46,7 +46,7 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     );
   }
   function singleHandler(ability: Ability) {
-    return makeSetChangeHandlerForSingle<Attacker,Ability>(
+    return makeSetChangeHandlerForSingle<Model,Ability>(
       atk,
       props.changeHandler,
       'abilities',
@@ -62,8 +62,8 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
 
   const params: IncProps[] = [
     //           id/label,       selectedValue,         values,                valueChangeHandler
-    new IncProps('Attacks',      atk.attacks,           span(1, 9),       numHandler('attacks')),
-    new IncProps('BS',           atk.bs + '+',          rollSpan,         numHandler('bs')),
+    new IncProps('Attacks',      atk.numDice,           span(1, 9),       numHandler('numDice')),
+    new IncProps('BS',           atk.diceStat + '+',    rollSpan,         numHandler('diceStat')),
     new IncProps('Normal Dmg',   atk.normDmg,           span(0, 9),       numHandler('normDmg')),
     new IncProps('Crit Dmg',     atk.critDmg,           span(0, 10),      numHandler('critDmg')),
     new IncProps('MWx',          atk.mwx,               xspan(1, 9),      numHandler('mwx')),
@@ -73,12 +73,13 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     // 2nd column
     new IncProps('Lethal',       atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),
     new IncProps(N.Rending,      toYN(Ability.Rending), xAndCheck,        singleHandler(Ability.Rending)),
-    new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit),            xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
-    new IncProps(N.CloseAssault, toYN(Ability.FailToNormIfAtLeastTwoSuccesses), xAndCheck, singleHandler(Ability.FailToNormIfAtLeastTwoSuccesses)),
     new IncProps(N.AutoNorms,    atk.autoNorms,         xspan(1, 9),      numHandler('autoNorms')),
     new IncProps(N.AutoCrits,    atk.autoCrits,         xspan(1, 9),      numHandler('autoCrits')),
+    new IncProps(N.FailsToNorms, atk.failsToNorms,      xspan(1, 9),      numHandler('normsToCrits')),
     new IncProps(N.NormsToCrits, atk.normsToCrits,      xspan(1, 9),      numHandler('normsToCrits')),
+    new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit),            xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
     new IncProps('ElitePoints*', eliteAbility,          eliteAbilities,   subsetHandler(eliteAbilities)),
+    new IncProps(N.CloseAssault, toYN(Ability.FailToNormIfAtLeastTwoSuccesses), xAndCheck, singleHandler(Ability.FailToNormIfAtLeastTwoSuccesses)),
     //new IncProps(N.NoCover,      atk.noCover,            noCoverChoices,        textHandler('noCover')),
   ];
 

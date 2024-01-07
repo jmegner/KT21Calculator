@@ -1,4 +1,4 @@
-import Attacker from "src/Attacker";
+import Model from "src/Model";
 import FightStrategy from 'src/FightStrategy';
 import {
   consolidateWoundPairProbs,
@@ -6,8 +6,8 @@ import {
 } from "./CalcEngineFightInternal";
 
 export function calcRemainingWounds(
-  guy1: Attacker,
-  guy2: Attacker,
+  guy1: Model,
+  guy2: Model,
   guy1Strategy: FightStrategy = FightStrategy.MaxDmgToEnemy,
   guy2Strategy: FightStrategy = FightStrategy.MaxDmgToEnemy,
   numRounds: number = 1,

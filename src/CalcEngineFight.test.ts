@@ -1,4 +1,4 @@
-import Attacker from 'src/Attacker';
+import Model from 'src/Model';
 import {
   calcRemainingWounds,
 } from 'src/CalcEngineFight';
@@ -28,7 +28,7 @@ function newFighterState(
   abilities: Set<Ability> = new Set<Ability>(),
 ): FighterState {
   return new FighterState(
-    new Attacker(crits + norms, 2, 1, 2)
+    new Model(crits + norms, 2, 1, 2)
       .setProp('wounds', wounds)
       .setProp('abilities', abilities),
     crits,
@@ -508,7 +508,7 @@ describe(calcRemainingWounds.name + ' basic', () => {
   const dc = 4;
 
   it('fight can\'t be cut short', () => {
-    const guy1 = new Attacker(1, 6, dn, dc).setProp('wounds', w);
+    const guy1 = new Model(1, 6, dn, dc).setProp('wounds', w);
     const guy2 = clone(guy1);
 
     const [guy1Wounds, guy2Wounds] = calcRemainingWounds(guy1, guy2, FightStrategy.Strike, FightStrategy.Strike);
@@ -518,7 +518,7 @@ describe(calcRemainingWounds.name + ' basic', () => {
     expect(guy2Wounds.get(w - dc)).toBeCloseTo(pc, requiredPrecision);
   });
   it('fight can be cut short', () => {
-    const guy1 = new Attacker(1, 6, dn, dc).setProp('wounds', dc);
+    const guy1 = new Model(1, 6, dn, dc).setProp('wounds', dc);
     const guy2 = clone(guy1);
 
     const [guy1Wounds, guy2Wounds] = calcRemainingWounds(guy1, guy2, FightStrategy.Strike, FightStrategy.Strike);
@@ -528,9 +528,9 @@ describe(calcRemainingWounds.name + ' basic', () => {
     expect(guy2Wounds.get(dc)).toBeCloseTo(pf, requiredPrecision);
   });
   it('WS=6+ and Lethal=4+ should be handled same as WS=4+ and Lethal=4+', () => {
-    const guy1 = new Attacker(1, 2, 1, 1).setProp('wounds', 2);
-    const guy2a = new Attacker(1, 4, 1, 2).setProp('wounds', 1).setProp('lethal', 4);
-    const guy2b = new Attacker(1, 6, 1, 2).setProp('wounds', 1).setProp('lethal', 4);
+    const guy1 = new Model(1, 2, 1, 1).setProp('wounds', 2);
+    const guy2a = new Model(1, 4, 1, 2).setProp('wounds', 1).setProp('lethal', 4);
+    const guy2b = new Model(1, 6, 1, 2).setProp('wounds', 1).setProp('lethal', 4);
 
     const [guy1AWounds, guy2AWounds] = calcRemainingWounds(guy1, guy2a, FightStrategy.Strike, FightStrategy.Strike);
     const [guy1BWounds, guy2BWounds] = calcRemainingWounds(guy1, guy2b, FightStrategy.Strike, FightStrategy.Strike);
@@ -546,7 +546,7 @@ describe(calcRemainingWounds.name + ' multiple rounds', () => {
   const dc = 4;
 
   it('double fight where fight1 can\'t be fatal', () => {
-    const guy1 = new Attacker(1, 6, dn, dc).setProp('wounds', w);
+    const guy1 = new Model(1, 6, dn, dc).setProp('wounds', w);
     const guy2 = clone(guy1);
 
     const [guy1Wounds, guy2Wounds] = calcRemainingWounds(guy1, guy2, FightStrategy.Strike, FightStrategy.Strike, 2);
@@ -588,7 +588,7 @@ describe(calcRemainingWounds.name + ' multiple rounds', () => {
     expect(guy2Wounds.get(h2)).toBeCloseTo(                  f2c2     + f1c3 * 2 + f0c4, requiredPrecision);
   });
   it('double fight with possibly fatal fight1', () => {
-    const guy1 = new Attacker(1, 6, dn, dc).setProp('wounds', dc);
+    const guy1 = new Model(1, 6, dn, dc).setProp('wounds', dc);
     const guy2 = clone(guy1);
 
     // rolls, then remaining health, then prob

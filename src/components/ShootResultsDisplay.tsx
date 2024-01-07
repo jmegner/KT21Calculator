@@ -4,12 +4,12 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 
-import Defender from 'src/Defender';
+import Model from 'src/Model';
 import { toAscendingMap, weightedAverage, killProb, standardDeviation, } from 'src/Util';
 import { MaxWounds, WoundRange } from 'src/KtMisc';
 
 export interface Props {
-  defender: Defender;
+  defender: Model;
   //damageToProb: Map<number,number>;
   saveToDmgToProb: Map<number,Map<number,number>>;
 }
@@ -88,7 +88,7 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
   let avgDmgUnbounded = 0;
   const dmgProbTableBody: JSX.Element[] = [];
 
-  const chosenSaveDmgToProb = props.saveToDmgToProb.get(props.defender.save)!;
+  const chosenSaveDmgToProb = props.saveToDmgToProb.get(props.defender.diceStat)!;
   const killChance = killProb(chosenSaveDmgToProb, props.defender.wounds);
   let ascendingDmgToProb = toAscendingMap(chosenSaveDmgToProb);
   let probCumulative = 0;

@@ -8,7 +8,7 @@ import {
 import Credits from 'src/components/Credits';
 import * as Util from "src/Util";
 import FighterControls from 'src/components/FighterControls';
-import Attacker from 'src/Attacker';
+import Model from 'src/Model';
 import FightOptionControls from 'src/components/FightOptionControls';
 import { calcRemainingWounds } from 'src/CalcEngineFight';
 import FightResultsDisplay from 'src/components/FightResultsDisplay';
@@ -16,8 +16,8 @@ import FightOptions from 'src/FightOptions';
 import * as N from 'src/Notes';
 
 const FightSection: React.FC = () => {
-  const [fighterA, setFighterA] = React.useState(new Attacker());
-  const [fighterB, setFighterB] = React.useState(new Attacker());
+  const [fighterA, setFighterA] = React.useState(new Model());
+  const [fighterB, setFighterB] = React.useState(new Model());
   const [fightOptions, setFightOptions] = React.useState(new FightOptions());
   const aFirst = fightOptions.firstFighter === 'A';
   const [fighter1WoundProbs, fighter2WoundProbs] = React.useMemo(

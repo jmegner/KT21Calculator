@@ -20,7 +20,7 @@ import {
   xAndCheck,
   xspan,
 } from 'src/Util';
-import Attacker from 'src/Attacker';
+import Model from 'src/Model';
 import Ability, {
   eliteAbilities,
   mutuallyExclusiveFightAbilities as nicheAbilities,
@@ -31,8 +31,8 @@ import * as N from 'src/Notes';
 
 export interface Props {
   title: string;
-  attacker: Attacker;
-  changeHandler: Accepter<Attacker>;
+  attacker: Model;
+  changeHandler: Accepter<Model>;
 }
 
 const FighterControls: React.FC<Props> = (props: Props) => {
@@ -41,7 +41,7 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     = makePropChangeHandlers(atk, props.changeHandler);
 
   function subsetHandler(subset: Iterable<Ability>) {
-    return makeSetChangeHandler<Attacker,Ability>(
+    return makeSetChangeHandler<Model,Ability>(
       atk,
       props.changeHandler,
       'abilities',
@@ -49,7 +49,7 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     );
   }
   function singleHandler(ability: Ability) {
-    return makeSetChangeHandlerForSingle<Attacker,Ability>(
+    return makeSetChangeHandlerForSingle<Model,Ability>(
       atk,
       props.changeHandler,
       'abilities',
@@ -66,8 +66,8 @@ const FighterControls: React.FC<Props> = (props: Props) => {
 
   const params: IncProps[] = [
     //           id/label,           selectedValue,         values,           valueChangeHandler
-    new IncProps('Attacks',          atk.attacks,           span(1, 8),       numHandler('attacks')),
-    new IncProps('WS',               atk.bs + '+',          rollSpan,         numHandler('bs')),
+    new IncProps('Attacks',          atk.numDice,           span(1, 8),       numHandler('numDice')),
+    new IncProps('WS',               atk.diceStat + '+',    rollSpan,         numHandler('diceStat')),
     new IncProps('Normal Dmg',       atk.normDmg,           span(1, 9),       numHandler('normDmg')),
     new IncProps('Critical Dmg',     atk.critDmg,           span(1, 9),       numHandler('critDmg')),
     new IncProps('Lethal',           atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),

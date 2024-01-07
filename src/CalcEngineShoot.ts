@@ -1,5 +1,4 @@
-import Attacker from "src/Attacker";
-import Defender from "src/Defender";
+import Model from "src/Model";
 import * as Util from 'src/Util';
 import FinalDiceProb from 'src/FinalDiceProb';
 import * as Common from 'src/CalcEngineCommon';
@@ -11,8 +10,8 @@ import {
 } from 'src/CalcEngineShootInternal'
 
 export function calcDmgProbs(
-  attacker: Attacker,
-  defender: Defender,
+  attacker: Model,
+  defender: Model,
   shootOptions: ShootOptions = new ShootOptions(),
 ): Map<number, number> // damage to prob
 {

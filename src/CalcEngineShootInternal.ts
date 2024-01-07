@@ -1,5 +1,4 @@
-import Attacker from "src/Attacker";
-import Defender from "src/Defender";
+import Model from "src/Model";
 import * as Util from 'src/Util';
 import FinalDiceProb from 'src/FinalDiceProb';
 import * as Common from 'src/CalcEngineCommon';
@@ -24,20 +23,21 @@ class DefenderFinalDiceStuff {
 }
 
 export function calcDefenderFinalDiceStuff(
-  defender: Defender,
-  attacker: Attacker,
+  defender: Model,
+  attacker: Model,
 ): DefenderFinalDiceStuff
 {
-  const defenderSingleDieProbs = defender.toDieProbs();
+  const defenderSingleDieProbs = defender.toDefenderDieProbs();
 
-  const numDefDiceWithoutPx = Math.max(0, defender.usesInvulnSave() ? defender.defense : defender.defense - attacker.apx);
+  const numDefDiceWithoutPx = Math.max(0, defender.usesInvulnSave() ? defender.numDice : defender.numDice - attacker.apx);
 
   const defenderFinalDiceProbs = Common.calcFinalDiceProbs(
     defenderSingleDieProbs,
     numDefDiceWithoutPx,
     defender.reroll,
-    defender.coverCritSaves,
-    defender.coverNormSaves,
+    defender.autoCrits,
+    defender.autoNorms,
+    defender.failsToNorms,
     defender.normsToCrits,
     defender.abilities,
     );
@@ -50,14 +50,14 @@ export function calcDefenderFinalDiceStuff(
 
   // for Px triggered and relevant
   if (pxIsRelevant) {
-    const numDefDiceWithPx = Math.max(0, defender.defense - effectivePx);
+    const numDefDiceWithPx = Math.max(0, defender.numDice - effectivePx);
 
     defenderFinalDiceProbsWithPx = Common.calcFinalDiceProbs(
       defenderSingleDieProbs,
       numDefDiceWithPx,
       defender.reroll,
-      defender.coverCritSaves,
-      defender.coverNormSaves,
+      defender.autoCrits,
+      defender.autoNorms,
       defender.normsToCrits,
     );
   }
@@ -90,8 +90,8 @@ export function calcPostFnpDamages(
 
 
 export function calcDamage(
-  attacker: Attacker,
-  defender: Defender,
+  attacker: Model,
+  defender: Model,
   critHits: number,
   normHits: number,
   critSaves: number,

@@ -1,6 +1,6 @@
 import { clone } from "lodash";
 
-import Attacker from "src/Attacker";
+import Model from "src/Model";
 import * as Util from 'src/Util';
 import * as Common from 'src/CalcEngineCommon';
 import FightStrategy from 'src/FightStrategy';
@@ -25,8 +25,8 @@ export function consolidateWoundPairProbs(woundPairProbs: Map<string,number>): [
 }
 
 export function calcRemainingWoundPairProbs(
-  guy1: Attacker,
-  guy2: Attacker,
+  guy1: Model,
+  guy2: Model,
   guy1Strategy: FightStrategy = FightStrategy.MaxDmgToEnemy,
   guy2Strategy: FightStrategy = FightStrategy.MaxDmgToEnemy,
   numRounds: number = 1,
