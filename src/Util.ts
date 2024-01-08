@@ -339,3 +339,22 @@ export function forceTo<InType extends {},OutType>(input: InType, outClass: {new
   });
   return output;
 }
+
+export function requiredAndOptionalItemsToTwoCols<T>(
+  requiredItems: T[],
+  optionalItems: T[],
+  includeOptional: boolean,
+) : [T[],T[]]
+{
+  const requiredItemsSplitIndex = (requiredItems.length + 1) / 2; // +1 to prefer left col
+  let itemsCol0 = requiredItems.slice(0, requiredItemsSplitIndex);
+  let itemsCol1 = requiredItems.slice(requiredItemsSplitIndex);
+
+  if(includeOptional) {
+    const optionalItemsSplitIndex = optionalItems.length / 2; // no +1 so that we prefer right col
+    itemsCol0 = itemsCol0.concat(optionalItems.slice(0, optionalItemsSplitIndex));
+    itemsCol1 = itemsCol1.concat(optionalItems.slice(optionalItemsSplitIndex));
+  }
+
+  return [itemsCol0, itemsCol1];
+}

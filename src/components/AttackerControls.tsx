@@ -3,7 +3,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
+import IncDecSelect, {Props as IncProps, propsToRows} from 'src/components/IncDecSelect';
 import {
   Accepter,
   boolToCheckX,
@@ -12,6 +12,7 @@ import {
   makeSetChangeHandler,
   makeSetChangeHandlerForSingle,
   preX,
+  requiredAndOptionalItemsToTwoCols,
   rollSpan,
   span,
   xAndCheck,
@@ -24,6 +25,7 @@ import Ability, {
 } from 'src/Ability';
 import * as N from 'src/Notes';
 import NoCoverType from 'src/NoCoverType';
+import { useCheckboxAndVariable } from 'src/hooks/useCheckboxAndVariable';
 
 
 export interface Props {
@@ -35,7 +37,8 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
   const atk = props.attacker;
   const [textHandler, numHandler, boolHandler]
     = makePropChangeHandlers(atk, props.changeHandler);
-  const noCoverChoices = Object.values(NoCoverType);
+  const [advancedCheckbox, wantShowAdvanced] = useCheckboxAndVariable('Advanced');
+  //const noCoverChoices = Object.values(NoCoverType);
 
   function subsetHandler(subset: Iterable<Ability>) {
     return makeSetChangeHandler<Model,Ability>(
@@ -60,7 +63,7 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
 
   const eliteAbility = extractFromSet(eliteAbilities, Ability.None, atk.abilities)!;
 
-  const params: IncProps[] = [
+  const basicParams: IncProps[] = [
     //           id/label,       selectedValue,         values,                valueChangeHandler
     new IncProps('Attacks',      atk.numDice,           span(1, 9),       numHandler('numDice')),
     new IncProps('BS',           atk.diceStat + '+',    rollSpan,         numHandler('diceStat')),
@@ -70,9 +73,10 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     new IncProps('APx',          atk.apx,               xspan(1, 4),      numHandler('apx')),
     new IncProps('Px',           atk.px,                xspan(1, 4),      numHandler('px')),
     new IncProps(N.Reroll,       atk.reroll,            preX(rerolls),    textHandler('reroll')),
-    // 2nd column
-    new IncProps('Lethal',       atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),
     new IncProps(N.Rending,      toYN(Ability.Rending), xAndCheck,        singleHandler(Ability.Rending)),
+  ];
+  const advancedParams: IncProps[] = [
+    new IncProps('Lethal',       atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),
     new IncProps(N.AutoNorms,    atk.autoNorms,         xspan(1, 9),      numHandler('autoNorms')),
     new IncProps(N.AutoCrits,    atk.autoCrits,         xspan(1, 9),      numHandler('autoCrits')),
     new IncProps(N.FailsToNorms, atk.failsToNorms,      xspan(1, 9),      numHandler('normsToCrits')),
@@ -83,21 +87,27 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     //new IncProps(N.NoCover,      atk.noCover,            noCoverChoices,        textHandler('noCover')),
   ];
 
-  const paramElems = params.map(p =>
-    <Row key={p.id}><Col className='pr-0'><IncDecSelect {...p}/></Col></Row>);
+  const [paramsCol0, paramsCol1] = requiredAndOptionalItemsToTwoCols(
+    basicParams, advancedParams, wantShowAdvanced);
+
+  const elemsCol0 = propsToRows(paramsCol0);
+  const elemsCol1 = propsToRows(paramsCol1);
 
   return (
     <Container style={{width: '310px'}}>
-      <Row>Attacker</Row>
+      <Row>
+        <Col>Attacker</Col>
+        <Col>{advancedCheckbox}</Col>
+      </Row>
       <Row>
         <Col>
           <Container className='p-0'>
-            {paramElems.slice(0, paramElems.length / 2)}
+            {elemsCol0}
           </Container>
         </Col>
         <Col>
           <Container className='p-0'>
-            {paramElems.slice(paramElems.length / 2)}
+            {elemsCol1}
           </Container>
         </Col>
       </Row>

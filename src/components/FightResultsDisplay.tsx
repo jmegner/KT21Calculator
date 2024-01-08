@@ -58,7 +58,7 @@ function makeFighterResultsSection(
   });
 
   return (
-    <Container>
+    <Container style={{width: '310px'}}>
       <Row>{title}</Row>
       <Row>
         <Col style={{fontSize: '11px'}}>

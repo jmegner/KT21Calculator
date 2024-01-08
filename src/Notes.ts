@@ -115,7 +115,7 @@ export const NicheAbility = new Note(
     + `  Murderous Entrance is a Void Troupe tactical ploy to strike again after a crit strike.`
 );
 export const Duelist = new Note(
-  `Duelist`,
+  `Duelist/PreParry`,
   `Do one parry before usual dice resolution.`,
 );
 export const Dummy = new Note(

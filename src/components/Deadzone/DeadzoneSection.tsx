@@ -34,7 +34,7 @@ export const DeadzoneSection: FC = () => {
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
 
   return (
-    <Container style={{width: '510px'}}>
+    <Container style={{width: '360px'}}>
       <Row>
         Deadzone, Third Edition
         <a href='https://companion.manticgames.com/deadzone-rules/'>[Rules]</a>

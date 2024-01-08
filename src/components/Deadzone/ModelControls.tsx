@@ -39,7 +39,7 @@ const ModelControls: React.FC<Props> = (props: Props) => {
   const title = props.isAttacker ? "Attacker" : "Defender";
 
   return (
-    <Container style={{width: '180px'}}>
+    <Container style={{width: '170px'}}>
       <Row>{title}</Row>
       <Row>
         <Col>

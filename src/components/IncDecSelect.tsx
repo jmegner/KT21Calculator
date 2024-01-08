@@ -3,6 +3,7 @@ import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import * as Util from 'src/Util';
 import Note from 'src/Notes';
+import { Col, Row } from 'react-bootstrap';
 
 export interface IProps {
   id: string;
@@ -79,6 +80,14 @@ const IncDecSelect: React.FC<IProps> = (props: IProps) => {
       </InputGroup>
     </div>
   );
+}
+
+export function propsToRow(props: Props): JSX.Element {
+  return <Row key={props.id}><Col className='pr-0'><IncDecSelect {...props}/></Col></Row>;
+}
+
+export function propsToRows(props: Props[]): JSX.Element[] {
+  return props.map(p => <Row key={p.id}><Col className='pr-0'><IncDecSelect {...p}/></Col></Row>);
 }
 
 export default IncDecSelect;

@@ -16,7 +16,12 @@ Features that would be nice for me to get around to implementing ...
 - fight section
   - transition from uninjured to injured (degraded WS) between rounds
   - fnp: this one is messy, so is low priority
-
+- "daemonic energies", special rule on the balefire acolyte's dagger...Basically it does 2 mortal wounds per retained crit in melee
+- novitiate fail/norm/crit transformations from Acts Of Faith
+  - FailsToNorms = 1, fight or shoot-attack
+  - NormsToCrits = 1, all (fight, attack, def)
+  - hmmm, there is a way to avoid 1 MW dmg
+- TODO: "show more" checkbox
 
 ## Dev Stuff
 Basically, this is a React SPA web app mostly written in TypeScript.
