@@ -73,8 +73,8 @@ export function calcFinalDiceProb(
   norms: number,
   fails: number,
   reroll: Ability = Ability.None, // really just care if Balanced or CeaselessPlusBalanced
-  autoCrits: number = 0,
-  autoNorms: number = 0,
+  additionalCrits: number = 0,
+  additionalNorms: number = 0,
   failsToNorms: number = 0,
   normsToCrits: number = 0,
   abilities: Set<Ability> = new Set<Ability>(),
@@ -136,8 +136,8 @@ export function calcFinalDiceProb(
     }
   }
 
-  crits += autoCrits;
-  norms += autoNorms;
+  crits += additionalCrits;
+  norms += additionalNorms;
 
   if (abilities.has(Ability.FailToNormIfCrit)) {
     if (crits > 0 && fails > 0) {

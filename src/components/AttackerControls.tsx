@@ -74,12 +74,12 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     new IncProps('Px',           atk.px,                xspan(1, 4),      numHandler('px')),
     new IncProps(N.Reroll,       atk.reroll,            preX(rerolls),    textHandler('reroll')),
     new IncProps(N.Rending,      toYN(Ability.Rending), xAndCheck,        singleHandler(Ability.Rending)),
+    new IncProps('Lethal',       atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),
   ];
   const advancedParams: IncProps[] = [
-    new IncProps('Lethal',       atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),
     new IncProps(N.AutoNorms,    atk.autoNorms,         xspan(1, 9),      numHandler('autoNorms')),
     new IncProps(N.AutoCrits,    atk.autoCrits,         xspan(1, 9),      numHandler('autoCrits')),
-    new IncProps(N.FailsToNorms, atk.failsToNorms,      xspan(1, 9),      numHandler('normsToCrits')),
+    new IncProps(N.FailsToNorms, atk.failsToNorms,      xspan(1, 9),      numHandler('failsToNorms')),
     new IncProps(N.NormsToCrits, atk.normsToCrits,      xspan(1, 9),      numHandler('normsToCrits')),
     new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit),            xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
     new IncProps('ElitePoints*', eliteAbility,          eliteAbilities,   subsetHandler(eliteAbilities)),

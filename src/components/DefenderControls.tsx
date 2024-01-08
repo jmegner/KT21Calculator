@@ -55,11 +55,12 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
     new IncProps('Save',           def.diceStat + '+',       withPlus(SaveRange), numHandler('diceStat')),
     new IncProps('Wounds',         def.wounds,               span(1, 20),      numHandler('wounds')),
     new IncProps(N.InvulnSave,     def.invulnSave + '+',     xrollSpan,        numHandler('invulnSave')),
-    new IncProps(N.CoverNormSaves, def.autoNorms,            xspan(1, 4),      numHandler('autoNorms')),
+    new IncProps(N.CoverNormSaves, def.autoNorms,            xspan(1, 9),      numHandler('autoNorms')),
   ];
   const advancedParams: IncProps[] = [
-    new IncProps(N.CoverCritSaves, def.autoCrits,            xspan(1, 4),      numHandler('autoCrits')),
-    new IncProps(N.NormsToCrits,   def.normsToCrits,         xspan(1, 4),      numHandler('normsToCrits')),
+    new IncProps(N.CoverCritSaves, def.autoCrits,            xspan(1, 9),      numHandler('autoCrits')),
+    new IncProps(N.NormsToCrits,   def.normsToCrits,         xspan(1, 9),      numHandler('normsToCrits')),
+    new IncProps(N.FailsToNorms,   def.failsToNorms,         xspan(1, 9),      numHandler('failsToNorms')),
     new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit), xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
     new IncProps(N.HardyX,         def.hardyx + '+',         xspan(5, 2, '+'), numHandler('hardyx')),
     new IncProps(N.FeelNoPain,     def.fnp + '+',            xspan(6, 2, '+'), numHandler('fnp')),

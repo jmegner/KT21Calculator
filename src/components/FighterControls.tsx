@@ -85,6 +85,7 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps(N.AutoNorms,        atk.autoNorms,         xspan(1, 9),      numHandler('autoNorms')),
     new IncProps(N.AutoCrits,        atk.autoCrits,         xspan(1, 9),      numHandler('autoCrits')),
     new IncProps(N.NormsToCrits,     atk.normsToCrits,      xspan(1, 9),      numHandler('normsToCrits')),
+    new IncProps(N.FailsToNorms,     atk.failsToNorms,      xspan(1, 9),      numHandler('failsToNorms')),
     new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit),  xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
     new IncProps('ElitePoints*',     eliteAbility,          eliteAbilities,   subsetHandler(eliteAbilities)),
     new IncProps(N.Duelist,          toYN(Ability.Duelist), xAndCheck,        singleHandler(Ability.Duelist)),
