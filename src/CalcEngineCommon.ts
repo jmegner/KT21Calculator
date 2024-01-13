@@ -365,10 +365,12 @@ export function getProbOfNumTediousRerolls(
       divisor *= factorial(numFailTypesWithCertainNumDice);
     }
 
-    const maxFailTypeCount = max(failTypeCounts)!; // how many rerolls we get
-    rerollCountProbs[maxFailTypeCount] += commonProbFactor / divisor;
+    const numRerollsAchieved = failTypeCounts[0]; // descending order, so first is biggest
+    rerollCountProbs[numRerollsAchieved] += commonProbFactor / divisor;
   } while(changeToNextDescendingSequenceWithSameSum(failTypeCounts));
 
+  //const scaledProbs = rerollCountProbs.map(prob => prob * Math.pow(numFailTypes, numOrigFails - 1));
+  //console.debug(`TediousRerollCountProbs: bins=${numFailTypes} total=${numOrigFails}, scaledProbs=${scaledProbs}`);
   return rerollCountProbs[numRerolls];
 }
 

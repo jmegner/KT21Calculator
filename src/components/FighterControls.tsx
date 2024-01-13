@@ -11,6 +11,7 @@ import {
   Accepter,
   boolToCheckX,
   extractFromSet,
+  incDecPropsHasNondefaultSelectedValue,
   makePropChangeHandlers,
   makeSetChangeHandler,
   makeSetChangeHandlerForSingle,
@@ -92,9 +93,13 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps(N.JustAScratch,     toYN(Ability.JustAScratch), xAndCheck,   singleHandler(Ability.JustAScratch)),
   ];
 
-  const [paramsCol0, paramsCol1] = requiredAndOptionalItemsToTwoCols(
-    basicParams, advancedParams, wantShowAdvanced);
+  const advancedParamsToShow
+    = wantShowAdvanced
+    ? advancedParams
+    : advancedParams.filter(p => incDecPropsHasNondefaultSelectedValue(p));
 
+  const [paramsCol0, paramsCol1] = requiredAndOptionalItemsToTwoCols(
+    basicParams, advancedParamsToShow);
   const elemsCol0 = propsToRows(paramsCol0);
   const elemsCol1 = propsToRows(paramsCol1);
 

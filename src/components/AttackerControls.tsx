@@ -8,6 +8,7 @@ import {
   Accepter,
   boolToCheckX,
   extractFromSet,
+  incDecPropsHasNondefaultSelectedValue,
   makePropChangeHandlers,
   makeSetChangeHandler,
   makeSetChangeHandlerForSingle,
@@ -24,7 +25,6 @@ import Ability, {
   rerollAbilities as rerolls
 } from 'src/Ability';
 import * as N from 'src/Notes';
-import NoCoverType from 'src/NoCoverType';
 import { useCheckboxAndVariable } from 'src/hooks/useCheckboxAndVariable';
 
 
@@ -87,8 +87,13 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     //new IncProps(N.NoCover,      atk.noCover,            noCoverChoices,        textHandler('noCover')),
   ];
 
+  const advancedParamsToShow
+    = wantShowAdvanced
+    ? advancedParams
+    : advancedParams.filter(p => incDecPropsHasNondefaultSelectedValue(p));
+
   const [paramsCol0, paramsCol1] = requiredAndOptionalItemsToTwoCols(
-    basicParams, advancedParams, wantShowAdvanced);
+    basicParams, advancedParamsToShow);
 
   const elemsCol0 = propsToRows(paramsCol0);
   const elemsCol1 = propsToRows(paramsCol1);

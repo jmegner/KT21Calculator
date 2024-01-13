@@ -11,11 +11,13 @@ import { SaveRange } from 'src/KtMisc';
 import {
   Accepter,
   boolToCheckX,
+  incDecPropsHasNondefaultSelectedValue,
   makePropChangeHandlers,
   makeSetChangeHandlerForSingle,
   preX,
   requiredAndOptionalItemsToTwoCols,
   span,
+  thickX,
   withPlus,
   xAndCheck,
   xrollSpan,
@@ -68,12 +70,12 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
     new IncProps(N.JustAScratch,   toYN(Ability.JustAScratch), xAndCheck,      singleHandler(Ability.JustAScratch)),
   ];
 
-  const [paramsCol0, paramsCol1] = requiredAndOptionalItemsToTwoCols(
-    basicParams, advancedParams, wantShowAdvanced);
-
-  const elemsCol0 = propsToRows(paramsCol0);
-  const elemsCol1 = propsToRows(paramsCol1);
-
+  // we actually have 1 column when rendered, and order gets weird if we pretend we have 2
+  const usedAdvancedParams = advancedParams.filter(p => incDecPropsHasNondefaultSelectedValue(p));
+  const advancedParamsToShow = wantShowAdvanced ? advancedParams : usedAdvancedParams;
+  const paramsToShow = basicParams.concat(advancedParamsToShow);
+  const elemsCol0 = propsToRows(paramsToShow);
+  const elemsCol1: JSX.Element[] = [];
   return (
     // TODO: change width to ~310px so it is actually 2 cols but doesn't go below attacker section
     <Container style={{width: '180px'}}>

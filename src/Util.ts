@@ -101,6 +101,10 @@ export function makeIncDecPropsFromLookup<ObjType,PropType>(
   );
 }
 
+export function incDecPropsHasNondefaultSelectedValue(incDecProps: IncProps) : boolean {
+  return incDecProps.selectedValue !== incDecProps.values[0] && incDecProps.selectedValue !== "0";
+}
+
 export function makePropChangeHandler<T>(
   obj: T,
   objChangeHandler: (t: T) => void,
@@ -343,7 +347,7 @@ export function forceTo<InType extends {},OutType>(input: InType, outClass: {new
 export function requiredAndOptionalItemsToTwoCols<T>(
   requiredItems: T[],
   optionalItems: T[],
-  includeOptional: boolean,
+  includeOptional: boolean = true,
 ) : [T[],T[]]
 {
   const requiredItemsSplitIndex = (requiredItems.length + 1) / 2; // +1 to prefer left col

@@ -17,6 +17,7 @@ Features that would be nice for me to get around to implementing ...
   - transition from uninjured to injured (degraded WS) between rounds
   - fnp: this one is messy, so is low priority
 - "daemonic energies", special rule on the balefire acolyte's dagger...Basically it does 2 mortal wounds per retained crit in melee
+- maybe if you use an "advanced" param and flip back to basic, still show the used advanced param.
 
 ## Dev Stuff
 Basically, this is a React SPA web app mostly written in TypeScript.
