@@ -102,7 +102,10 @@ export function makeIncDecPropsFromLookup<ObjType,PropType>(
 }
 
 export function incDecPropsHasNondefaultSelectedValue(incDecProps: IncProps) : boolean {
-  return incDecProps.selectedValue !== incDecProps.values[0] && incDecProps.selectedValue !== "0";
+  return incDecProps.selectedValue !== incDecProps.values[0]
+    && incDecProps.selectedValue !== "0"
+    && incDecProps.selectedValue !== "0+"
+    ;
 }
 
 export function makePropChangeHandler<T>(
