@@ -349,7 +349,7 @@ export function forceTo<InType extends {},OutType>(input: InType, outClass: {new
 
 export function requiredAndOptionalItemsToTwoCols<T>(
   requiredItems: T[],
-  optionalItems: T[],
+  optionalItems: T[] = [],
   includeOptional: boolean = true,
 ) : [T[],T[]]
 {

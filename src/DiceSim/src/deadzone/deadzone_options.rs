@@ -8,6 +8,8 @@ pub struct DeadzoneOptions {
     pub num_rounds: i32,
     #[wasm_bindgen(js_name = attackerCanBeDamaged)]
     pub attacker_can_be_damaged: bool,
+    #[wasm_bindgen(js_name = explodingDiceMaxLevels)]
+    pub exploding_dice_max_levels: i32,
 }
 
 #[wasm_bindgen]
@@ -18,6 +20,7 @@ impl DeadzoneOptions {
             num_simulations: 100,
             num_rounds: 1,
             attacker_can_be_damaged: false,
+            exploding_dice_max_levels: i32::MAX,
         }
     }
 }

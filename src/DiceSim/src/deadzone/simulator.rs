@@ -23,6 +23,10 @@ impl Sf {
         self.s += other.s;
         self.f += other.f;
     }
+
+    fn total(&self) -> i32 {
+        self.s + self.f
+    }
 }
 
 const PIP_LO: i32 = 1;
@@ -31,24 +35,14 @@ const SHIELD_SUCCESS_PROB: f64 = 0.375;
 
 #[wasm_bindgen(js_name = "deadzoneCalcDmgProbs")]
 pub fn deadzone_calc_dmg_probs(
-    attacker: DeadzoneModel,
-    defender: DeadzoneModel,
-    options: DeadzoneOptions,
+    attacker: &DeadzoneModel,
+    defender: &DeadzoneModel,
+    options: &DeadzoneOptions,
 ) -> js_sys::Map {
     let mut rng = rand::thread_rng();
     let die_distribution = rand::distributions::Uniform::new(PIP_LO, PIP_HI + 1);
-    let atk_success_probs = make_success_probs(
-        &die_distribution,
-        &mut rng,
-        &attacker,
-        options.num_simulations,
-    );
-    let def_success_probs = make_success_probs(
-        &die_distribution,
-        &mut rng,
-        &defender,
-        options.num_simulations,
-    );
+    let atk_success_probs = make_success_probs(&die_distribution, &mut rng, &attacker, &options);
+    let def_success_probs = make_success_probs(&die_distribution, &mut rng, &defender, &options);
     let mut dmg_probs = HashMap::<i32, f64>::new();
 
     for (atk_successes, atk_prob) in atk_success_probs.iter() {
@@ -99,22 +93,23 @@ fn make_success_probs(
     die_distribution: &rand::distributions::Uniform<i32>,
     rng: &mut ThreadRng,
     model: &DeadzoneModel,
-    num_simulations: i32,
+    options: &DeadzoneOptions,
 ) -> HashMap<i32, f64> {
     let mut success_counts = HashMap::<i32, i32>::new();
-    for _ in 0..num_simulations {
+    for _ in 0..options.num_simulations {
         let num_successes = simulated_num_successes_from_multi_roll(
             die_distribution,
             rng,
             model.num_dice,
             model.dice_stat,
             model.num_rerolls,
+            options.exploding_dice_max_levels,
         );
         add_to_map_value(&mut success_counts, &num_successes, 1);
     }
     let success_probs = success_counts
         .iter()
-        .map(|(k, v)| (*k, *v as f64 / num_simulations as f64))
+        .map(|(k, v)| (*k, *v as f64 / options.num_simulations as f64))
         .collect();
     return success_probs;
 }
@@ -125,6 +120,7 @@ fn simulated_num_successes_from_multi_roll(
     num_dice: i32,
     dice_stat: i32,
     num_rerolls: i32,
+    exploding_dice_max_levels: i32,
 ) -> i32 {
     let mut sf = Sf::new();
 
@@ -133,6 +129,7 @@ fn simulated_num_successes_from_multi_roll(
             die_distribution,
             rng,
             dice_stat,
+            exploding_dice_max_levels,
         ));
     }
 
@@ -147,6 +144,7 @@ fn simulated_num_successes_from_multi_roll(
             num_actual_rerolls,
             dice_stat,
             0,
+            exploding_dice_max_levels,
         )
     };
     return num_original_successes + num_rerolled_successes;
@@ -156,6 +154,7 @@ fn simulated_sf_from_single_roll(
     die_distribution: &rand::distributions::Uniform<i32>,
     rng: &mut ThreadRng,
     dice_stat: i32,
+    exploding_dice_max_levels: i32,
 ) -> Sf {
     let mut sf = Sf::new();
     loop {
@@ -165,7 +164,7 @@ fn simulated_sf_from_single_roll(
         } else {
             sf.f += 1;
         }
-        if pip_outcome != PIP_HI {
+        if pip_outcome != PIP_HI || sf.total() > exploding_dice_max_levels {
             break;
         }
     }

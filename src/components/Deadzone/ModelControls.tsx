@@ -5,13 +5,13 @@ import Col from 'react-bootstrap/Col';
 
 import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
 import * as Util from 'src/Util';
-import Model from 'src/Deadzone/Model';
+import { DeadzoneModel, } from "src/DiceSim/pkg/dice_sim";
 
 
 export interface Props {
-  model: Model;
+  model: DeadzoneModel;
   isAttacker: boolean;
-  changeHandler: Util.Accepter<Model>;
+  changeHandler: Util.Accepter<DeadzoneModel>;
 }
 
 const ModelControls: React.FC<Props> = (props: Props) => {

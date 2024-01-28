@@ -14,20 +14,19 @@ import Credits from 'src/components/Credits';
 import * as Util from "src/Util";
 import { calcDmgProbs } from 'src/Deadzone/CalcEngine';
 import * as N from 'src/Notes';
-import Model from 'src/Deadzone/Model';
-import { CombatOptions } from 'src/Deadzone/CombatOptions';
 import ModelControls from './ModelControls';
 import ResultsDisplay from './ResultsDisplay';
-import CombatOptionControls from './CombatOptionControls';
+import OptionControls from './OptionControls';
+import { DeadzoneModel, DeadzoneOptions, } from "src/DiceSim/pkg/dice_sim";
 
 export const DeadzoneSection: FC = () => {
-  const [attacker, setAttacker] = useState(new Model());
-  const [defender, setDefender] = useState(new Model());
-  const [combatOptions, setCombatOptions] = useState(new CombatOptions());
+  const [attacker, setAttacker] = useState(new DeadzoneModel());
+  const [defender, setDefender] = useState(new DeadzoneModel());
+  const [options, setOptions] = useState(new DeadzoneOptions());
 
   const dmgToProb = useMemo(
-    () => calcDmgProbs(attacker, defender, combatOptions),
-    [attacker, defender, combatOptions]);
+    () => calcDmgProbs(attacker, defender, options),
+    [attacker, defender, options]);
 
   const noteListItems: JSX.Element[] = [
     N.AvgDamageUnbounded,
@@ -49,10 +48,10 @@ export const DeadzoneSection: FC = () => {
         </Col>
       </Row>
       <Row className='p-0 border'>
-        <CombatOptionControls combatOptions={combatOptions} changeHandler={setCombatOptions} />
+        <OptionControls options={options} changeHandler={setOptions} />
       </Row>
       <Row className='border'>
-        <ResultsDisplay dmgToProb={dmgToProb} attackerHp={attacker.hp} defenderHp={defender.hp} attackerCanBeDamaged={combatOptions.attackerCanBeDamaged} />
+        <ResultsDisplay dmgToProb={dmgToProb} attackerHp={attacker.hp} defenderHp={defender.hp} attackerCanBeDamaged={options.attackerCanBeDamaged} />
       </Row>
       <Row>
         <Col className={Util.centerHoriz + ' border'} style={{fontSize: '11px'}}>
