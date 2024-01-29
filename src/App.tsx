@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { useSearchParams } from 'react-router-dom';
+import { ErrorBoundary } from 'react-error-boundary';
 
 import * as Util from 'src/Util';
 import { CalculatorViewChoice } from 'src/CalculatorViewChoice';
@@ -28,6 +29,16 @@ for(const [view, texts] of _viewToAdditionalTexts) {
   }
 }
 
+function fallbackRender({ error, resetErrorBoundary }: { error: Error, resetErrorBoundary: () => void }) {
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre>{error.message}</pre>
+      <button onClick={resetErrorBoundary}>Try again</button>
+    </div>
+  );
+}
+
 const App = () => {
   const [currentView, setCurrentView] = useState<CalculatorViewChoice>(CalculatorViewChoice.KtShoot);
   const [urlParams, setUrlParams] = useSearchParams(); // eslint-disable-line no-unused-vars
@@ -48,9 +59,11 @@ const App = () => {
     child: JSX.Element,
   ) : JSX.Element {
     return (
-      <div style={{ display: currentView === view ? 'block' : 'none' }}>
-        {child}
-      </div>
+      <ErrorBoundary fallbackRender={fallbackRender}>
+        <div style={{ display: currentView === view ? 'block' : 'none' }}>
+          {child}
+        </div>
+      </ErrorBoundary>
     );
   }
 
