@@ -14,6 +14,7 @@ import Credits from 'src/components/Credits';
 import * as Util from "src/Util";
 import { calcDmgProbs } from 'src/Deadzone/CalcEngine';
 import * as N from 'src/Notes';
+import {Situation} from './Situation';
 import ModelControls from './ModelControls';
 import ResultsDisplay from './ResultsDisplay';
 import OptionControls from './OptionControls';
@@ -33,25 +34,21 @@ export const DeadzoneSection: FC = () => {
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
 
   return (
-    <Container style={{width: '360px'}}>
+    <Container style={{width: '750px'}}>
       <Row>
         Deadzone, Third Edition
         <a href='https://companion.manticgames.com/deadzone-rules/'>[Rules]</a>
         <a href='https://boardgamegeek.com/filepage/239614/esoteric-order-gamers-deadzone-3rd-edition-rules-r'>[Reference]</a>
       </Row>
-      <Row>
-        <Col className={Util.centerHoriz + ' p-0 border'}>
-          <ModelControls isAttacker={true} model={attacker} changeHandler={setAttacker} />
+      <Row >
+        <Col className='border p-0'>
+          Situation1
+          <Situation/>
         </Col>
-        <Col className={Util.centerHoriz + ' p-0 border'}>
-          <ModelControls isAttacker={false} model={defender} changeHandler={setDefender} />
+        <Col className='border p-0'>
+          Situation2
+          <Situation/>
         </Col>
-      </Row>
-      <Row className='p-0 border'>
-        <OptionControls options={options} changeHandler={setOptions} />
-      </Row>
-      <Row className='border'>
-        <ResultsDisplay dmgToProb={dmgToProb} attackerHp={attacker.hp} defenderHp={defender.hp} attackerCanBeDamaged={options.attackerCanBeDamaged} />
       </Row>
       <Row>
         <Col className={Util.centerHoriz + ' border'} style={{fontSize: '11px'}}>
