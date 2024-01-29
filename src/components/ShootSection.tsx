@@ -17,6 +17,7 @@ import * as Util from "src/Util";
 import { calcDmgProbs } from 'src/CalcEngineShoot';
 import * as N from 'src/Notes';
 import { SaveRange } from 'src/KtMisc';
+import { ShootSituation } from './ShootSituation';
 
 const ShootSection: React.FC = () => {
   const [attacker, setAttacker] = React.useState(new Model());
@@ -50,28 +51,20 @@ const ShootSection: React.FC = () => {
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
 
   return (
-    <Container style={{width: '600px'}}>
+    <Container style={{width: '1600px'}}>
       <Row>
         Kill Team 2021 Edition, Shooting
         <a href='https://www.warhammer-community.com/wp-content/uploads/2022/08/ekD0GG2pTHlYba0G.pdf'>[Lite Rules]</a>
       </Row>
-      <Row>
-        <Col className={Util.centerHoriz + ' p-0'} xs='auto'>
-          <Container>
-            <Row className='border'>
-              <AttackerControls attacker={attacker} changeHandler={setAttacker} />
-            </Row>
-            <Row className='border'>
-              <ShootOptionControls shootOptions={shootOptions} changeHandler={setShootOptions} />
-            </Row>
-          </Container>
+      <Row >
+        <Col className='border p-0'>
+          Situation1
+          <ShootSituation/>
         </Col>
-        <Col className={Util.centerHoriz + ' border' } xs='auto'>
-          <DefenderControls defender={defender} changeHandler={setDefender} />
+        <Col className='border p-0'>
+          Situation2
+          <ShootSituation/>
         </Col>
-      </Row>
-      <Row className='border'>
-        <ShootResultsDisplay saveToDmgToProb={saveToDmgToProb} defender={defender} />
       </Row>
       <Row>
         <Col className={Util.centerHoriz + ' border'} style={{fontSize: '11px'}}>
