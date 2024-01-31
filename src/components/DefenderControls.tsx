@@ -75,23 +75,17 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
   const advancedParamsToShow = wantShowAdvanced ? advancedParams : usedAdvancedParams;
   const paramsToShow = basicParams.concat(advancedParamsToShow);
   const elemsCol0 = propsToRows(paramsToShow);
-  const elemsCol1: JSX.Element[] = [];
   return (
-    // TODO: change width to ~310px so it is actually 2 cols but doesn't go below attacker section
-    <Container style={{width: '180px'}}>
+    // it would be nice to make this something other than a fixed width
+    <Container style={{width: '130px'}}>
       <Row>
         <Col>Defender</Col>
         <Col>{advancedCheckbox}</Col>
       </Row>
       <Row>
         <Col>
-          <Container className='p-0'>
+          <Container className='p-0' style={{width: 'fit-content'}}>
             {elemsCol0}
-          </Container>
-        </Col>
-        <Col>
-          <Container className='p-0'>
-            {elemsCol1}
           </Container>
         </Col>
       </Row>

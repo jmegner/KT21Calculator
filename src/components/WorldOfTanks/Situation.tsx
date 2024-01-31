@@ -24,7 +24,7 @@ const Situation: React.FC = () => {
   const numRoundsParam = new IncProps('NumRounds', numRounds, Util.span(1, 10), Util.acceptNumToAcceptString(setNumRounds));
 
   return (
-    <Container style={{width: '400px'}}>
+    <Container style={{width:'fit-content'}}>
       <Row>
         <Col className={Util.centerHoriz + ' p-0'} xs='auto'>
           <Container>

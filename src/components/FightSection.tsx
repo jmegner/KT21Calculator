@@ -47,7 +47,7 @@ const FightSection: React.FC = () => {
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
 
   return (
-    <Container style={{width: '400'}}>
+    <Container style={{width: 'fit-content'}}>
       <Row>
         Kill Team 2021 Edition, Fighting
         <a href='https://www.warhammer-community.com/wp-content/uploads/2022/08/ekD0GG2pTHlYba0G.pdf'>[Lite Rules]</a>
@@ -83,7 +83,7 @@ const FightSection: React.FC = () => {
           <Credits/>
         </Col>
       </Row>
-      <Row>
+      <Row style={{width: '700px'}}>
         <Col className={Util.centerHoriz + ' border'}>
           <div>
             Notes:

@@ -19,7 +19,7 @@ const WorldOfTanksSection: React.FC = () => {
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
 
   return (
-    <Container style={{width: '900px'}}>
+    <Container style={{width: 'fit-content'}}>
       <Row>
         <a href='https://www.gf9games.com/worldoftanks/'>World Of Tanks Miniatures Game</a>
         &#x202F;(<a href='https://www.gf9games.com/worldoftanks/wp-content/uploads/2020/06/WOT-Rulebook-FINAL-Small.pdf'>Rules PDF</a>)
@@ -39,7 +39,7 @@ const WorldOfTanksSection: React.FC = () => {
           <Credits/>
         </Col>
       </Row>
-      <Row>
+      <Row style={{width: '700px'}}>
         <Col className='border' style={{fontSize: '11px'}}>
           Notes:
           <ul>

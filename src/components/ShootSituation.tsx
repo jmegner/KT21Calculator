@@ -27,7 +27,7 @@ export const ShootSituation: React.FC = () => {
     [attacker, defender, shootOptions]);
 
   return (
-    <Container style={{width: '550px'}}>
+    <Container style={{width: 'fit-content'}}>
       <Row>
         <Col className={Util.centerHoriz + ' p-0'} xs='auto'>
           <Container>

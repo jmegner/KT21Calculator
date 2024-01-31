@@ -51,12 +51,12 @@ const ShootSection: React.FC = () => {
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
 
   return (
-    <Container style={{width: '1600px'}}>
+    <Container style={{width: 'fit-content'}}>
       <Row>
         Kill Team 2021 Edition, Shooting
         <a href='https://www.warhammer-community.com/wp-content/uploads/2022/08/ekD0GG2pTHlYba0G.pdf'>[Lite Rules]</a>
       </Row>
-      <Row >
+      <Row>
         <Col className='border p-0'>
           Situation1
           <ShootSituation/>
@@ -71,7 +71,7 @@ const ShootSection: React.FC = () => {
           <Credits/>
         </Col>
       </Row>
-      <Row>
+      <Row style={{width: '800px'}}>
         <Col className='border' style={{fontSize: '11px'}}>
           Notes:
           <ul>
