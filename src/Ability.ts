@@ -8,8 +8,9 @@ export enum Ability {
     DoubleBalanced = "DoubleBalanced", // reroll 2 dice; basicially single reroll ability from two different sources
     Ceaseless = "Ceaseless", // reroll all 1s
     Relentless = "Relentless", // reroll any of your choosing; we choose to reroll all fails; we never fish for crits
+    CritFishRelentless = "CritFishRelentless", // reroll all non-crits, aka crit fishing
     CeaselessPlusBalanced = "BothCeaselessAndBalanced", // ex: Auto Bolt Rifle (Ceaseless) and Devastator Doctrine (Balanced)
-    Tedious = "MostCommonFail", // "can re-roll any or all of your attack dice results of one result (e.g. results of 2)"
+    RerollMostCommonFail = "MostCommonFail", // "can re-roll any or all of your attack dice results of one result (e.g. results of 2)"
 
     // fail/norm/crit manipulation
     Rending = "Rending", // if have crit, promote one normal hit to crit
@@ -36,8 +37,9 @@ export const rerollAbilities = [
   Ability.Balanced,
   Ability.DoubleBalanced,
   Ability.Relentless,
+  Ability.CritFishRelentless,
   Ability.CeaselessPlusBalanced,
-  Ability.Tedious,
+  Ability.RerollMostCommonFail,
 ];
 
 export const mutuallyExclusiveFightAbilities = [

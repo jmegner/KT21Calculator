@@ -88,8 +88,8 @@ export function calcFinalDiceProb(
   else if (reroll === Ability.DoubleBalanced) {
     prob = calcFinalDiceProbBalanced(dieProbs, crits, norms, fails, 2);
   }
-  else if (reroll === Ability.Tedious) {
-    prob = calcFinalDiceProbTedious(dieProbs, crits, norms, fails);
+  else if (reroll === Ability.RerollMostCommonFail) {
+    prob = calcFinalDiceProbRerollMostCommonFail(dieProbs, crits, norms, fails);
   }
   else {
     prob = calcMultiRollProb(dieProbs, crits, norms, fails);
@@ -266,7 +266,7 @@ export function calcFinalDiceProbBalanced(
   return prob;
 }
 
-export function calcFinalDiceProbTedious(
+export function calcFinalDiceProbRerollMostCommonFail(
   dieProbs: DieProbs,
   finalCrits: number,
   finalNorms: number,

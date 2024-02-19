@@ -34,6 +34,12 @@ export default class DieProbs {
       normHitProb *= rerollMultiplier;
       failHitProb = 1 - critHitProb - normHitProb;
     }
+    else if (reroll === Ability.CritFishRelentless) {
+      const noncritProb = 1 - critHitProb;
+      failHitProb *= noncritProb;
+      normHitProb *= noncritProb;
+      critHitProb *= 2 - critHitProb;
+    }
 
     return new DieProbs(critHitProb, normHitProb, failHitProb);
   }
