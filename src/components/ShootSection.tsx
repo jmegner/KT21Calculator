@@ -7,7 +7,7 @@ import {
   Row,
 } from 'react-bootstrap';
 
-import "src/components/ShootSection.css"
+// import "src/components/ShootSection.css";
 import ShootOptions from 'src/ShootOptions';
 import AttackerControls from "src/components/AttackerControls";
 import DefenderControls from "src/components/DefenderControls";
@@ -54,39 +54,33 @@ const ShootSection: React.FC = () => {
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
 
   return (
-    <div>
-      <h4>
+    <Container fluid>
+      <h4 style={{textAlign:'center'}}>
         Kill Team 2021 Edition, Shooting
         <a href='https://www.warhammer-community.com/wp-content/uploads/2022/08/ekD0GG2pTHlYba0G.pdf'>[Lite Rules]</a>
       </h4>
-      <Accordion defaultActiveKey="0" alwaysOpen>
-        <Accordion.Item  eventKey='0'>
-          <Accordion.Header className='ShootSection'>Situation 1</Accordion.Header>
-          <Accordion.Body className='ShootSection'>
-            <ShootSituation/>
-          </Accordion.Body>
-        </Accordion.Item>
-        <Accordion.Item eventKey='1'>
-          <Accordion.Header>Situation 2</Accordion.Header>
-          <Accordion.Body>
-            <ShootSituation/>
-          </Accordion.Body>
-        </Accordion.Item>
-      </Accordion>
       <Row>
-        <Col className={Util.centerHoriz + ' border'} style={{fontSize: '11px'}}>
-          <Credits/>
+        <Col>
+          <h2 style={{textAlign:'center'}}>Situation 1</h2>
+          <ShootSituation/>
+        </Col>
+        <Col>
+          <h2 style={{textAlign:'center'}}>Situation 2</h2>
+          <ShootSituation/>
         </Col>
       </Row>
-      <Row style={{width: '50%'}}>
-        <Col className='border' style={{fontSize: '11px'}}>
+      <Row>
+        <Col style={{textAlign: 'center'}}><Credits/></Col>  
+      </Row>
+      <Row>
+        <Col>
           Notes:
           <ul>
             {noteListItems}
           </ul>
         </Col>
       </Row>
-      </div>
+    </Container>
   );
 };
 

@@ -3,6 +3,7 @@ import {
   Col,
   Container,
   Row,
+  Stack,
 } from 'react-bootstrap';
 
 import ShootOptions from 'src/ShootOptions';
@@ -27,23 +28,21 @@ export const ShootSituation: React.FC = () => {
     [attacker, defender, shootOptions]);
 
   return (
-    <Container style={{width: 'fit-content'}}>
+    <Container>
       <Row>
-        <Col className={Util.centerHoriz + ' p-0'} xs='auto'>
-          <Container>
-            <Row className='border'>
-              <AttackerControls attacker={attacker} changeHandler={setAttacker} />
-            </Row>
-            <Row className='border'>
-              <ShootOptionControls shootOptions={shootOptions} changeHandler={setShootOptions} />
-            </Row>
-          </Container>
+        <Col className='border' md={7} sm = {6}>
+          <AttackerControls attacker={attacker} changeHandler={setAttacker} />
         </Col>
-        <Col className={Util.centerHoriz + ' border' } xs='auto'>
+        <Col className='border' md={5} sm={6}>
           <DefenderControls defender={defender} changeHandler={setDefender} />
         </Col>
       </Row>
-      <Row className='border'>
+      <Row className='border justify-content-center'>
+        <Col md = {8} sm = {10}>
+          <ShootOptionControls shootOptions={shootOptions} changeHandler={setShootOptions} />
+        </Col>
+      </Row>
+      <Row className='border justify-content-center'>
         <ShootResultsDisplay saveToDmgToProb={saveToDmgToProb} defender={defender} />
       </Row>
     </Container>

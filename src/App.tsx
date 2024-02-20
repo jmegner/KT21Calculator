@@ -12,6 +12,7 @@ import ShootMassAnalysisSection from 'src/components/ShootMassAnalysisSection';
 import WorldOfTanksSection from 'src/components/WorldOfTanks/WorldOfTanksSection';
 import { DeadzoneSection } from 'src/components/Deadzone/DeadzoneSection';
 
+
 const _viewToAdditionalTexts: Map<CalculatorViewChoice, string[]> = new Map([
   [CalculatorViewChoice.KtShoot, ['shoot']],
   [CalculatorViewChoice.KtFight, ['fight']],
@@ -60,7 +61,7 @@ const App = () => {
   ) : JSX.Element {
     return (
       <ErrorBoundary fallbackRender={fallbackRender}>
-        <div style={{ display: currentView === view ? 'block' : 'none' }}>
+        <div style={{ display: currentView === view ? 'block' : 'none'}}>
           {child}
         </div>
       </ErrorBoundary>
@@ -70,14 +71,14 @@ const App = () => {
   return (
     <>
       <AppHeader navCallback={setCurrentView} currentView={currentView} />
-        <Container>
+        <Container fluid>
           <Row>
             <Col className={Util.centerHoriz + ' p-0'} style={{fontSize: '11px'}}>
               Starred (*) items have explanations in hovertext and 'Notes' at bottom.
             </Col>
           </Row>
           <Row>
-            <Col>
+            <Col style={{marginLeft:'5%', marginRight: '5%'}}>
               {sectionDiv(CalculatorViewChoice.KtShoot, <ShootSection/>)}
               {sectionDiv(CalculatorViewChoice.KtFight, <FightSection/>)}
               {sectionDiv(CalculatorViewChoice.KtShootMassAnalysis, <ShootMassAnalysisSection/>)}

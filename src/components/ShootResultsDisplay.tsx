@@ -7,6 +7,8 @@ import Table from 'react-bootstrap/Table';
 import Model from 'src/Model';
 import { toAscendingMap, weightedAverage, killProb, standardDeviation, } from 'src/Util';
 import { MaxWounds, WoundRange } from 'src/KtMisc';
+import Accordion from 'react-bootstrap/Accordion';
+import 'src/components/ShootResultsDisplay.css'
 
 export interface Props {
   defender: Model;
@@ -38,7 +40,6 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
 
   const killChanceTable =
     <>
-      <span style={{ fontSize: '13px' }}>KillChances for various Sv&amp;W...</span>
       <Table bordered={true} striped={true} style={{ fontSize: '11px' }}>
         <thead>
           <tr>
@@ -70,7 +71,6 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
 
   const saveToAvgDmgTable =
     <>
-      <span style={{ fontSize: '13px' }}>AvgDmg for various Sv...</span>
       <Table bordered={true} striped={true} style={{ fontSize: '11px' }}>
         <thead>
           <tr>
@@ -136,7 +136,25 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
     </>;
 
   return (
-    <Container style={{width: '320px'}}>
+    <Container fluid>
+      <Row>
+        <Col>
+        <Accordion flush>
+          <Accordion.Item eventKey='0'>
+            <Accordion.Header as="h6">AvgDmg for various Sv...</Accordion.Header>
+            <Accordion.Body>{saveToAvgDmgTable}</Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+        </Col>
+        <Col>
+        <Accordion flush>
+          <Accordion.Item eventKey='0'>
+            <Accordion.Header as="h6">KillChances for various Sv&amp;W...</Accordion.Header>
+            <Accordion.Body>{killChanceTable}</Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+        </Col>
+      </Row>
       <Row>Results</Row>
       <Row>
         <Col style={{fontSize: '11px'}}>
@@ -158,14 +176,6 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
       <Row>
         <Col>
           {dmgProbTable}
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          {saveToAvgDmgTable}
-        </Col>
-        <Col>
-          {killChanceTable}
         </Col>
       </Row>
     </Container>

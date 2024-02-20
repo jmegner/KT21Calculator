@@ -83,11 +83,11 @@ const IncDecSelect: React.FC<IProps> = (props: IProps) => {
 }
 
 export function propsToRow(props: Props): JSX.Element {
-  return <Row key={props.id}><Col className='pr-0'><IncDecSelect {...props}/></Col></Row>;
+  return <Row key={props.id}><Col><IncDecSelect {...props}/></Col></Row>;
 }
 
 export function propsToRows(props: Props[]): JSX.Element[] {
-  return props.map(p => <Row key={p.id}><Col className='pr-0'><IncDecSelect {...p}/></Col></Row>);
+  return props.map(p => <Row key={p.id}><Col><IncDecSelect {...p}/></Col></Row>);
 }
 
 export default IncDecSelect;

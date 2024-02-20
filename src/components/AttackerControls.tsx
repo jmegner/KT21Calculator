@@ -99,21 +99,17 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
   const elemsCol1 = propsToRows(paramsCol1);
 
   return (
-    <Container style={{width: '310px'}}>
+    <Container>
       <Row>
         <Col>Attacker</Col>
         <Col>{advancedCheckbox}</Col>
       </Row>
       <Row>
         <Col>
-          <Container className='p-0'>
             {elemsCol0}
-          </Container>
         </Col>
         <Col>
-          <Container className='p-0'>
             {elemsCol1}
-          </Container>
         </Col>
       </Row>
     </Container>
