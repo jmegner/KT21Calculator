@@ -78,7 +78,7 @@ const App = () => {
             </Col>
           </Row>
           <Row>
-            <Col style={{marginLeft:'5%', marginRight: '5%'}}>
+            <Col>
               {sectionDiv(CalculatorViewChoice.KtShoot, <ShootSection/>)}
               {sectionDiv(CalculatorViewChoice.KtFight, <FightSection/>)}
               {sectionDiv(CalculatorViewChoice.KtShootMassAnalysis, <ShootMassAnalysisSection/>)}
