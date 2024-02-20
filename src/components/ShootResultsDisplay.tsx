@@ -138,7 +138,7 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
   return (
     <Container fluid>
       <Row>
-        <Col>
+        <Col lg={6} md={12}>
         <Accordion flush>
           <Accordion.Item eventKey='0'>
             <Accordion.Header as="h6">AvgDmg for various Sv...</Accordion.Header>
@@ -146,7 +146,7 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
           </Accordion.Item>
         </Accordion>
         </Col>
-        <Col>
+        <Col lg={6} md={12}>
         <Accordion flush>
           <Accordion.Item eventKey='0'>
             <Accordion.Header as="h6">KillChances for various Sv&amp;W...</Accordion.Header>
