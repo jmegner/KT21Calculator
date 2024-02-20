@@ -7,7 +7,6 @@ import {
   Row,
 } from 'react-bootstrap';
 
-// import "src/components/ShootSection.css";
 import ShootOptions from 'src/ShootOptions';
 import AttackerControls from "src/components/AttackerControls";
 import DefenderControls from "src/components/DefenderControls";
