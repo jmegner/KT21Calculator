@@ -3,7 +3,6 @@ import {
   Col,
   Container,
   Row,
-  Stack,
 } from 'react-bootstrap';
 
 import ShootOptions from 'src/ShootOptions';
@@ -13,7 +12,6 @@ import ShootOptionControls from 'src/components/ShootOptionControls';
 import ShootResultsDisplay from 'src/components/ShootResultsDisplay';
 
 import Model from 'src/Model';
-import * as Util from "src/Util";
 import { calcDmgProbs } from 'src/CalcEngineShoot';
 import { SaveRange } from 'src/KtMisc';
 

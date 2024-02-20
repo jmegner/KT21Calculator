@@ -1,7 +1,5 @@
 import React from 'react';
 import {
-  Accordion,
-  AccordionItem,
   Col,
   Container,
   Row,
@@ -15,7 +13,6 @@ import ShootResultsDisplay from 'src/components/ShootResultsDisplay';
 import Credits from 'src/components/Credits';
 
 import Model from 'src/Model';
-import * as Util from "src/Util";
 import { calcDmgProbs } from 'src/CalcEngineShoot';
 import * as N from 'src/Notes';
 import { SaveRange } from 'src/KtMisc';
