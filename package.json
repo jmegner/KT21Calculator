@@ -1,5 +1,5 @@
 {
-  "homepage": "https://daespinozah.github.io/KT21Calculator/",
+  "homepage": "https://jmegner.github.io/KT21Calculator/",
   "name": "ktcalc",
   "version": "0.1.0",
   "private": true,
@@ -15,8 +15,6 @@
     "react-scripts": "^5.0.0"
   },
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "KT21Calculator -d build",
     "start": "react-scripts start",
     "build": "npm run build:wasm && npm run build:react",
     "build:react": "react-scripts build",
