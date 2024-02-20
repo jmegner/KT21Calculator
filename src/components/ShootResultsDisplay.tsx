@@ -40,7 +40,7 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
 
   const killChanceTable =
     <>
-      <Table bordered={true} striped={true} style={{ fontSize: '11px' }}>
+      <Table responsive striped bordered hover size="sm" style={{ fontSize: '11px' }}>
         <thead>
           <tr>
             <th>W</th>
