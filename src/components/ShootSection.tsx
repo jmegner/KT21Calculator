@@ -19,6 +19,7 @@ import { calcDmgProbs } from 'src/CalcEngineShoot';
 import * as N from 'src/Notes';
 import { SaveRange } from 'src/KtMisc';
 import { ShootSituation } from './ShootSituation';
+import 'src/components/ShootSection.css'
 
 const ShootSection: React.FC = () => {
   const [attacker, setAttacker] = React.useState(new Model());
@@ -59,29 +60,18 @@ const ShootSection: React.FC = () => {
       </h4>
       <div className='d-none d-md-block'>
         <Row className='justify-content-md-center'>
-          <Col lg={4} md="auto" className='p-0'>
+          <Col lg={4} md="6" className='p-0'>
             <h2 style={{textAlign:'center'}}>Situation 1</h2>
             <ShootSituation/>
           </Col>
-          <Col lg={4} md="auto" className="p-0">
+          <Col lg={4} md="6" className="p-0">
             <h2 style={{textAlign:'center'}}>Situation 2</h2>
             <ShootSituation/>
           </Col>
         </Row>
-        <Row>
-          <Col style={{textAlign: 'center'}}><Credits/></Col>  
-        </Row>
-        <Row>
-          <Col>
-            Notes:
-            <ul>
-              {noteListItems}
-            </ul>
-          </Col>
-        </Row>
       </div>
-      <div className='d-md-block d-sm-none'>
-        <Carousel touch indicators={false} controls={false}>
+      <div className='d-md-none'>
+        <Carousel touch indicators={false} controls={false} interval={null}>
           <Carousel.Item>
             <h2 style={{textAlign:'center'}}>Situation 1</h2>
             <ShootSituation/>
@@ -92,7 +82,17 @@ const ShootSection: React.FC = () => {
           </Carousel.Item>
         </Carousel>
       </div>
-      
+      <Row>
+          <Col style={{textAlign: 'center'}}><Credits/></Col>  
+        </Row>
+        <Row>
+          <Col>
+            Notes:
+            <ul>
+              {noteListItems}
+            </ul>
+          </Col>
+        </Row>
     </Container>   
   );
 };
