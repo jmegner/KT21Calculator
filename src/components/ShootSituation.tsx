@@ -36,7 +36,7 @@ export const ShootSituation: React.FC = () => {
         </Col>
       </Row>
       <Row className='border justify-content-center'>
-        <Col md = {8} sm = {10}>
+        <Col>
           <ShootOptionControls shootOptions={shootOptions} changeHandler={setShootOptions} />
         </Col>
       </Row>
