@@ -53,47 +53,56 @@ const ShootSection: React.FC = () => {
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
 
   return (
-    <Container fluid = "sm">
-      <h4 style={{textAlign:'center'}}>
+    <>
+    <h4 style={{textAlign:'center'}}>
         Kill Team 2021 Edition, Shooting
         <a href='https://www.warhammer-community.com/wp-content/uploads/2022/08/ekD0GG2pTHlYba0G.pdf'>[Lite Rules]</a>
-      </h4>
+    </h4>
+
+    <Container fluid = "sm">
+      //hide reactive version on small screens 
       <div className='d-none d-sm-block'>
         <Row className='justify-content-md-center'>
-          <Col lg={4} md={6} className='p-0'>
+          <Col xl={4} lg={5} md={6} className='p-0'>
             <h2 style={{textAlign:'center'}}>Situation 1</h2>
             <ShootSituation/>
           </Col>
-          <Col lg={4} md={6} className="p-0">
+          <Col xl={4} lg={5} md={6} className="p-0">
             <h2 style={{textAlign:'center'}}>Situation 2</h2>
             <ShootSituation/>
           </Col>
         </Row>
       </div>
-      <div className='d-sm-none'>
-        <Carousel touch indicators={false} controls={false} interval={null}>
-          <Carousel.Item>
-            <h2 style={{textAlign:'center'}}>Situation 1</h2>
-            <ShootSituation/>
-          </Carousel.Item>
-          <Carousel.Item>
-            <h2 style={{textAlign:'center'}}>Situation 2</h2>
-            <ShootSituation/>
-          </Carousel.Item>
-        </Carousel>
-      </div>
+    </Container> 
+
+    //show carousel on small screens
+    <div className='d-sm-none'>
+      <Carousel touch indicators={false} controls={false} interval={null}>
+        <Carousel.Item>
+          <h2 style={{textAlign:'center'}}>Situation 1</h2>
+          <ShootSituation/>
+        </Carousel.Item>
+        <Carousel.Item>
+          <h2 style={{textAlign:'center'}}>Situation 2</h2>
+          <ShootSituation/>
+        </Carousel.Item>
+      </Carousel>
+    </div>
+    
+    <Container fluid="sm">
       <Row>
-          <Col style={{textAlign: 'center'}}><Credits/></Col>  
-        </Row>
-        <Row>
-          <Col>
-            Notes:
-            <ul>
-              {noteListItems}
-            </ul>
-          </Col>
-        </Row>
-    </Container>   
+        <Col style={{textAlign: 'center'}}><Credits/></Col>  
+      </Row>
+      <Row>
+        <Col>
+          Notes:
+          <ul>
+            {noteListItems}
+          </ul>
+        </Col>
+      </Row> 
+    </Container> 
+    </>
   );
 };
 
