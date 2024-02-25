@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Col,
   Container,
   Row,
 } from 'react-bootstrap';
+
 
 import ShootOptions from 'src/ShootOptions';
 import AttackerControls from "src/components/AttackerControls";
@@ -50,17 +51,17 @@ const ShootSection: React.FC = () => {
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
 
   return (
-    <Container fluid>
+    <Container fluid = "sm">
       <h4 style={{textAlign:'center'}}>
         Kill Team 2021 Edition, Shooting
         <a href='https://www.warhammer-community.com/wp-content/uploads/2022/08/ekD0GG2pTHlYba0G.pdf'>[Lite Rules]</a>
       </h4>
-      <Row>
-        <Col>
+      <Row className='justify-content-md-center'>
+        <Col lg={4} md="auto" className='p-0'>
           <h2 style={{textAlign:'center'}}>Situation 1</h2>
           <ShootSituation/>
         </Col>
-        <Col>
+        <Col lg={4} md="auto" className="p-0">
           <h2 style={{textAlign:'center'}}>Situation 2</h2>
           <ShootSituation/>
         </Col>
@@ -76,7 +77,7 @@ const ShootSection: React.FC = () => {
           </ul>
         </Col>
       </Row>
-    </Container>
+    </Container>   
   );
 };
 

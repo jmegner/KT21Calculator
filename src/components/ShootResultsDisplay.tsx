@@ -40,7 +40,7 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
 
   const killChanceTable =
     <>
-      <Table responsive striped bordered hover size="sm" style={{ fontSize: '11px'}}>
+      <Table responsive striped bordered hover size="sm" style={{ fontSize: '11px' }}>
         <thead>
           <tr>
             <th>W</th>
@@ -71,7 +71,7 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
 
   const saveToAvgDmgTable =
     <>
-      <Table bordered={true} striped={true} style={{ fontSize: '11px' }}>
+      <Table striped bordered hover size="sm" style={{ fontSize: '11px' }}>
         <thead>
           <tr>
             <th>Sv</th>
@@ -120,7 +120,7 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
   const dmgProbTable =
     <>
       <span style={{ fontSize: '13px' }}>Dmg probs for exact scenario...</span>
-      <Table bordered={true} striped={true} style={{ fontSize: '11px' }}>
+      <Table responsive striped bordered hover  style={{ fontSize: '11px' }}>
         <thead>
           <tr>
             <th>Dmg</th>
@@ -138,18 +138,18 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
   return (
     <Container fluid>
       <Row>
-        <Col lg={6} md={12}>
+        <Col lg={4} md={12} className='p-0'>
         <Accordion flush>
           <Accordion.Item eventKey='0'>
-            <Accordion.Header as="h6">AvgDmg for various Sv...</Accordion.Header>
+            <Accordion.Header as="h6">Average Damage</Accordion.Header>
             <Accordion.Body>{saveToAvgDmgTable}</Accordion.Body>
           </Accordion.Item>
         </Accordion>
         </Col>
-        <Col lg={6} md={12}>
+        <Col lg={8} md={12} className='p-0'>
         <Accordion flush>
           <Accordion.Item eventKey='0'>
-            <Accordion.Header as="h6">KillChances for various Sv&amp;W...</Accordion.Header>
+            <Accordion.Header as="h6">Kill Chances</Accordion.Header>
             <Accordion.Body>{killChanceTable}</Accordion.Body>
           </Accordion.Item>
         </Accordion>
