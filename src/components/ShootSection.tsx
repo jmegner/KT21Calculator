@@ -60,11 +60,11 @@ const ShootSection: React.FC = () => {
       </h4>
       <div className='d-none d-md-block'>
         <Row className='justify-content-md-center'>
-          <Col lg={4} md="6" className='p-0'>
+          <Col lg={4} md={6} className='p-0'>
             <h2 style={{textAlign:'center'}}>Situation 1</h2>
             <ShootSituation/>
           </Col>
-          <Col lg={4} md="6" className="p-0">
+          <Col lg={4} md={6} className="p-0">
             <h2 style={{textAlign:'center'}}>Situation 2</h2>
             <ShootSituation/>
           </Col>
