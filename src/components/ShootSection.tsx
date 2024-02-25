@@ -61,7 +61,6 @@ const ShootSection: React.FC = () => {
     </h4>
 
     <Container fluid = "sm">
-      //hide reactive version on small screens 
       <div className='d-none d-sm-block'>
         <Row className='justify-content-md-center'>
           <Col xl={4} lg={5} md={6} className='p-0'>
@@ -76,7 +75,6 @@ const ShootSection: React.FC = () => {
       </div>
     </Container> 
 
-    //show carousel on small screens
     <div className='d-sm-none'>
       <Carousel touch indicators={false} controls={false} interval={null}>
         <Carousel.Item>
