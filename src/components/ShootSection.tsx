@@ -58,7 +58,7 @@ const ShootSection: React.FC = () => {
         Kill Team 2021 Edition, Shooting
         <a href='https://www.warhammer-community.com/wp-content/uploads/2022/08/ekD0GG2pTHlYba0G.pdf'>[Lite Rules]</a>
       </h4>
-      <div className='d-none d-md-block'>
+      <div className='d-none d-sm-block'>
         <Row className='justify-content-md-center'>
           <Col lg={4} md={6} className='p-0'>
             <h2 style={{textAlign:'center'}}>Situation 1</h2>
@@ -70,7 +70,7 @@ const ShootSection: React.FC = () => {
           </Col>
         </Row>
       </div>
-      <div className='d-md-none'>
+      <div className='d-sm-none'>
         <Carousel touch indicators={false} controls={false} interval={null}>
           <Carousel.Item>
             <h2 style={{textAlign:'center'}}>Situation 1</h2>
