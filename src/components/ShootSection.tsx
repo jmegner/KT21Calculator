@@ -4,7 +4,6 @@ import {
   Container,
   Row,
   Carousel
-  Carousel
 } from 'react-bootstrap';
 
 
