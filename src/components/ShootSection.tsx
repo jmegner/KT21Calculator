@@ -3,6 +3,7 @@ import {
   Col,
   Container,
   Row,
+  Carousel
 } from 'react-bootstrap';
 
 
@@ -56,27 +57,42 @@ const ShootSection: React.FC = () => {
         Kill Team 2021 Edition, Shooting
         <a href='https://www.warhammer-community.com/wp-content/uploads/2022/08/ekD0GG2pTHlYba0G.pdf'>[Lite Rules]</a>
       </h4>
-      <Row className='justify-content-md-center'>
-        <Col lg={4} md="auto" className='p-0'>
-          <h2 style={{textAlign:'center'}}>Situation 1</h2>
-          <ShootSituation/>
-        </Col>
-        <Col lg={4} md="auto" className="p-0">
-          <h2 style={{textAlign:'center'}}>Situation 2</h2>
-          <ShootSituation/>
-        </Col>
-      </Row>
-      <Row>
-        <Col style={{textAlign: 'center'}}><Credits/></Col>  
-      </Row>
-      <Row>
-        <Col>
-          Notes:
-          <ul>
-            {noteListItems}
-          </ul>
-        </Col>
-      </Row>
+      <div className='d-none d-md-block'>
+        <Row className='justify-content-md-center'>
+          <Col lg={4} md="auto" className='p-0'>
+            <h2 style={{textAlign:'center'}}>Situation 1</h2>
+            <ShootSituation/>
+          </Col>
+          <Col lg={4} md="auto" className="p-0">
+            <h2 style={{textAlign:'center'}}>Situation 2</h2>
+            <ShootSituation/>
+          </Col>
+        </Row>
+        <Row>
+          <Col style={{textAlign: 'center'}}><Credits/></Col>  
+        </Row>
+        <Row>
+          <Col>
+            Notes:
+            <ul>
+              {noteListItems}
+            </ul>
+          </Col>
+        </Row>
+      </div>
+      <div className='d-md-block d-sm-none'>
+        <Carousel touch indicators={false} controls={false}>
+          <Carousel.Item>
+            <h2 style={{textAlign:'center'}}>Situation 1</h2>
+            <ShootSituation/>
+          </Carousel.Item>
+          <Carousel.Item>
+            <h2 style={{textAlign:'center'}}>Situation 2</h2>
+            <ShootSituation/>
+          </Carousel.Item>
+        </Carousel>
+      </div>
+      
     </Container>   
   );
 };
