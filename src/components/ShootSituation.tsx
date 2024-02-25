@@ -28,15 +28,15 @@ export const ShootSituation: React.FC = () => {
   return (
     <Container>
       <Row>
-        <Col className='border' md={7} sm = {6}>
+        <Col className='border' md={6} sm={6}>
           <AttackerControls attacker={attacker} changeHandler={setAttacker} />
         </Col>
-        <Col className='border' md={5} sm={6}>
+        <Col className='border' md={6} sm={6}>
           <DefenderControls defender={defender} changeHandler={setDefender} />
         </Col>
       </Row>
       <Row className='border justify-content-center'>
-        <Col md = {8} sm = {10}>
+        <Col>
           <ShootOptionControls shootOptions={shootOptions} changeHandler={setShootOptions} />
         </Col>
       </Row>

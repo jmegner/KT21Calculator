@@ -1,5 +1,5 @@
 {
-  "homepage": "https://jmegner.github.io/KT21Calculator/",
+  "homepage": "https://daespinozah.github.io/KT21Calculator/",
   "name": "ktcalc",
   "version": "0.1.0",
   "private": true,
@@ -15,6 +15,8 @@
     "react-scripts": "^5.0.0"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "npm run build:wasm && npm run build:react",
     "build:react": "react-scripts build",
@@ -62,6 +64,7 @@
     "@types/react": "17.0.3",
     "@types/react-dom": "17.0.3",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "gh-pages": "^6.1.1",
     "typescript": "^4.9.5"
   }
 }
