@@ -6,7 +6,7 @@ import {
   Carousel
 } from 'react-bootstrap';
 
-
+import SwipeableViews from "react-swipeable-views"
 import ShootOptions from 'src/ShootOptions';
 import AttackerControls from "src/components/AttackerControls";
 import DefenderControls from "src/components/DefenderControls";
@@ -19,8 +19,7 @@ import { calcDmgProbs } from 'src/CalcEngineShoot';
 import * as N from 'src/Notes';
 import { SaveRange } from 'src/KtMisc';
 import { ShootSituation } from './ShootSituation';
-import 'src/components/ShootSection.css'
-import 'src/components/ShootSection.css'
+
 
 const ShootSection: React.FC = () => {
   const [attacker, setAttacker] = React.useState(new Model());
@@ -76,16 +75,16 @@ const ShootSection: React.FC = () => {
     </Container> 
 
     <div className='d-sm-none'>
-      <Carousel touch indicators={false} controls={false} interval={null}>
-        <Carousel.Item>
-          <h2 style={{textAlign:'center'}}>Situation 1</h2>
+      <SwipeableViews>
+        <div>
+          <h2 className='sticky-top' style={{textAlign:'center'}}>Situation 1</h2>
           <ShootSituation/>
-        </Carousel.Item>
-        <Carousel.Item>
+        </div>
+        <div>
           <h2 style={{textAlign:'center'}}>Situation 2</h2>
           <ShootSituation/>
-        </Carousel.Item>
-      </Carousel>
+        </div>
+      </SwipeableViews>
     </div>
     
     <Container fluid="sm">
