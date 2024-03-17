@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Col, Container, Row, Stack } from 'react-bootstrap';
 import { useSearchParams } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
 
@@ -11,6 +11,7 @@ import FightSection from 'src/components/FightSection';
 import ShootMassAnalysisSection from 'src/components/ShootMassAnalysisSection';
 import WorldOfTanksSection from 'src/components/WorldOfTanks/WorldOfTanksSection';
 import { DeadzoneSection } from 'src/components/Deadzone/DeadzoneSection';
+
 
 const _viewToAdditionalTexts: Map<CalculatorViewChoice, string[]> = new Map([
   [CalculatorViewChoice.KtShoot, ['shoot']],
@@ -60,7 +61,7 @@ const App = () => {
   ) : JSX.Element {
     return (
       <ErrorBoundary fallbackRender={fallbackRender}>
-        <div style={{ display: currentView === view ? 'block' : 'none' }}>
+        <div style={{ display: currentView === view ? 'block' : 'none'}}>
           {child}
         </div>
       </ErrorBoundary>
@@ -69,23 +70,19 @@ const App = () => {
 
   return (
     <>
-      <AppHeader navCallback={setCurrentView} currentView={currentView} />
-        <Container>
-          <Row>
-            <Col className={Util.centerHoriz + ' p-0'} style={{fontSize: '11px'}}>
-              Starred (*) items have explanations in hovertext and 'Notes' at bottom.
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              {sectionDiv(CalculatorViewChoice.KtShoot, <ShootSection/>)}
-              {sectionDiv(CalculatorViewChoice.KtFight, <FightSection/>)}
-              {sectionDiv(CalculatorViewChoice.KtShootMassAnalysis, <ShootMassAnalysisSection/>)}
-              {sectionDiv(CalculatorViewChoice.WorldOfTanks, <WorldOfTanksSection/>)}
-              {sectionDiv(CalculatorViewChoice.Deadzone, <DeadzoneSection/>)}
-            </Col>
-          </Row>
-        </Container>
+        <Stack>
+          <AppHeader navCallback={setCurrentView} currentView={currentView} />
+          <div className={Util.centerHoriz + ' p-0'} style={{fontSize: '11px'}}>
+            Starred (*) items have explanations in hovertext and 'Notes' at bottom.
+          </div>
+          <div>
+            {sectionDiv(CalculatorViewChoice.KtShoot, <ShootSection/>)}
+            {sectionDiv(CalculatorViewChoice.KtFight, <FightSection/>)}
+            {sectionDiv(CalculatorViewChoice.KtShootMassAnalysis, <ShootMassAnalysisSection/>)}
+            {sectionDiv(CalculatorViewChoice.WorldOfTanks, <WorldOfTanksSection/>)}
+            {sectionDiv(CalculatorViewChoice.Deadzone, <DeadzoneSection/>)}
+          </div>
+        </Stack>
     </>
   );
 };

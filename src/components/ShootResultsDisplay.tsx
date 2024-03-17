@@ -7,6 +7,8 @@ import Table from 'react-bootstrap/Table';
 import Model from 'src/Model';
 import { toAscendingMap, weightedAverage, killProb, standardDeviation, } from 'src/Util';
 import { MaxWounds, WoundRange } from 'src/KtMisc';
+import Accordion from 'react-bootstrap/Accordion';
+import 'src/components/ShootResultsDisplay.css'
 
 export interface Props {
   defender: Model;
@@ -38,8 +40,7 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
 
   const killChanceTable =
     <>
-      <span style={{ fontSize: '13px' }}>KillChances for various Sv&amp;W...</span>
-      <Table bordered={true} striped={true} style={{ fontSize: '11px' }}>
+      <Table responsive striped bordered hover size="sm" style={{ fontSize: '11px' }}>
         <thead>
           <tr>
             <th>W</th>
@@ -70,8 +71,7 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
 
   const saveToAvgDmgTable =
     <>
-      <span style={{ fontSize: '13px' }}>AvgDmg for various Sv...</span>
-      <Table bordered={true} striped={true} style={{ fontSize: '11px' }}>
+      <Table striped bordered hover size="sm" style={{ fontSize: '11px' }}>
         <thead>
           <tr>
             <th>Sv</th>
@@ -120,7 +120,7 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
   const dmgProbTable =
     <>
       <span style={{ fontSize: '13px' }}>Dmg probs for exact scenario...</span>
-      <Table bordered={true} striped={true} style={{ fontSize: '11px' }}>
+      <Table responsive striped bordered hover  style={{ fontSize: '11px' }}>
         <thead>
           <tr>
             <th>Dmg</th>
@@ -136,7 +136,25 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
     </>;
 
   return (
-    <Container style={{width: '320px'}}>
+    <Container fluid>
+      <Row>
+        <Col lg={4} md={12} className='p-0'>
+        <Accordion flush>
+          <Accordion.Item eventKey='0'>
+            <Accordion.Header as="h6">Average Damage</Accordion.Header>
+            <Accordion.Body>{saveToAvgDmgTable}</Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+        </Col>
+        <Col lg={8} md={12} className='p-0'>
+        <Accordion flush>
+          <Accordion.Item eventKey='0'>
+            <Accordion.Header as="h6">Kill Chances</Accordion.Header>
+            <Accordion.Body>{killChanceTable}</Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+        </Col>
+      </Row>
       <Row>Results</Row>
       <Row>
         <Col style={{fontSize: '11px'}}>
@@ -158,14 +176,6 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
       <Row>
         <Col>
           {dmgProbTable}
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          {saveToAvgDmgTable}
-        </Col>
-        <Col>
-          {killChanceTable}
         </Col>
       </Row>
     </Container>

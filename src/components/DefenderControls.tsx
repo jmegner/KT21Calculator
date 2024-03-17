@@ -77,16 +77,14 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
   const elemsCol0 = propsToRows(paramsToShow);
   return (
     // it would be nice to make this something other than a fixed width
-    <Container style={{width: '130px'}}>
+    <Container>
       <Row>
         <Col>Defender</Col>
         <Col>{advancedCheckbox}</Col>
       </Row>
       <Row>
         <Col>
-          <Container className='p-0' style={{width: 'fit-content'}}>
-            {elemsCol0}
-          </Container>
+          {elemsCol0}
         </Col>
       </Row>
     </Container>

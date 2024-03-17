@@ -35,11 +35,11 @@ const ShootOptionControls: React.FC<Props> = (props: Props) => {
     <Row key={p.id}><Col className='pr-0'><IncDecSelect {...p}/></Col></Row>);
 
   return (
-    <Container style={{width: '310px'}}>
-      <Row>General</Row>
+    <Container>
+      <Row className='justify-content-center'>General</Row>
       <Row>
         <Col>
-          <Container className='p-0'>
+          <Container>
             {paramElems.slice(0, paramElems.length / 2)}
           </Container>
         </Col>
