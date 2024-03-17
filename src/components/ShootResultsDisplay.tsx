@@ -3,6 +3,9 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
+import Accordion from 'react-bootstrap/Accordion';
+
+import 'src/components/Accordion.css'
 
 import Model from 'src/Model';
 import { toAscendingMap, weightedAverage, killProb, standardDeviation, } from 'src/Util';
@@ -39,7 +42,7 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
   const killChanceTable =
     <>
       <span style={{ fontSize: '13px' }}>KillChances for various Sv&amp;W...</span>
-      <Table bordered={true} striped={true} style={{ fontSize: '11px' }}>
+      <Table bordered striped style={{ fontSize: '11px' }}>
         <thead>
           <tr>
             <th>W</th>
@@ -119,7 +122,7 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
 
   const dmgProbTable =
     <>
-      <span style={{ fontSize: '13px' }}>Dmg probs for exact scenario...</span>
+      {/*<span style={{ fontSize: '13px' }}>Dmg probs for exact scenario...</span>*/}
       <Table bordered={true} striped={true} style={{ fontSize: '11px' }}>
         <thead>
           <tr>
@@ -139,33 +142,33 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
     <Container style={{width: '320px'}}>
       <Row>Results</Row>
       <Row>
-        <Col style={{fontSize: '11px'}}>
-          AvgDmgUnbounded:
-        </Col>
-        <Col>
-          {avgDmgUnbounded.toFixed(digitsPastDecimal)}
-        </Col>
-      </Row>
-      <Row>
-        <Col style={{fontSize: '11px'}}>
-          KillChance:
-        </Col>
-        <Col>
-          {toPercentString(killChance)}%
-        </Col>
-        <br/>
-      </Row>
-      <Row>
-        <Col>
-          {dmgProbTable}
+        <Col className='p-0'>
+          <Accordion flush>
+            <Accordion.Item eventKey='0'>
+              <Accordion.Header as="p">Average Damage: {avgDmgUnbounded.toFixed(digitsPastDecimal)}</Accordion.Header>
+              <Accordion.Body>{saveToAvgDmgTable}</Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
         </Col>
       </Row>
       <Row>
-        <Col>
-          {saveToAvgDmgTable}
+        <Col className='p-0'>
+          <Accordion flush>
+            <Accordion.Item eventKey='1'>
+              <Accordion.Header as="p">Kill Chance: {toPercentString(killChance)}%</Accordion.Header>
+              <Accordion.Body>{killChanceTable}</Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
         </Col>
-        <Col>
-          {killChanceTable}
+      </Row>
+      <Row>
+        <Col className='p-0'>
+          <Accordion flush>
+            <Accordion.Item eventKey='2'>
+              <Accordion.Header as="p">Dmg probs for exact scenario</Accordion.Header>
+              <Accordion.Body>{dmgProbTable}</Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
         </Col>
       </Row>
     </Container>
