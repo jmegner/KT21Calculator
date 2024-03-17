@@ -38,7 +38,7 @@ export const DeadzoneSection: FC = () => {
       <Row>
         Deadzone, Third Edition
         <a href='https://companion.manticgames.com/deadzone-rules/'>[Rules]</a>
-        <a href='https://boardgamegeek.com/filepage/239614/esoteric-order-gamers-deadzone-3rd-edition-rules-r'>[Reference]</a>
+        <a href='https://www.orderofgamers.com/downloads/DeadzoneThirdEdition_v1.4.pdf'>[Reference]</a>
       </Row>
       <Row >
         <Col className='border p-0'>
