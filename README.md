@@ -13,7 +13,7 @@ Check out [Kill Team Resources](https://github.com/jmegner/KillTeamResources) re
 See [issues](https://github.com/jmegner/KT21Calculator/issues), but to comment on the big ones ...
 - I would love to do a [mass analysis tab](https://github.com/jmegner/KT21Calculator/issues/13), but it will take a lot of work.
 - [FNP for melee](https://github.com/jmegner/KT21Calculator/issues/3) is painful and I don't have any short term or medium term plans to do it.
-- Option for user to [select a relevant operative profile](https://github.com/jmegner/KT21Calculator/issues/14) (ex: Necron Immortal with Gauss Blaster) instead of individually selecting parameters.
+- Option for user to [select a relevant operative profile](https://github.com/jmegner/KT21Calculator/issues/14) (ex: Necron Immortal with Gauss Blaster) instead of individually selecting parameters.  Low priority because it is high effort and moderate benefit.
 
 ## Dev Stuff
 Basically, this is a React SPA web app mostly written in TypeScript.
