@@ -49,7 +49,7 @@ const FightSection: React.FC = () => {
   return (
     <Container style={{width: 'fit-content'}}>
       <Row>
-        Kill Team 2021 Edition, Fighting
+        Kill Team 2021 Edition, Fighting&nbsp;
         <a href='https://www.warhammer-community.com/wp-content/uploads/2022/08/ekD0GG2pTHlYba0G.pdf'>[Lite Rules]</a>
       </Row>
       <Row>

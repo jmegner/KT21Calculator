@@ -13,7 +13,6 @@ import { MaxWounds, WoundRange } from 'src/KtMisc';
 
 export interface Props {
   defender: Model;
-  //damageToProb: Map<number,number>;
   saveToDmgToProb: Map<number,Map<number,number>>;
 }
 

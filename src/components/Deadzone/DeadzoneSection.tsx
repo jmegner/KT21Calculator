@@ -36,8 +36,8 @@ export const DeadzoneSection: FC = () => {
   return (
     <Container style={{width: '750px'}}>
       <Row>
-        Deadzone, Third Edition
-        <a href='https://companion.manticgames.com/deadzone-rules/'>[Rules]</a>
+        Deadzone, Third Edition&nbsp;
+        <a href='https://companion.manticgames.com/deadzone-rules/'>[Rules]</a>&nbsp;
         <a href='https://www.orderofgamers.com/downloads/DeadzoneThirdEdition_v1.4.pdf'>[Reference]</a>
       </Row>
       <Row >

@@ -5,30 +5,13 @@ import {
   Row,
 } from 'react-bootstrap';
 
-import ShootOptions from 'src/ShootOptions';
-import AttackerControls from "src/components/AttackerControls";
-import DefenderControls from "src/components/DefenderControls";
-import ShootOptionControls from 'src/components/ShootOptionControls';
-import ShootResultsDisplay from 'src/components/ShootResultsDisplay';
 import Credits from 'src/components/Credits';
 
-import Model from 'src/Model';
 import * as Util from "src/Util";
-import { calcDmgProbs } from 'src/CalcEngineShoot';
 import * as N from 'src/Notes';
-import { SaveRange } from 'src/KtMisc';
 import { ShootSituation } from './ShootSituation';
 
 const ShootSection: React.FC = () => {
-  const [attacker, setAttacker] = React.useState(new Model());
-  const [defender, setDefender] = React.useState(Model.basicDefender());
-  const [shootOptions, setShootOptions] = React.useState(new ShootOptions());
-
-  const saveToDmgToProb = React.useMemo(
-    () => new Map<number,Map<number,number>>(SaveRange.map(save =>
-      [save, calcDmgProbs(attacker, defender.withProp('diceStat', save), shootOptions)])),
-    [attacker, defender, shootOptions]);
-
   const noteListItems: JSX.Element[] = [
     N.AvgDamageUnbounded,
     N.Reroll,
@@ -53,7 +36,7 @@ const ShootSection: React.FC = () => {
   return (
     <Container style={{width: 'fit-content'}}>
       <Row>
-        Kill Team 2021 Edition, Shooting
+        Kill Team 2021 Edition, Shooting&nbsp;
         <a href='https://www.warhammer-community.com/wp-content/uploads/2022/08/ekD0GG2pTHlYba0G.pdf'>[Lite Rules]</a>
       </Row>
       <Row>
