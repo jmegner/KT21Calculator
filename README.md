@@ -1,5 +1,5 @@
 # Kill Team 2021 Calculator ("ktcalc")
-Calculator for helping analyze shooting and fighting attacks in Kill Team (2021 edition). Heavily inspired by [kt2.doit-cms.ru](http://kt2.doit-cms.ru/) and hoping to improve on it.
+Calculator for helping analyze shooting and fighting attacks in Kill Team (2021 edition). Heavily inspired by kt2.doit-cms.ru (now offline).
 
 Live at [jmegner.github.io/KT21Calculator](https://jmegner.github.io/KT21Calculator/).
 
@@ -10,14 +10,10 @@ Check out [Kill Team Resources](https://github.com/jmegner/KillTeamResources) re
 
 ## Future Work
 
-Features that would be nice for me to get around to implementing ...
-- mass analysis tab
-- have option for user to select a relevant operative profile (ex: Necron Immortal with Gauss Blaster and Starfire Core) instead of individually selecting parameters.
-- fight section
-  - transition from uninjured to injured (degraded WS) between rounds
-  - fnp: this one is messy, so is low priority
-- "daemonic energies", special rule on the balefire acolyte's dagger...Basically it does 2 mortal wounds per retained crit in melee
-- maybe if you use an "advanced" param and flip back to basic, still show the used advanced param.
+See [issues](https://github.com/jmegner/KT21Calculator/issues), but to comment on the big ones ...
+- I would love to do a [mass analysis tab](https://github.com/jmegner/KT21Calculator/issues/13), but it will take a lot of work.
+- [FNP for melee](https://github.com/jmegner/KT21Calculator/issues/3) is painful and I don't have any short term or medium term plans to do it.
+- Option for user to [select a relevant operative profile](https://github.com/jmegner/KT21Calculator/issues/14) (ex: Necron Immortal with Gauss Blaster) instead of individually selecting parameters.  Low priority because it is high effort and moderate benefit.
 
 ## Dev Stuff
 Basically, this is a React SPA web app mostly written in TypeScript.
@@ -26,22 +22,22 @@ I use GitHub Actions to test, build, and deploy the web app upon every git-push 
 I do my development in vscode.
 
 List of notable technologies/libs/whatever used...
-- [TypeScript](https://www.typescriptlang.org/)
-- [NodeJS and npm](https://nodejs.org/en/)
-- [React](https://reactjs.org/)
-- [React-Bootstrap](https://react-bootstrap.github.io/)
+- [TypeScript](https://www.typescriptlang.org/) as the primary programming language.
+- [NodeJS and npm](https://nodejs.org/en/) for toolchain and package management.
+- [React](https://reactjs.org/) for UI framework.
+- [React-Bootstrap](https://react-bootstrap.github.io/) for UI components.
 - [Create-React-App](https://create-react-app.dev/) (but heavily considering using [Vite](https://vitejs.dev/) or [Remix](https://remix.run/) in future).
 - [Jest](https://jestjs.io/) for general JS/TS testing.
 - [Testing Library](https://testing-library.com/docs/react-testing-library/intro) for react-oriented testing.
 - [GitHub Actions](https://docs.github.com/en/actions) for CI/CD.
-- [Visual Studio Code](https://code.visualstudio.com/) (vscode)
+- [Visual Studio Code](https://code.visualstudio.com/) (vscode) for the IDE.
 - For the Deadzone calculator, which is Monte Carlo, I got 10x speed from using wasm.
   - [Rust](https://www.rust-lang.org/tools/install).
   - [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/) to build Rust into wasm.
   - [wasm-bindgen](https://github.com/rustwasm/wasm-bindgen)
 
 Dev setup...
-- You'll need to install NodeJS+npm for building and running.
+- You'll need to install [NodeJS+npm](https://nodejs.org/en/) for building and running.
 - Install [rust](https://www.rust-lang.org/tools/install) and [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/) to build rust into wasm.
   - Might have to do `rustup target add wasm32-unknown-unknown` as well.
 - For debugging and otherwise having a nice experience, this project is set up for vscode as the IDE.
@@ -55,6 +51,10 @@ Dev setup...
 
 
 ## Thanks
+
+My thanks to [Daniel Espinoza-Hernandez](https://github.com/daespinozah) for UI improvements, like Accordions and SwipableViews.
+
+My thanks to [Dave/veddermatic](https://github.com/veddermatic) for the nav bar and icons at top.
 
 My thanks to Redux maintainer
 [Mark Erikson](https://github.com/markerikson)
