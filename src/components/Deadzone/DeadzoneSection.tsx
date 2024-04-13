@@ -1,7 +1,5 @@
 import {
   FC,
-  useMemo,
-  useState,
 } from 'react';
 import {
   Col,
@@ -12,23 +10,10 @@ import {
 import Credits from 'src/components/Credits';
 
 import * as Util from "src/Util";
-import { calcDmgProbs } from 'src/Deadzone/CalcEngine';
 import * as N from 'src/Notes';
 import {Situation} from './Situation';
-import ModelControls from './ModelControls';
-import ResultsDisplay from './ResultsDisplay';
-import OptionControls from './OptionControls';
-import { DeadzoneModel, DeadzoneOptions, } from "src/DiceSim/pkg/dice_sim";
 
 export const DeadzoneSection: FC = () => {
-  const [attacker, setAttacker] = useState(new DeadzoneModel());
-  const [defender, setDefender] = useState(new DeadzoneModel());
-  const [options, setOptions] = useState(new DeadzoneOptions());
-
-  const dmgToProb = useMemo(
-    () => calcDmgProbs(attacker, defender, options),
-    [attacker, defender, options]);
-
   const noteListItems: JSX.Element[] = [
     N.AvgDamageUnbounded,
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
