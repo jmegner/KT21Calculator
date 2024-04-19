@@ -132,8 +132,7 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
     </>;
 
   return (
-    <Container style={{width: '320px'}}>
-      <Row>Results</Row>
+    <Container className='p-2' style={{width: '320px'}}>
       <Row>
         <Col className='p-0'>
           <Accordion flush>

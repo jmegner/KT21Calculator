@@ -423,16 +423,24 @@ export function calcMultiRoundDamage(
 
   // eslint-disable-next-line
   for(let _ of range(numRounds - 1)) {
-    const dmgsPrevRounds = dmgsCumulative;
-    dmgsCumulative = new Map<number,number>();
-
-    for(let [dmgPrevRounds, probPrevRounds] of dmgsPrevRounds) {
-      for(let [dmgSingleRound, probSingleRound] of dmgsSingleRound) {
-        const dmgCumulative = dmgPrevRounds + dmgSingleRound;
-        addToMapValue(dmgsCumulative, dmgCumulative, probPrevRounds * probSingleRound);
-      }
-    }
+    dmgsCumulative = combineDmgProbs(dmgsCumulative, dmgsSingleRound);
   }
 
   return dmgsCumulative;
+}
+
+export function combineDmgProbs(
+  dmgToProb1: Map<number,number>,
+  dmgToProb2: Map<number,number>,
+): Map<number, number>
+{
+  const dmgToProbCombined = new Map<number,number>();
+
+  for(let [dmg1, prob1] of dmgToProb1) {
+    for(let [dmg2, prob2] of dmgToProb2) {
+      addToMapValue(dmgToProbCombined, dmg1 + dmg2, prob1 * prob2);
+    }
+  }
+
+  return dmgToProbCombined;
 }

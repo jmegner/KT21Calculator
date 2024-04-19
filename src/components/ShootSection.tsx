@@ -15,6 +15,7 @@ import ShootOptions from 'src/ShootOptions';
 import { calcDmgProbs } from 'src/CalcEngineShoot';
 import { SaveRange } from 'src/KtMisc';
 import ShootResultsDisplay from './ShootResultsDisplay';
+import { combineDmgProbs } from 'src/CalcEngineCommon';
 
 const ShootSection: React.FC = () => {
   const [attacker1, setAttacker1] = React.useState(new Model());
@@ -35,6 +36,8 @@ const ShootSection: React.FC = () => {
       [save, calcDmgProbs(attacker2, defender2.withProp('diceStat', save), shootOptions2)])),
     [attacker2, defender2, shootOptions2]);
 
+  const saveToDmgToProbCombined = new Map<number,Map<number,number>>(SaveRange.map(save =>
+    [save, combineDmgProbs(saveToDmgToProb1.get(save)!, saveToDmgToProb2.get(save)!)]));
 
   const noteListItems: JSX.Element[] = [
     N.AvgDamageUnbounded,
@@ -89,10 +92,14 @@ const ShootSection: React.FC = () => {
             />
         </Col>
       </Row>
-      <Row className='border p-0'>
-        <div>Combination Of Situation 1 & 2<br/></div>
-        <ShootResultsDisplay saveToDmgToProb={saveToDmgToProb1} defender={defender1} />
-      </Row>
+      <div className='border p-0'>
+        <Row className={Util.centerHoriz}>
+          Situation 1&2 Combo using W={defender1.wounds} and Sv={defender1.diceStat}+ from Situation1
+        </Row>
+        <Row>
+          <ShootResultsDisplay saveToDmgToProb={saveToDmgToProbCombined} defender={defender1} />
+        </Row>
+      </div>
       <Row>
         <Col className={Util.centerHoriz + ' border'} style={{fontSize: '11px'}}>
           <Credits/>
