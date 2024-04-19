@@ -13,17 +13,14 @@ import ShootResultsDisplay from 'src/components/ShootResultsDisplay';
 
 import Model from 'src/Model';
 import * as Util from "src/Util";
-import { calcDmgProbs } from 'src/CalcEngineShoot';
-import { SaveRange } from 'src/KtMisc';
-import { Accepter } from 'src/Util';
 
 export interface Props {
   attacker: Model;
-  setAttacker: Accepter<Model>;
+  setAttacker: Util.Accepter<Model>;
   defender: Model;
-  setDefender: Accepter<Model>;
+  setDefender: Util.Accepter<Model>;
   shootOptions: ShootOptions;
-  setShootOptions: Accepter<ShootOptions>;
+  setShootOptions: Util.Accepter<ShootOptions>;
   saveToDmgToProb: Map<number,Map<number,number>>;
 }
 

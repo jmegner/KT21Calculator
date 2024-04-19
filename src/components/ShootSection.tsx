@@ -89,7 +89,8 @@ const ShootSection: React.FC = () => {
             />
         </Col>
       </Row>
-      <Row>
+      <Row className='border p-0'>
+        <div>Combination Of Situation 1 & 2<br/></div>
         <ShootResultsDisplay saveToDmgToProb={saveToDmgToProb1} defender={defender1} />
       </Row>
       <Row>
