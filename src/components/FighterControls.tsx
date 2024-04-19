@@ -6,7 +6,7 @@ import {
   Row,
 } from 'react-bootstrap';
 
-import IncDecSelect, {Props as IncProps, propsToRow, propsToRows} from 'src/components/IncDecSelect';
+import {Props as IncProps, propsToRows} from 'src/components/IncDecSelect';
 import {
   Accepter,
   boolToCheckX,

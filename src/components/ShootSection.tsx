@@ -10,8 +10,32 @@ import Credits from 'src/components/Credits';
 import * as Util from "src/Util";
 import * as N from 'src/Notes';
 import { ShootSituation } from './ShootSituation';
+import Model from 'src/Model';
+import ShootOptions from 'src/ShootOptions';
+import { calcDmgProbs } from 'src/CalcEngineShoot';
+import { SaveRange } from 'src/KtMisc';
+import ShootResultsDisplay from './ShootResultsDisplay';
 
 const ShootSection: React.FC = () => {
+  const [attacker1, setAttacker1] = React.useState(new Model());
+  const [defender1, setDefender1] = React.useState(Model.basicDefender());
+  const [shootOptions1, setShootOptions1] = React.useState(new ShootOptions());
+
+  const saveToDmgToProb1 = React.useMemo(
+    () => new Map<number,Map<number,number>>(SaveRange.map(save =>
+      [save, calcDmgProbs(attacker1, defender1.withProp('diceStat', save), shootOptions1)])),
+    [attacker1, defender1, shootOptions1]);
+
+  const [attacker2, setAttacker2] = React.useState(new Model());
+  const [defender2, setDefender2] = React.useState(Model.basicDefender());
+  const [shootOptions2, setShootOptions2] = React.useState(new ShootOptions());
+
+  const saveToDmgToProb2 = React.useMemo(
+    () => new Map<number,Map<number,number>>(SaveRange.map(save =>
+      [save, calcDmgProbs(attacker2, defender2.withProp('diceStat', save), shootOptions2)])),
+    [attacker2, defender2, shootOptions2]);
+
+
   const noteListItems: JSX.Element[] = [
     N.AvgDamageUnbounded,
     N.Reroll,
@@ -42,12 +66,31 @@ const ShootSection: React.FC = () => {
       <Row>
         <Col className='border p-0'>
           Situation1
-          <ShootSituation/>
+          <ShootSituation
+            attacker={attacker1}
+            setAttacker={setAttacker1}
+            defender={defender1}
+            setDefender={setDefender1}
+            shootOptions={shootOptions1}
+            setShootOptions={setShootOptions1}
+            saveToDmgToProb={saveToDmgToProb1}
+            />
         </Col>
         <Col className='border p-0'>
           Situation2
-          <ShootSituation/>
+          <ShootSituation
+            attacker={attacker2}
+            setAttacker={setAttacker2}
+            defender={defender2}
+            setDefender={setDefender2}
+            shootOptions={shootOptions2}
+            setShootOptions={setShootOptions2}
+            saveToDmgToProb={saveToDmgToProb2}
+            />
         </Col>
+      </Row>
+      <Row>
+        <ShootResultsDisplay saveToDmgToProb={saveToDmgToProb1} defender={defender1} />
       </Row>
       <Row>
         <Col className={Util.centerHoriz + ' border'} style={{fontSize: '11px'}}>

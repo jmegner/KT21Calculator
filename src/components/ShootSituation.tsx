@@ -15,36 +15,38 @@ import Model from 'src/Model';
 import * as Util from "src/Util";
 import { calcDmgProbs } from 'src/CalcEngineShoot';
 import { SaveRange } from 'src/KtMisc';
+import { Accepter } from 'src/Util';
 
-export const ShootSituation: React.FC = () => {
-  const [attacker, setAttacker] = React.useState(new Model());
-  const [defender, setDefender] = React.useState(Model.basicDefender());
-  const [shootOptions, setShootOptions] = React.useState(new ShootOptions());
+export interface Props {
+  attacker: Model;
+  setAttacker: Accepter<Model>;
+  defender: Model;
+  setDefender: Accepter<Model>;
+  shootOptions: ShootOptions;
+  setShootOptions: Accepter<ShootOptions>;
+  saveToDmgToProb: Map<number,Map<number,number>>;
+}
 
-  const saveToDmgToProb = React.useMemo(
-    () => new Map<number,Map<number,number>>(SaveRange.map(save =>
-      [save, calcDmgProbs(attacker, defender.withProp('diceStat', save), shootOptions)])),
-    [attacker, defender, shootOptions]);
-
+export const ShootSituation: React.FC<Props> = (props: Props) => {
   return (
     <Container style={{width: 'fit-content'}}>
       <Row>
         <Col className={Util.centerHoriz + ' p-0'} xs='auto'>
           <Container>
             <Row className='border'>
-              <AttackerControls attacker={attacker} changeHandler={setAttacker} />
+              <AttackerControls attacker={props.attacker} changeHandler={props.setAttacker} />
             </Row>
             <Row className='border'>
-              <ShootOptionControls shootOptions={shootOptions} changeHandler={setShootOptions} />
+              <ShootOptionControls shootOptions={props.shootOptions} changeHandler={props.setShootOptions} />
             </Row>
           </Container>
         </Col>
         <Col className={Util.centerHoriz + ' border' } xs='auto'>
-          <DefenderControls defender={defender} changeHandler={setDefender} />
+          <DefenderControls defender={props.defender} changeHandler={props.setDefender} />
         </Col>
       </Row>
       <Row className='border'>
-        <ShootResultsDisplay saveToDmgToProb={saveToDmgToProb} defender={defender} />
+        <ShootResultsDisplay saveToDmgToProb={props.saveToDmgToProb} defender={props.defender} />
       </Row>
     </Container>
   );
