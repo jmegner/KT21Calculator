@@ -9,7 +9,7 @@ import 'src/components/Accordion.css'
 
 import Model from 'src/Model';
 import { toAscendingMap, weightedAverage, killProb, standardDeviation, } from 'src/Util';
-import { MaxWounds, WoundRange } from 'src/KtMisc';
+import { range } from 'lodash';
 
 export interface Props {
   defender: Model;
@@ -21,9 +21,10 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
   const toPercentString = (val: number) => (val * 100).toFixed(digitsPastDecimal);
   const saves = [...props.saveToDmgToProb.keys()].sort();
 
+  const maxDmg = Math.max(...props.saveToDmgToProb.values().next().value.keys());
   const killChanceTableBody: JSX.Element[] = [];
 
-  for(const wounds of WoundRange) {
+  for(const wounds of range(1, maxDmg + 1)) {
     const killChances: number[] = [];
 
     for(const save of saves) {
@@ -94,29 +95,22 @@ const ShootResultsDisplay: React.FC<Props> = (props: Props) => {
   const killChance = killProb(chosenSaveDmgToProb, props.defender.wounds);
   let ascendingDmgToProb = toAscendingMap(chosenSaveDmgToProb);
   let probCumulative = 0;
-  let wantMoreDmgRows = true;
 
   for(const [dmg, prob] of ascendingDmgToProb) {
-     avgDmgUnbounded += dmg * prob;
+    avgDmgUnbounded += dmg * prob;
 
-    if (wantMoreDmgRows) {
-      const probAtLeastThisMuchDmg = 1 - probCumulative;
-      probCumulative += prob;
-      const probAtMostThisMuchDmg = probCumulative;
+    const probAtLeastThisMuchDmg = 1 - probCumulative;
+    probCumulative += prob;
+    const probAtMostThisMuchDmg = probCumulative;
 
-      dmgProbTableBody.push(
-        <tr key={dmg}>
-          <td>{dmg}</td>
-          <td>{toPercentString(probAtLeastThisMuchDmg)}</td>
-          <td>{toPercentString(probAtMostThisMuchDmg)}</td>
-          <td>{toPercentString(prob)}</td>
-        </tr>
-      );
-
-      if (dmg >= MaxWounds) {
-        wantMoreDmgRows = false;
-      }
-    }
+    dmgProbTableBody.push(
+      <tr key={dmg}>
+        <td>{dmg}</td>
+        <td>{toPercentString(probAtLeastThisMuchDmg)}</td>
+        <td>{toPercentString(probAtMostThisMuchDmg)}</td>
+        <td>{toPercentString(prob)}</td>
+      </tr>
+    );
   }
 
   const dmgProbTable =
