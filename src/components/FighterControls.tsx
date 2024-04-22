@@ -6,15 +6,22 @@ import {
   Row,
 } from 'react-bootstrap';
 
-import {Props as IncProps, propsToRows} from 'src/components/IncDecSelect';
+import Ability, {
+  eliteAbilities,
+  mutuallyExclusiveFightAbilities as nicheAbilities,
+  rerollAbilities as rerolls
+} from 'src/Ability';
+import Model from 'src/Model';
+import * as N from 'src/Notes';
 import {
   Accepter,
   boolToCheckX,
   extractFromSet,
   incDecPropsHasNondefaultSelectedValue,
-  makePropChangeHandlers,
+  makeNumChangeHandler,
   makeSetChangeHandler,
   makeSetChangeHandlerForSingle,
+  makeTextChangeHandler,
   preX,
   requiredAndOptionalItemsToTwoCols,
   rollSpan,
@@ -22,13 +29,7 @@ import {
   xAndCheck,
   xspan,
 } from 'src/Util';
-import Model from 'src/Model';
-import Ability, {
-  eliteAbilities,
-  mutuallyExclusiveFightAbilities as nicheAbilities,
-  rerollAbilities as rerolls
-} from 'src/Ability';
-import * as N from 'src/Notes';
+import { Props as IncProps, propsToRows } from 'src/components/IncDecSelect';
 import { useCheckboxAndVariable } from 'src/hooks/useCheckboxAndVariable';
 
 
@@ -40,8 +41,8 @@ export interface Props {
 
 const FighterControls: React.FC<Props> = (props: Props) => {
   const atk = props.attacker;
-  const [textHandler, numHandler, boolHandler]
-    = makePropChangeHandlers(atk, props.changeHandler);
+  const textHandler = makeTextChangeHandler(atk, props.changeHandler);
+  const numHandler = makeNumChangeHandler(atk, props.changeHandler);
   const [advancedCheckbox, wantShowAdvanced] = useCheckboxAndVariable('Advanced');
 
   function subsetHandler(subset: Iterable<Ability>) {
@@ -87,7 +88,7 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps(N.AutoCrits,        atk.autoCrits,         xspan(1, 9),      numHandler('autoCrits')),
     new IncProps(N.NormsToCrits,     atk.normsToCrits,      xspan(1, 9),      numHandler('normsToCrits')),
     new IncProps(N.FailsToNorms,     atk.failsToNorms,      xspan(1, 9),      numHandler('failsToNorms')),
-    new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit),  xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
+    new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit), xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
     new IncProps('ElitePoints*',     eliteAbility,          eliteAbilities,   subsetHandler(eliteAbilities)),
     new IncProps(N.Duelist,          toYN(Ability.Duelist), xAndCheck,        singleHandler(Ability.Duelist)),
     new IncProps(N.JustAScratch,     toYN(Ability.JustAScratch), xAndCheck,   singleHandler(Ability.JustAScratch)),

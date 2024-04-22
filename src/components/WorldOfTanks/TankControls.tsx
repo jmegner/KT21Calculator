@@ -1,49 +1,57 @@
 import React from 'react';
+import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 
-import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
-import * as Util from 'src/Util';
-import { boolToCheckX as toCheckX } from 'src/Util';
-import Tank from 'src/WorldOfTanks/Tank';
-import {rerolls} from 'src/WorldOfTanks/Reroll';
 import * as N from 'src/Notes';
+import {
+  Accepter,
+  makeBoolChangeHandler,
+  makeNumChangeHandler,
+  makeTextChangeHandler,
+  span,
+  boolToCheckX as toCheckX,
+  xAndCheck,
+} from 'src/Util';
+import { rerolls } from 'src/WorldOfTanks/Reroll';
+import Tank from 'src/WorldOfTanks/Tank';
+import IncDecSelect, { Props as IncProps } from 'src/components/IncDecSelect';
 
 
 export interface Props {
   tank: Tank;
   isAttacker: boolean;
-  changeHandler: Util.Accepter<Tank>;
+  changeHandler: Accepter<Tank>;
 }
 
 const TankControls: React.FC<Props> = (props: Props) => {
   const tank = props.tank;
-  const [textHandler, numHandler, boolHandler]
-    = Util.makePropChangeHandlers(tank, props.changeHandler);
-  const diceSpan = Util.span(props.isAttacker ? 1 : 0, 10);
+  const textHandler = makeTextChangeHandler(tank, props.changeHandler);
+  const numHandler = makeNumChangeHandler(tank, props.changeHandler);
+  const boolHandler = makeBoolChangeHandler(tank, props.changeHandler);
+  const diceSpan = span(props.isAttacker ? 1 : 0, 10);
   const hitsToCritsLabel = `HitsToCrits (ex: ${props.isAttacker ? 'BigGun' : 'Spall Liner'})`;
 
   let params: IncProps[] = [
     //           id/label,         selectedValue,                   values,           valueChangeHandler
     new IncProps('Dice',           tank.dice,                       diceSpan,         numHandler('dice')),
     new IncProps('Reroll',         tank.reroll,                     rerolls,          textHandler('reroll')),
-    new IncProps(hitsToCritsLabel, tank.hitsToCrits,                Util.span(0, 3), numHandler('hitsToCrits')),
+    new IncProps(hitsToCritsLabel, tank.hitsToCrits,                span(0, 3), numHandler('hitsToCrits')),
   ];
 
   if(props.isAttacker) {
     params.push(...[
       //           id/label,         selectedValue,                   values,           valueChangeHandler
-      new IncProps('CritsToHits (ex: ArrowShot)', tank.critsToHits,   Util.span(0, 3),  numHandler('critsToHits')),
-      new IncProps(N.Deadeye,        toCheckX(tank.deadeye),          Util.xAndCheck,   boolHandler('deadeye')),
-      new IncProps(N.HighExplosive,  toCheckX(tank.highExplosive),    Util.xAndCheck,   boolHandler('highExplosive')),
-      new IncProps(N.TargetHullDown, toCheckX(tank.targetIsHullDown), Util.xAndCheck,   boolHandler('targetIsHullDown')),
+      new IncProps('CritsToHits (ex: ArrowShot)', tank.critsToHits,   span(0, 3),  numHandler('critsToHits')),
+      new IncProps(N.Deadeye,        toCheckX(tank.deadeye),          xAndCheck,   boolHandler('deadeye')),
+      new IncProps(N.HighExplosive,  toCheckX(tank.highExplosive),    xAndCheck,   boolHandler('highExplosive')),
+      new IncProps(N.TargetHullDown, toCheckX(tank.targetIsHullDown), xAndCheck,   boolHandler('targetIsHullDown')),
     ]);
   }
   else {
     params.push(...[
       //           id/label,         selectedValue,                   values,           valueChangeHandler
-      new IncProps('HP',             tank.hp,                         Util.span(1,11),  numHandler('hp')),
+      new IncProps('HP',             tank.hp,                         span(1,11),  numHandler('hp')),
     ]);
 
   }

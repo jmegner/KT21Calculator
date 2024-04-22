@@ -3,15 +3,16 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import IncDecSelect, {Props as IncProps, propsToRows} from 'src/components/IncDecSelect';
+import {Props as IncProps, propsToRows} from 'src/components/IncDecSelect';
 import {
   Accepter,
   boolToCheckX,
   extractFromSet,
   incDecPropsHasNondefaultSelectedValue,
-  makePropChangeHandlers,
+  makeNumChangeHandler,
   makeSetChangeHandler,
   makeSetChangeHandlerForSingle,
+  makeTextChangeHandler,
   preX,
   requiredAndOptionalItemsToTwoCols,
   rollSpan,
@@ -35,8 +36,8 @@ export interface Props {
 
 const AttackerControls: React.FC<Props> = (props: Props) => {
   const atk = props.attacker;
-  const [textHandler, numHandler, boolHandler]
-    = makePropChangeHandlers(atk, props.changeHandler);
+  const textHandler = makeTextChangeHandler(atk, props.changeHandler);
+  const numHandler = makeNumChangeHandler(atk, props.changeHandler);
   const [advancedCheckbox, wantShowAdvanced] = useCheckboxAndVariable('Advanced');
   //const noCoverChoices = Object.values(NoCoverType);
 

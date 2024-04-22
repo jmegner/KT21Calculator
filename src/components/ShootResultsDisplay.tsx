@@ -8,7 +8,12 @@ import Accordion from 'react-bootstrap/Accordion';
 import 'src/components/Accordion.css'
 
 import Model from 'src/Model';
-import { toAscendingMap, weightedAverage, killProb, standardDeviation, } from 'src/Util';
+import {
+  toAscendingMap,
+  weightedAverage,
+  killProb,
+  standardDeviation,
+} from 'src/Util';
 import { range } from 'lodash';
 
 export interface Props {

@@ -4,28 +4,31 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
-import * as Util from 'src/Util';
+import {
+  Accepter,
+  makeNumChangeHandler,
+  span,
+} from 'src/Util';
 import { DeadzoneModel, } from "src/DiceSim/pkg/dice_sim";
 
 
 export interface Props {
   model: DeadzoneModel;
   isAttacker: boolean;
-  changeHandler: Util.Accepter<DeadzoneModel>;
+  changeHandler: Accepter<DeadzoneModel>;
 }
 
 const ModelControls: React.FC<Props> = (props: Props) => {
   const model = props.model;
-  const [textHandler, numHandler, boolHandler]
-    = Util.makePropChangeHandlers(model, props.changeHandler);
-  const diceSpan = Util.span(props.isAttacker ? 1 : 0, 9);
-  const intSpan = Util.span(0, 9);
+  const numHandler = makeNumChangeHandler(model, props.changeHandler);
+  const diceSpan = span(props.isAttacker ? 1 : 0, 9);
+  const intSpan = span(0, 9);
 
   let params: IncProps[] = [
     //           id/label,            selectedValue,        values,               valueChangeHandler
-    new IncProps('HP',                model.hp,             Util.span(1,10),      numHandler('hp')),
+    new IncProps('HP',                model.hp,             span(1,10),      numHandler('hp')),
     new IncProps('Dice',              model.numDice,        diceSpan,             numHandler('numDice')),
-    new IncProps('Stat(RA/FI/SV)',    model.diceStat + "+", Util.span(1, 8, '+'), numHandler('diceStat')),
+    new IncProps('Stat(RA/FI/SV)',    model.diceStat + "+", span(1, 8, '+'), numHandler('diceStat')),
     new IncProps('Rerolls',           model.numRerolls,     intSpan,              numHandler('numRerolls')),
     new IncProps('Toxic/Dismantle',   model.toxicDmg,       intSpan,              numHandler('toxicDmg')),
     new IncProps('AP',                model.ap,             intSpan,              numHandler('ap')),

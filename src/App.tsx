@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
-import { useSearchParams } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
+import { useSearchParams } from 'react-router-dom';
 
-import * as Util from 'src/Util';
 import { CalculatorViewChoice } from 'src/CalculatorViewChoice';
+import { centerHoriz, } from 'src/Util';
 import AppHeader from "src/components/AppHeader";
-import ShootSection from 'src/components/ShootSection';
+import { DeadzoneSection } from 'src/components/Deadzone/DeadzoneSection';
 import FightSection from 'src/components/FightSection';
 import ShootMassAnalysisSection from 'src/components/ShootMassAnalysisSection';
+import ShootSection from 'src/components/ShootSection';
 import WorldOfTanksSection from 'src/components/WorldOfTanks/WorldOfTanksSection';
-import { DeadzoneSection } from 'src/components/Deadzone/DeadzoneSection';
 
 const _viewToAdditionalTexts: Map<CalculatorViewChoice, string[]> = new Map([
   [CalculatorViewChoice.KtShoot, ['shoot']],
@@ -41,7 +41,7 @@ function fallbackRender({ error, resetErrorBoundary }: { error: Error, resetErro
 
 const App = () => {
   const [currentView, setCurrentView] = useState<CalculatorViewChoice>(CalculatorViewChoice.KtShoot);
-  const [urlParams, setUrlParams] = useSearchParams(); // eslint-disable-line no-unused-vars
+  const [urlParams, /*setUrlParams*/] = useSearchParams();
 
   useEffect( () => {
     const viewText = urlParams.get('view')
@@ -72,7 +72,7 @@ const App = () => {
       <AppHeader navCallback={setCurrentView} currentView={currentView} />
         <Container>
           <Row>
-            <Col className={Util.centerHoriz + ' p-0'} style={{fontSize: '11px'}}>
+            <Col className={centerHoriz + ' p-0'} style={{fontSize: '11px'}}>
               Starred (*) items have explanations in hovertext and 'Notes' at bottom.
             </Col>
           </Row>

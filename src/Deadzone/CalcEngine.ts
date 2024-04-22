@@ -1,4 +1,3 @@
-import { randomInt } from "mathjs";
 import { executeAndMeasureMs, } from 'src/Util';
 import { DeadzoneModel, DeadzoneOptions, deadzoneCalcDmgProbs } from "src/DiceSim/pkg/dice_sim";
 

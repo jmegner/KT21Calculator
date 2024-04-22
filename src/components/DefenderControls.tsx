@@ -3,7 +3,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import IncDecSelect, {Props as IncProps, propsToRows} from 'src/components/IncDecSelect';
+import {Props as IncProps, propsToRows} from 'src/components/IncDecSelect';
 import Model from 'src/Model';
 import Ability, {rerollAbilities as rerolls} from 'src/Ability';
 import * as N from 'src/Notes';
@@ -12,12 +12,11 @@ import {
   Accepter,
   boolToCheckX,
   incDecPropsHasNondefaultSelectedValue,
-  makePropChangeHandlers,
+  makeNumChangeHandler,
   makeSetChangeHandlerForSingle,
+  makeTextChangeHandler,
   preX,
-  requiredAndOptionalItemsToTwoCols,
   span,
-  thickX,
   withPlus,
   xAndCheck,
   xrollSpan,
@@ -33,9 +32,8 @@ export interface Props {
 
 const DefenderControls: React.FC<Props> = (props: Props) => {
   const def = props.defender;
-  const [textHandler, numHandler, /*boolHandler*/]
-    = makePropChangeHandlers(def, props.changeHandler);
-  //const [wantShowAdvanced, setWantShowAdvanced] = React.useState(false);
+  const textHandler = makeTextChangeHandler(props.defender, props.changeHandler);
+  const numHandler = makeNumChangeHandler(props.defender, props.changeHandler);
   const [advancedCheckbox, wantShowAdvanced] = useCheckboxAndVariable('Advanced');
 
   function singleHandler(ability: Ability) {

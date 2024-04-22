@@ -1,18 +1,19 @@
 import React from 'react';
+import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 
-import IncDecSelect, {Props as IncProps, propsToRows} from 'src/components/IncDecSelect';
+import { Props as IncProps, propsToRows } from 'src/components/IncDecSelect';
 import { DeadzoneOptions } from "src/DiceSim/pkg/dice_sim";
 import {
   Accepter,
-  makePropChangeHandlers,
+  boolToCheckX,
+  makeBoolChangeHandler,
+  makeIncDecPropsFromLookup,
+  makeNumChangeHandler,
+  requiredAndOptionalItemsToTwoCols,
   span,
   xAndCheck,
-  boolToCheckX,
-  makeIncDecPropsFromLookup,
-  requiredAndOptionalItemsToTwoCols,
 } from 'src/Util';
 
 export interface Props {
@@ -22,15 +23,14 @@ export interface Props {
 
 const OptionControls: React.FC<Props> = (props: Props) => {
   const opts = props.options;
-  // eslint-disable-next-line
-  const [textHandler, numHandler, boolHandler]
-    = makePropChangeHandlers(opts, props.changeHandler);
+  const numHandler = makeNumChangeHandler(opts, props.changeHandler);
+  const boolHandler = makeBoolChangeHandler(opts, props.changeHandler);
 
   const simCountToDisplayTexts = new Map<number,string>([
     [1, '1'],
     [1e2, '100'],
     [1e3, '1K'],
-    [1e4, '10K, recommended'],
+    [1e4, '10K, okay'],
     [1e5, '100K, pretty accurate'],
     [1e6, '1M, excessive'],
   ]);

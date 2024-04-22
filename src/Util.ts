@@ -133,6 +133,14 @@ export function makePropChangeHandlers<T>(
   ];
 }
 
+export function makeTextChangeHandler<T>(
+  obj: T,
+  objChangeHandler: (t: T) => void,
+) : (propName: keyof T) => Accepter<string>
+{
+  return makePropChangeHandler(obj, objChangeHandler);
+}
+
 export function makeNumChangeHandler<T>(
   obj: T,
   objChangeHandler: (t: T) => void,

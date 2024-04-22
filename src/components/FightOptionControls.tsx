@@ -5,15 +5,20 @@ import {
   Row,
 } from 'react-bootstrap';
 
-import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
-import * as Util from 'src/Util';
-import FightStrategy from 'src/FightStrategy';
 import FightOptions from 'src/FightOptions';
+import FightStrategy from 'src/FightStrategy';
+import {
+  Accepter,
+  makeNumChangeHandler,
+  makeTextChangeHandler,
+  span,
+} from 'src/Util';
+import IncDecSelect, { Props as IncProps } from 'src/components/IncDecSelect';
 
 
 export interface Props {
   fightOptions: FightOptions;
-  changeHandler: Util.Accepter<FightOptions>;
+  changeHandler: Accepter<FightOptions>;
 }
 
 const FightOptionControls: React.FC<Props> = (props: Props) => {
@@ -23,15 +28,15 @@ const FightOptionControls: React.FC<Props> = (props: Props) => {
   const numRoundsId = 'Rounds';
   const strategies = Object.values(FightStrategy);
   const opts = props.fightOptions;
-  const [textHandler, numHandler, ]
-    = Util.makePropChangeHandlers(opts, props.changeHandler);
+  const textHandler = makeTextChangeHandler(opts, props.changeHandler);
+  const numHandler = makeNumChangeHandler(opts, props.changeHandler);
 
   const params: IncProps[] = [
     //           id/label,           selectedValue,         values,          valueChangeHandler
     new IncProps(strategyFighterAId, opts.strategyFighterA, strategies,      textHandler('strategyFighterA')),
     new IncProps(strategyFighterBId, opts.strategyFighterB, strategies,      textHandler('strategyFighterB')),
     new IncProps(firstFighterId,     opts.firstFighter,     ['A', 'B'],      textHandler('firstFighter')),
-    new IncProps(numRoundsId,        opts.numRounds,        Util.span(1, 3), numHandler('numRounds')),
+    new IncProps(numRoundsId,        opts.numRounds,        span(1, 3),      numHandler('numRounds')),
   ];
 
   const paramCols = params.map(p =>
