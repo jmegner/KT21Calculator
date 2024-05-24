@@ -94,7 +94,7 @@ const ShootSection: React.FC = () => {
       </Row>
       <div className='border p-0'>
         <Row className={Util.centerHoriz}>
-          Situation 1&2 Combo using W={defender1.wounds} and Sv={defender1.diceStat}+ from Situation1
+          Situation 1&2 Combo using W={defender1.wounds} from Situation1
         </Row>
         <Row>
           <ShootResultsDisplay saveToDmgToProb={saveToDmgToProbCombined} defender={defender1} />
