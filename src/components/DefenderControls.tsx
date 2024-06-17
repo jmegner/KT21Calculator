@@ -7,7 +7,7 @@ import {Props as IncProps, propsToRows} from 'src/components/IncDecSelect';
 import Model from 'src/Model';
 import Ability, {rerollAbilities as rerolls} from 'src/Ability';
 import * as N from 'src/Notes';
-import { SaveRange } from 'src/KtMisc';
+import { MaxWounds, SaveRange } from 'src/KtMisc';
 import {
   Accepter,
   boolToCheckX,
@@ -53,7 +53,7 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
     //           id,               selectedValue,            values,           valueChangeHandler
     new IncProps('Defense',        def.numDice,              span(0, 4),       numHandler('numDice')),
     new IncProps('Save',           def.diceStat + '+',       withPlus(SaveRange), numHandler('diceStat')),
-    new IncProps('Wounds',         def.wounds,               span(1, 20),      numHandler('wounds')),
+    new IncProps('Wounds',         def.wounds,               span(1, MaxWounds),      numHandler('wounds')),
     new IncProps(N.InvulnSave,     def.invulnSave + '+',     xrollSpan,        numHandler('invulnSave')),
     new IncProps(N.CoverNormSaves, def.autoNorms,            xspan(1, 9),      numHandler('autoNorms')),
   ];

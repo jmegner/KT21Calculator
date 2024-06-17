@@ -11,6 +11,7 @@ import Ability, {
   mutuallyExclusiveFightAbilities as nicheAbilities,
   rerollAbilities as rerolls
 } from 'src/Ability';
+import { MaxWounds } from 'src/KtMisc';
 import Model from 'src/Model';
 import * as N from 'src/Notes';
 import {
@@ -71,7 +72,7 @@ const FighterControls: React.FC<Props> = (props: Props) => {
 
   const basicParams: IncProps[] = [
     //           id/label,           selectedValue,         values,           valueChangeHandler
-    new IncProps('Wounds',           atk.wounds,            span(1, 19),      numHandler('wounds')),
+    new IncProps('Wounds',           atk.wounds,            span(1, MaxWounds),      numHandler('wounds')),
     new IncProps('Attacks',          atk.numDice,           span(1, 8),       numHandler('numDice')),
     new IncProps('WS',               atk.diceStat + '+',    rollSpan,         numHandler('diceStat')),
     new IncProps('Normal Dmg',       atk.normDmg,           span(1, 9),       numHandler('normDmg')),
