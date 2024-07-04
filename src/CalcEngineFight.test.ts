@@ -152,7 +152,7 @@ describe(calcDieChoice.name + ', common & strike/parry', () => {
   });
   it('#2b: if enemy already stunned, then cannot stun again', () => {
     const chooser = newFighterState(99, 99, 99, FightStrategy.Parry, new Set<Ability>([Ability.Stun]));
-    chooser.hasDoneStun = true;
+    chooser.hasCritStruck = true;
     const enemy = newFighterState(0, 99, 20);
     expect(calcDieChoice(chooser, enemy)).toBe(FightChoice.NormParry);
   });
@@ -243,7 +243,7 @@ describe(resolveDieChoice.name + ': basic, stun, storm shield, hammerhand, duell
   it('CritStrike+stun, already stunned', () => {
     for(let stormShieldMaybe of [Ability.None, Ability.StormShield]) { // storm shield shouldn't matter
       const chooser = makeChooser(Ability.Stun, stormShieldMaybe);
-      chooser.hasDoneStun = true;
+      chooser.hasCritStruck = true;
       const enemy = makeEnemy(chooser.profile.critDmg + finalWounds);
 
       resolveDieChoice(FightChoice.CritStrike, chooser, enemy);

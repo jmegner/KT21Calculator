@@ -3,6 +3,7 @@ import Model from "src/Model";
 import FightStrategy from 'src/FightStrategy';
 import FightChoice from "src/FightChoice";
 import Ability from "./Ability";
+import { MinCritDmgAfterDurable } from "./KtMisc";
 
 export default class FighterState {
   public profile: Model;
@@ -10,9 +11,8 @@ export default class FighterState {
   public norms: number;
   public strategy: FightStrategy;
   public currentWounds: number;
-  public hasDoneStun: boolean;
   public hasStruck: boolean;
-  public hasDoneMurderousEntrance: boolean;
+  public hasCritStruck: boolean;
 
   public constructor(
     profile: Model,
@@ -20,18 +20,16 @@ export default class FighterState {
     norms: number,
     strategy: FightStrategy,
     currentWounds: number = -1,
-    hasDoneStun: boolean = false,
-    hasDoneHammerhand: boolean = false,
-    hasDoneMurderousEntrance: boolean = false,
+    hasStruck: boolean = false,
+    hasCritStruck: boolean = false,
   ) {
     this.profile = profile;
     this.crits = crits;
     this.norms = norms;
     this.strategy = strategy;
     this.currentWounds = currentWounds > 0 ? currentWounds : this.profile.wounds;
-    this.hasDoneStun = hasDoneStun;
-    this.hasStruck = hasDoneHammerhand;
-    this.hasDoneMurderousEntrance = hasDoneMurderousEntrance;
+    this.hasStruck = hasStruck;
+    this.hasCritStruck = hasCritStruck;
   }
 
   public successes() {
@@ -40,6 +38,12 @@ export default class FighterState {
 
   public applyDmg(dmg: number) {
     this.currentWounds = Math.max(0, this.currentWounds - dmg);
+  }
+
+  public applyDmgFromStrike(dmg: number, atker: Model, isCrit: boolean) {
+    if (isCrit) {
+      this.hasCritStruck = true;
+    }
   }
 
   public isFullHealth() {
@@ -66,13 +70,26 @@ export default class FighterState {
     return this.possibleDmg(this.crits, this.norms);
   }
 
-  public nextDmg(): number {
-    let dmg = this.hammerhandDmg();
+  public nextCritDmgWithDurableAndWithoutHammerhand(enemy: FighterState): number {
+    let critDmg = this.profile.critDmg;
+
+    if(enemy.profile.abilities.has(Ability.Durable)
+      && !this.hasCritStruck
+      && this.profile.critDmg > MinCritDmgAfterDurable
+    ) {
+      critDmg--;
+    }
+
+    return critDmg;
+  }
+
+  public nextDmg(enemy: FighterState): number {
+    let dmg = 0;
 
     if (this.crits > 0) {
-      dmg += this.profile.critDmg;
+      dmg += this.nextCritDmgWithDurableAndWithoutHammerhand(enemy);
 
-      if (this.profile.has(Ability.MurderousEntrance) && !this.hasDoneMurderousEntrance) {
+      if (this.profile.has(Ability.MurderousEntrance) && !this.hasCritStruck) {
         dmg += this.profile.critDmg;
       }
     }
@@ -80,6 +97,7 @@ export default class FighterState {
       dmg += this.profile.normDmg;
     }
 
+    dmg += this.hammerhandDmg();
     return dmg;
   }
 

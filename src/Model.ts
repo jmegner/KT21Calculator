@@ -122,7 +122,7 @@ export default class Model {
     return this.abilities.has(ability);
   }
 
-  public setAbility(ability: Ability, addIt: boolean): Model {
+  public setAbility(ability: Ability, addIt: boolean = true): Model {
     Util.addOrRemove(this.abilities, ability, addIt);
     return this;
   }

@@ -126,6 +126,21 @@ describe(calcDamage.name + ', smallCrit (crit < norm)', () => {
   });
 });
 
+describe(calcDmgProbs.name + ', Durable', () => {
+  const dn = 10; // normal damage
+  const dc = 100; // critical damage
+  const atker = new Model(0, 0, dn, dc);
+  const def = new Model().setAbility(Ability.Durable);
+  it('Durable, D=10/100', () => {
+    expect(calcDamage(atker, def, 2, 2, 0, 0)).toBe(2 * dc - 1 + 2 * dn);
+  });
+  it('Durable, D=10/3', () => {
+    const lowDc = 3;
+    const lowAtker = new Model(0, 0, dn, lowDc);
+    expect(calcDamage(lowAtker, def, 2, 2, 0, 0)).toBe(2 * lowDc + 2 * dn);
+  });
+});
+
 describe(calcDamage.name + ', Fire Team rules', () => {
   // test typical situation of normDmg < critDmg < 2*normDmg
   const dn = 5; // normal damage
@@ -616,5 +631,4 @@ describe('q', () => {
     expect(0).toBe(0);
   });
 });
-
 */

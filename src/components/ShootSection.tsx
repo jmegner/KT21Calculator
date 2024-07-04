@@ -51,7 +51,7 @@ const ShootSection: React.FC = () => {
     N.CoverCritSaves,
     N.NormsToCrits,
     N.InvulnSave,
-    //N.Durable,
+    N.Durable,
     N.HardyX,
     N.FeelNoPain,
     N.EliteModerate,

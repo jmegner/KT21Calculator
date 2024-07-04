@@ -84,15 +84,16 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps(N.StunMelee,        toYN(Ability.Stun),    xAndCheck,        singleHandler(Ability.Stun)),
   ];
   const advancedParams: IncProps[] = [
-    new IncProps(N.NicheAbility,     nicheAbility,          nicheAbilities,   subsetHandler(nicheAbilities)),
-    new IncProps(N.AutoNorms,        atk.autoNorms,         xspan(1, 9),      numHandler('autoNorms')),
-    new IncProps(N.AutoCrits,        atk.autoCrits,         xspan(1, 9),      numHandler('autoCrits')),
-    new IncProps(N.NormsToCrits,     atk.normsToCrits,      xspan(1, 9),      numHandler('normsToCrits')),
-    new IncProps(N.FailsToNorms,     atk.failsToNorms,      xspan(1, 9),      numHandler('failsToNorms')),
-    new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit), xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
-    new IncProps('ElitePoints*',     eliteAbility,          eliteAbilities,   subsetHandler(eliteAbilities)),
-    new IncProps(N.Duelist,          toYN(Ability.Duelist), xAndCheck,        singleHandler(Ability.Duelist)),
-    new IncProps(N.JustAScratch,     toYN(Ability.JustAScratch), xAndCheck,   singleHandler(Ability.JustAScratch)),
+    new IncProps(N.NicheAbility,     nicheAbility,               nicheAbilities, subsetHandler(nicheAbilities)),
+    new IncProps(N.AutoNorms,        atk.autoNorms,              xspan(1, 9),    numHandler('autoNorms')),
+    new IncProps(N.AutoCrits,        atk.autoCrits,              xspan(1, 9),    numHandler('autoCrits')),
+    new IncProps(N.NormsToCrits,     atk.normsToCrits,           xspan(1, 9),    numHandler('normsToCrits')),
+    new IncProps(N.FailsToNorms,     atk.failsToNorms,           xspan(1, 9),    numHandler('failsToNorms')),
+    new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit), xAndCheck,  singleHandler(Ability.FailToNormIfCrit)),
+    new IncProps('ElitePoints*',     eliteAbility,               eliteAbilities, subsetHandler(eliteAbilities)),
+    new IncProps(N.Duelist,          toYN(Ability.Duelist),      xAndCheck,      singleHandler(Ability.Duelist)),
+    new IncProps(N.JustAScratch,     toYN(Ability.JustAScratch), xAndCheck,      singleHandler(Ability.JustAScratch)),
+    new IncProps(N.Durable,          toYN(Ability.Durable),      xAndCheck,      singleHandler(Ability.Durable)),
   ];
 
   const advancedParamsToShow

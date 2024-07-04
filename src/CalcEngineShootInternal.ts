@@ -3,6 +3,7 @@ import * as Util from 'src/Util';
 import FinalDiceProb from 'src/FinalDiceProb';
 import * as Common from 'src/CalcEngineCommon';
 import Ability from "src/Ability";
+import { MinCritDmgAfterDurable } from "./KtMisc";
 
 class DefenderFinalDiceStuff {
   public finalDiceProbs: FinalDiceProb[];
@@ -167,5 +168,11 @@ export function calcDamage(
   }
 
   damage += critHits * attacker.critDmg + normHits * attacker.normDmg;
+
+  // TODO: make the above decisions take Durable into account
+  if(defender.has(Ability.Durable) && attacker.critDmg > MinCritDmgAfterDurable && critHits > 0) {
+    damage -= 1;
+  }
+
   return damage;
 }

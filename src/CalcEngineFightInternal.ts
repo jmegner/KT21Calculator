@@ -7,6 +7,7 @@ import FightStrategy from 'src/FightStrategy';
 import FighterState from "src/FighterState";
 import FightChoice from "src/FightChoice";
 import Ability from "src/Ability";
+import { MinCritDmgAfterDurable } from "./KtMisc";
 
 export const toWoundPairKey = (guy1Wounds: number, guy2Wounds: number): string => [guy1Wounds, guy2Wounds].toString();
 export const fromWoundPairKey = (woundsPairText: string): number[] => woundsPairText.split(',').map(x => parseInt(x));
@@ -107,20 +108,15 @@ export function resolveFight(
   while(currentGuy.crits + currentGuy.norms + nextGuy.crits + nextGuy.norms > 0
     && currentGuy.currentWounds > 0 && nextGuy.currentWounds > 0)
   {
-    // if a guy is out of successes, then other guy does all strikes
-    if(currentGuy.crits + currentGuy.norms <= 0) {
-      currentGuy.applyDmg(nextGuy.totalDmg());
-      break;
-    }
-    else if(nextGuy.crits + nextGuy.norms <= 0) {
-      nextGuy.applyDmg(currentGuy.totalDmg());
-      break;
-    }
-    else {
+    // used to have a `if(oneGuy out of successes){ oneGuy.applyDmg(otherGuy.totalDmg())); }`
+    // but it would be painful to make that handle Durable and other abilities
+
+    if(currentGuy.crits + currentGuy.norms > 0) {
       const choice = calcDieChoice(currentGuy, nextGuy);
       resolveDieChoice(choice, currentGuy, nextGuy);
-      [currentGuy, nextGuy] = [nextGuy, currentGuy];
     }
+
+    [currentGuy, nextGuy] = [nextGuy, currentGuy];
   }
 
   if(guy1State.crits < 0 || guy1State.norms < 0
@@ -135,7 +131,7 @@ export function calcDieChoice(chooser: FighterState, enemy: FighterState): Fight
 
   // ALWAYS strike if you can kill enemy with a single strike;
   // also, if enemy has brutal and you have no crits, then you must strike;
-  if(chooser.nextDmg() >= enemy.currentWounds
+  if(chooser.nextDmg(enemy) >= enemy.currentWounds
     || (enemy.profile.has(Ability.Brutal) && chooser.crits === 0)) {
     return chooser.nextStrike();
   }
@@ -143,7 +139,7 @@ export function calcDieChoice(chooser: FighterState, enemy: FighterState): Fight
   // if can stun enemy (crit strike that also cancels an enemy NORM success),
   // and enemy doesn't have any crit successes, then there is no downside
   // to doing a stunning crit strike now
-  if(chooser.profile.has(Ability.Stun) && !chooser.hasDoneStun && chooser.crits > 0 && enemy.crits === 0) {
+  if(chooser.profile.has(Ability.Stun) && !chooser.hasCritStruck && chooser.crits > 0 && enemy.crits === 0) {
     return FightChoice.CritStrike;
   }
 
@@ -204,7 +200,7 @@ export function resolveDieChoice(
   chooser: FighterState,
   enemy: FighterState,
 ): void {
-  function applyFirstStrikeDmg(dmg: number) {
+  function applyDmgWithFirstStrikeHandling(dmg: number) {
     if(!chooser.hasStruck) {
       if(enemy.profile.abilities.has(Ability.JustAScratch)) {
         dmg = 0;
@@ -217,38 +213,36 @@ export function resolveDieChoice(
   }
 
   if(choice === FightChoice.CritStrike) {
+    let critDmgAfterPossibleDurable = chooser.nextCritDmgWithDurableAndWithoutHammerhand(enemy);
+    applyDmgWithFirstStrikeHandling(critDmgAfterPossibleDurable);
     chooser.crits--;
-    applyFirstStrikeDmg(chooser.profile.critDmg);
+
+    if(chooser.profile.has(Ability.Stun) && !chooser.hasCritStruck) {
+      enemy.norms = Math.max(0, enemy.norms - 1); // stun ability can only cancel an enemy norm success
+    }
 
     if (
       chooser.successes()
       && chooser.profile.has(Ability.MurderousEntrance)
-      && !chooser.hasDoneMurderousEntrance
+      && !chooser.hasCritStruck
     ) {
-      chooser.hasDoneMurderousEntrance = true;
-
       if(chooser.crits > 0) {
-        chooser.crits--;
         enemy.applyDmg(chooser.profile.critDmg);
+        chooser.crits--;
       }
       else {
-        chooser.norms--;
         enemy.applyDmg(chooser.profile.normDmg);
+        chooser.norms--;
       }
     }
 
-    if(chooser.profile.has(Ability.Stun) && !chooser.hasDoneStun) {
-      chooser.hasDoneStun = true;
-      enemy.norms = Math.max(0, enemy.norms - 1); // stun ability can only cancel an enemy norm success
-    }
+    chooser.hasCritStruck = true;
   }
   else if(choice === FightChoice.NormStrike) {
+    applyDmgWithFirstStrikeHandling(chooser.profile.normDmg);
     chooser.norms--;
-    applyFirstStrikeDmg(chooser.profile.normDmg);
   }
   else if(choice === FightChoice.CritParry) {
-    chooser.crits--;
-
     // Dueller: critical parry can cancel additional normal success
     if(chooser.profile.abilities.has(Ability.Dueller)) {
       let numCritsCancelled = 0;
@@ -270,13 +264,14 @@ export function resolveDieChoice(
         }
       }
     }
+    chooser.crits--;
   }
   else if(choice === FightChoice.NormParry) {
     if(enemy.profile.has(Ability.Brutal)) {
       throw new Error("not allowed to do FightChoice.NormParry when enemy has brutal")
     }
-    chooser.norms--;
     enemy.norms = Math.max(0, enemy.norms - chooser.profile.cancelsPerParry());
+    chooser.norms--;
   }
   else {
     throw new Error("invalid DieChoice");
