@@ -16,16 +16,16 @@ export default class DieProbs {
   }
 
   public static fromSkills(critSkill: number, normSkill: number, reroll: Ability) {
-    // BEFORE taking ceaseless and relentless into account
+    // BEFORE taking RerollOnes and relentless into account
     let critHitProb = (7 - critSkill) / 6;
     let normHitProb = Math.max(0, (critSkill - normSkill) / 6); // handle BS=6+ and Lethal=4+
     let failHitProb = 1 - critHitProb - normHitProb;
 
-    // now to take ceaseless and relentless into account...
+    // now to take RerollOnes and relentless into account...
     // (balanced can not be taken into account at this layer and is handled later)
-    if (reroll === Ability.Ceaseless
+    if (reroll === Ability.RerollOnes
       || reroll === Ability.Relentless
-      || reroll === Ability.CeaselessPlusBalanced
+      || reroll === Ability.RerollOnesPlusBalanced
     ) {
       const rerollMultiplier = reroll === Ability.Relentless
         ? 1 + failHitProb

@@ -6,24 +6,28 @@ export enum Ability {
     // rerolls
     Balanced = "Balanced", // reroll 1 die; also used for Extended Chitin during defense
     DoubleBalanced = "DoubleBalanced", // reroll 2 dice; basicially single reroll ability from two different sources
-    Ceaseless = "Ceaseless", // reroll all 1s
+    RerollOnes = "Ones", // reroll all 1s, was called ceaseless in 2021
     Relentless = "Relentless", // reroll any of your choosing; we choose to reroll all fails; we never fish for crits
     CritFishRelentless = "CritFishRelentless", // reroll all non-crits, aka crit fishing
-    CeaselessPlusBalanced = "BothCeaselessAndBalanced", // ex: Auto Bolt Rifle (Ceaseless) and Devastator Doctrine (Balanced)
+    RerollOnesPlusBalanced = "BothOnesAndBalanced", // ex: in 2021, Auto Bolt Rifle and Devastator Doctrine
     RerollMostCommonFail = "MostCommonFail", // "can re-roll any or all of your attack dice results of one result (e.g. results of 2)"
 
     // fail/norm/crit manipulation
+    Severe = "Severe", // if no crits, promote one normal hit to crit
     Rending = "Rending", // if have crit, promote one normal hit to crit
-    FailToNormIfCrit = "FailToNormIfCrit", // crit triggers promotion of fail to norm; Starfire, DakkaDakkaDakka, Toxin Sacs
+    FailToNormIfCrit = "Punishing/FailToNormIfCrit", // crit triggers promotion of fail to norm; 2024 Punishing; 2021: Starfire, DakkaDakkaDakka, Toxin Sacs
     FailToNormIfAtLeastTwoSuccesses = "CloseAssault", // if at least two successes, promote fail to norm; from Imperial Navy Breachers Close Assault
     EliteModerate = "EliteModerate", // promote miss to norm or norm to crit
     EliteExtreme = "EliteExtreme", // promote miss to crit
     JustAScratch = "JustAScratch", // cancel one attack die just before damage; both shoot and fight
     Durable = "Durable", // one crit hit does 1 less damage, to minimun of 3
 
-    // fight stuff
+    // fight stuff relevant to 2024
     Brutal = "Brutal", // opponent can only parry with crit
-    Stun = "Stun", // effect different between shoot and fight
+    Shock = "Shock", // "the first time you strike with a crit, also discard one of opponent's unresolved norms (or crit if no norms)"
+
+    // fight stuff relevant to only 2021 or I have not checked for 2024
+    Stun2021 = "Stun2021", // effect different between shoot and fight
     StormShield = "StormShield", // each parry cancels two successes
     Hammerhand = "Hammerhand", // first strike does one extra dmg
     Dueller = "Dueller", // each crit parry cancels extra normal success
@@ -34,13 +38,13 @@ export enum Ability {
 };
 
 export const rerollAbilities = [
-  Ability.Ceaseless,
   Ability.Balanced,
   Ability.DoubleBalanced,
+  Ability.RerollMostCommonFail,
   Ability.Relentless,
   Ability.CritFishRelentless,
-  Ability.CeaselessPlusBalanced,
-  Ability.RerollMostCommonFail,
+  Ability.RerollOnes,
+  Ability.RerollOnesPlusBalanced,
 ];
 
 export const mutuallyExclusiveFightAbilities = [

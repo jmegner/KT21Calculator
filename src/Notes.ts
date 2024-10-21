@@ -10,11 +10,11 @@ export default class Note {
 
 export const Reroll = new Note(
   `Reroll`,
-  `Ceaseless rerolls 1s.  Balanced rerolls 1 die.  Relentless rerolls fails.`
+  `Balanced rerolls 1 die.  Relentless rerolls fails.`
+    + `  MostCommonFail rerolls most common fail result (ex: reroll 2s); it's called "ceaseless" in KT2024.`
     + `  CritFishRelentless rerolls non-crits.`
     + `  DoubleBalanced rerolls 2 dice.`
-    + `  BothCeaselessAndBalanced rerolls 1s and then rerolls 1 die that hasn't already been rerolled.`
-    + `  MostCommonFail rerolls most common fail result (ex: reroll 2s).`
+    + `  BothOnesAndBalanced rerolls 1s and then rerolls 1 die that hasn't already been rerolled.`
     ,
 );
 export const NoCover = new Note(
@@ -22,7 +22,7 @@ export const NoCover = new Note(
   `Defender can not use cover saves. Intercession Squad's Accurate chapter tactic triggers this only if a crit hit is retained.`,
 );
 export const AutoNorms = new Note(
-  `AutoNorms`,
+  `AutoNorms/Accurate`,
   `How many attack dice can be automatically retained as a normal success. Much like cover saves but for attack dice.`,
 );
 export const AutoCrits = new Note(
@@ -57,8 +57,12 @@ export const Rending = new Note(
   `Rending`,
   `If you roll >=1 crit, you can modify a norm to a crit.`,
 );
+export const Severe = new Note(
+  `Severe`,
+  `If you roll no crits, you can modify a norm to a crit.`,
+);
 export const FailToNormIfCrit = new Note(
-  `FailToNormIfCrit`,
+  `Punishing/FailToNormIfCrit`,
   `Modify a failed hit into a normal hit if you had at least one critical hit; Necron equipment Starfire Core, Kommando strategic ploy "Dakka! Dakka! Dakka!", Hive Fleet equipment Toxin Sacs, Corsair Voidscarred strategic ploy Outcasts.`,
 );
 export const CoverNormSaves = new Note(
@@ -104,9 +108,13 @@ export const Brutal = new Note(
   `Brutal`,
   `Opponent can not do norm parries.`,
 );
-export const StunMelee = new Note(
-  `Stun`,
-  `In melee, first crit strike additionally discards 1 norm success of opponent. Second crit strike decrements opponent APL.`,
+export const Shock = new Note(
+  `Shock`,
+  `First crit strike also cancels enemy unresolved norm (or crit if no norms).`,
+);
+export const StunMelee2021 = new Note(
+  `Stun2021`,
+  `In KT2021, in melee, first crit strike additionally discards 1 norm success of opponent. Second crit strike decrements opponent APL.`,
 );
 export const NicheAbility = new Note(
   `NicheAbility`,

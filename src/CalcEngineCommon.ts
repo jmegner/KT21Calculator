@@ -72,7 +72,7 @@ export function calcFinalDiceProb(
   crits: number,
   norms: number,
   fails: number,
-  reroll: Ability = Ability.None, // really just care if Balanced or CeaselessPlusBalanced
+  reroll: Ability = Ability.None, // really just care if Balanced or RerollOnesPlusBalanced
   additionalCrits: number = 0,
   additionalNorms: number = 0,
   failsToNorms: number = 0,
@@ -95,28 +95,28 @@ export function calcFinalDiceProb(
     prob = calcMultiRollProb(dieProbs, crits, norms, fails);
   }
 
-  if (reroll === Ability.CeaselessPlusBalanced) {
+  if (reroll === Ability.RerollOnesPlusBalanced) {
     const probRollBeforeBalanced = prob;
     // probSingleFailCanNotBeRerolled = (BS - 1) / (7*BS - 13)
-    // but, to put it in terms of given ceaseless fail prob: 1/7 + 1/(42*pFail)
+    // but, to put it in terms of given RerollOnes fail prob: 1/7 + 1/(42*pFail)
     const probSingleFailCanNotBeRerolled = 1 / 7 + 1 / (42 * dieProbs.fail);
 
-    const nonceaselessProbCrit = dieProbs.crit * 6 / 7;
-    const nonceaselessProbNorm = dieProbs.norm * 6 / 7;
-    const nonceaselessProbFail = 1 - nonceaselessProbCrit - nonceaselessProbNorm;
+    const nonRerollOnesProbCrit = dieProbs.crit * 6 / 7;
+    const nonRerollOnesProbNorm = dieProbs.norm * 6 / 7;
+    const nonRerollOnesProbFail = 1 - nonRerollOnesProbCrit - nonRerollOnesProbNorm;
 
     // if no fails, then prob we got that before balanced reroll is already calculated
 
     // 1st, consider prob of PreBalancedRoll+CannotDoBalancedRoll;
     // if CannotDoBalancedRoll is coming from no fails, then we already calculated that;
-    // remaining case is we did have fails and all of them were ceaseless-rerolled;
+    // remaining case is we did have fails and all of them were ones-rerolled;
     // this is probPlainRoll * probSingleFailCanNotBeRerolled^NumFails
     if(fails > 0) {
       const conditionalProbNoneCanBeRerolled = Math.pow(probSingleFailCanNotBeRerolled, fails);
       prob *= conditionalProbNoneCanBeRerolled;
 
       // 2nd, consider prob of PreBalancedRoll+CanDoBalancedRoll+FailedBalancedRoll
-      prob += probRollBeforeBalanced * (1 - conditionalProbNoneCanBeRerolled) * nonceaselessProbFail;
+      prob += probRollBeforeBalanced * (1 - conditionalProbNoneCanBeRerolled) * nonRerollOnesProbFail;
     }
 
     // 3rd, consider prob of PreBalancedRollWithOneLessCrit+CanDoBalancedRoll+CritBalancedRoll
@@ -124,7 +124,7 @@ export function calcFinalDiceProb(
       const conditionalProbSomeCanBeRerolled = 1 - Math.pow(probSingleFailCanNotBeRerolled, fails + 1);
       prob += calcMultiRollProb(dieProbs, crits - 1, norms, fails + 1)
         * conditionalProbSomeCanBeRerolled
-        * nonceaselessProbCrit;
+        * nonRerollOnesProbCrit;
     }
 
     // 4th, consider prob of PreBalancedRollWithOneLessNorm+CanDoBalancedRoll+NormBalancedRoll
@@ -132,7 +132,7 @@ export function calcFinalDiceProb(
       const conditionalProbSomeCanBeRerolled = 1 - Math.pow(probSingleFailCanNotBeRerolled, fails + 1);
       prob += calcMultiRollProb(dieProbs, crits, norms - 1, fails + 1)
         * conditionalProbSomeCanBeRerolled
-        * nonceaselessProbNorm;
+        * nonRerollOnesProbNorm;
     }
   }
 

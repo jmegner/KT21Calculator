@@ -105,13 +105,13 @@ describe(Common.calcFinalDiceProb.name, () => {
   const pf = 2 / 6; // fail probability
   const dieProbs = new DieProbs(pc, pn, pf);
 
-  // only for CeaselessPlusBalanced
-  const pcCeaseless = pc * 7 / 6;
-  const pnCeaseless = pn * 7 / 6;
-  const pfCeaseless = 1 - pcCeaseless - pnCeaseless;
-  const dieProbsCeaseless = new DieProbs(pcCeaseless, pnCeaseless, pfCeaseless);
-  const p1 = 1 / 6; // fail that can be rerolled by Ceaseless
-  const p2 = pf - 1 / 6; // fail that can not be rerolled by Ceaseless
+  // only for OnesPlusBalanced
+  const pcOnes = pc * 7 / 6;
+  const pnOnes = pn * 7 / 6;
+  const pfOnes = 1 - pcOnes - pnOnes;
+  const dieProbsOnes = new DieProbs(pcOnes, pnOnes, pfOnes);
+  const p1 = 1 / 6; // fail that can be rerolled by Ones
+  const p2 = pf - 1 / 6; // fail that can not be rerolled by Ones
 
   const justRending = new Set<Ability>([Ability.Rending]);
   const justFailToNormIfCrit = new Set<Ability>([Ability.FailToNormIfCrit]);
@@ -160,24 +160,24 @@ describe(Common.calcFinalDiceProb.name, () => {
     const actual = Common.calcFinalDiceProb(dieProbs, 2, 0, 1, Ability.DoubleBalanced);
     expectClose(actual, 3*pc*pc*pf*pf + 3*pc*pf*pf*2*pc*pf + pf*pf*pf*pc*pc);
   });
-  it('basic CeaselessPlusBalanced 1c', () => {
-    const actual = Common.calcFinalDiceProb(dieProbsCeaseless, 1, 0, 0, Ability.CeaselessPlusBalanced);
+  it('basic OnesPlusBalanced 1c', () => {
+    const actual = Common.calcFinalDiceProb(dieProbsOnes, 1, 0, 0, Ability.RerollOnesPlusBalanced);
     expectClose(actual, pc + pf * pc, 1, 0);
   });
-  it('basic CeaselessPlusBalanced 1n', () => {
-    const actual = Common.calcFinalDiceProb(dieProbsCeaseless, 0, 1, 0, Ability.CeaselessPlusBalanced);
+  it('basic OnesPlusBalanced 1n', () => {
+    const actual = Common.calcFinalDiceProb(dieProbsOnes, 0, 1, 0, Ability.RerollOnesPlusBalanced);
     expectClose(actual, pn + pf*pn, 0, 1);
   });
-  it('basic CeaslessPlusBalanced 1f', () => {
-    const actual = Common.calcFinalDiceProb(dieProbsCeaseless, 0, 0, 1, Ability.CeaselessPlusBalanced);
+  it('basic OnesPlusBalanced 1f', () => {
+    const actual = Common.calcFinalDiceProb(dieProbsOnes, 0, 0, 1, Ability.RerollOnesPlusBalanced);
     expectClose(actual, pf*pf, 0, 0);
   });
-  it('CeaslessPlusBalanced 2c', () => {
-    const actual = Common.calcFinalDiceProb(dieProbsCeaseless, 2, 0, 0, Ability.CeaselessPlusBalanced);
+  it('OnesPlusBalanced 2c', () => {
+    const actual = Common.calcFinalDiceProb(dieProbsOnes, 2, 0, 0, Ability.RerollOnesPlusBalanced);
     expectClose(actual, pc*pc + 2*pc*pc*pf + pc*pc*p1*p1 + 2*pc*pc*p1*p2, 2, 0);
   });
-  it('CeaslessPlusBalanced 2f', () => {
-    const actual = Common.calcFinalDiceProb(dieProbsCeaseless, 0, 0, 2, Ability.CeaselessPlusBalanced);
+  it('OnesPlusBalanced 2f', () => {
+    const actual = Common.calcFinalDiceProb(dieProbsOnes, 0, 0, 2, Ability.RerollOnesPlusBalanced);
     expectClose(actual, p1*p1*pf*pf + 2*p1*p1*pf*pf + p2*p2*pf, 0, 0);
   });
   it('rending {0c,1n,1f} => {0c,1n,1f}', () => {

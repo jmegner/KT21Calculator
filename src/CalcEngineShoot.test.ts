@@ -417,9 +417,9 @@ describe(calcDmgProbs.name + ', balanced', () => {
   });
 });
 
-describe(calcDmgProbs.name + ', ceaseless', () => {
-  it('ceaseless with 1 atk die', () => {
-    const atk = newTestAttacker(1).setProp('reroll', Ability.Ceaseless);
+describe(calcDmgProbs.name + ', RerollOnes', () => {
+  it('RerollOnes with 1 atk die', () => {
+    const atk = newTestAttacker(1).setProp('reroll', Ability.RerollOnes);
     const pc = 1 / 6;
     const pn = 2 / 6;
     const pf = 3 / 6;
@@ -432,14 +432,14 @@ describe(calcDmgProbs.name + ', ceaseless', () => {
     expect(dmgs.get(atk.critDmg)).toBeCloseTo(pc + p1 * pc, requiredPrecision);
     expect(dmgs.size).toBe(3);
   });
-  it('ceaseless damage', () => {
+  it('RerollOnes damage', () => {
     const atk = newTestAttacker(3);
-    const atkCeaseless = atk.withProp('reroll', Ability.Ceaseless);
+    const atkRerollOnes = atk.withProp('reroll', Ability.RerollOnes);
     const def = new Model(0);
 
     const dmg = avgDmg(atk, def);
-    const dmgCeaseless = avgDmg(atkCeaseless, def);
-    expect(dmgCeaseless).toBeCloseTo(dmg * 7 / 6, requiredPrecision);
+    const dmgRerollOnes = avgDmg(atkRerollOnes, def);
+    expect(dmgRerollOnes).toBeCloseTo(dmg * 7 / 6, requiredPrecision);
   });
 });
 

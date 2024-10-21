@@ -36,7 +36,7 @@ const FightSection: React.FC = () => {
     N.Reroll,
     N.Rending,
     N.Brutal,
-    N.StunMelee,
+    N.StunMelee2021,
     N.NicheAbility,
     N.AutoNorms,
     N.AutoCrits,

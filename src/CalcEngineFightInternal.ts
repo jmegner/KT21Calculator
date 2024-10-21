@@ -139,7 +139,7 @@ export function calcDieChoice(chooser: FighterState, enemy: FighterState): Fight
   // if can stun enemy (crit strike that also cancels an enemy NORM success),
   // and enemy doesn't have any crit successes, then there is no downside
   // to doing a stunning crit strike now
-  if(chooser.profile.has(Ability.Stun) && !chooser.hasCritStruck && chooser.crits > 0 && enemy.crits === 0) {
+  if(chooser.profile.has(Ability.Stun2021) && !chooser.hasCritStruck && chooser.crits > 0 && enemy.crits === 0) {
     return FightChoice.CritStrike;
   }
 
@@ -217,7 +217,7 @@ export function resolveDieChoice(
     applyDmgWithFirstStrikeHandling(critDmgAfterPossibleDurable);
     chooser.crits--;
 
-    if(chooser.profile.has(Ability.Stun) && !chooser.hasCritStruck) {
+    if(chooser.profile.has(Ability.Stun2021) && !chooser.hasCritStruck) {
       enemy.norms = Math.max(0, enemy.norms - 1); // stun ability can only cancel an enemy norm success
     }
 

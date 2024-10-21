@@ -81,7 +81,7 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps('Lethal',           atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),
     new IncProps(N.Rending,          toYN(Ability.Rending), xAndCheck,        singleHandler(Ability.Rending)),
     new IncProps(N.Brutal,           toYN(Ability.Brutal),  xAndCheck,        singleHandler(Ability.Brutal)),
-    new IncProps(N.StunMelee,        toYN(Ability.Stun),    xAndCheck,        singleHandler(Ability.Stun)),
+    new IncProps(N.StunMelee2021,        toYN(Ability.Stun2021),    xAndCheck,        singleHandler(Ability.Stun2021)),
   ];
   const advancedParams: IncProps[] = [
     new IncProps(N.NicheAbility,     nicheAbility,               nicheAbilities, subsetHandler(nicheAbilities)),
