@@ -20,6 +20,7 @@ export enum Ability {
     EliteExtreme = "EliteExtreme", // promote miss to crit
     JustAScratch = "JustAScratch", // cancel one attack die just before damage; both shoot and fight
     Durable = "Durable", // one crit hit does 1 less damage, to minimun of 3
+    Severe = "Severe", // turns one crit into a hit if no crits are rolled
 
     // fight stuff
     Brutal = "Brutal", // opponent can only parry with crit

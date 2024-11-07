@@ -85,6 +85,7 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit),            xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
     new IncProps('ElitePoints*', eliteAbility,          eliteAbilities,   subsetHandler(eliteAbilities)),
     new IncProps(N.CloseAssault, toYN(Ability.FailToNormIfAtLeastTwoSuccesses), xAndCheck, singleHandler(Ability.FailToNormIfAtLeastTwoSuccesses)),
+    new IncProps(N.Severe, toYN(Ability.Severe), xAndCheck, singleHandler(Ability.Severe)),
     //new IncProps(N.NoCover,      atk.noCover,            noCoverChoices,        textHandler('noCover')),
   ];
 

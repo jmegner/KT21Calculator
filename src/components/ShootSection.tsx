@@ -43,6 +43,7 @@ const ShootSection: React.FC = () => {
     N.AvgDamageUnbounded,
     N.Reroll,
     N.Rending,
+    N.Severe,
     N.FailToNormIfCrit,
     N.CloseAssault,
     N.AutoNorms,

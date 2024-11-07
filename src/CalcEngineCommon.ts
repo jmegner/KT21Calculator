@@ -188,6 +188,13 @@ export function calcFinalDiceProb(
       crits++;
     }
   }
+  
+  if (abilities.has(Ability.Severe)) {
+    if (norms >= 1 && crits === 0) {
+      crits++;
+      norms--;
+    }
+  }
 
   if (abilities.has(Ability.Rending)) {
     if (crits > 0 && norms > 0) {

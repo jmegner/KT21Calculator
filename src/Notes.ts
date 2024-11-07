@@ -57,6 +57,10 @@ export const Rending = new Note(
   `Rending`,
   `If you roll >=1 crit, you can modify a norm to a crit.`,
 );
+export const Severe = new Note(
+  `Severe`,
+  `If you roll no crits, you can modify a norm to a crit.`,
+);
 export const FailToNormIfCrit = new Note(
   `FailToNormIfCrit`,
   `Modify a failed hit into a normal hit if you had at least one critical hit; Necron equipment Starfire Core, Kommando strategic ploy "Dakka! Dakka! Dakka!", Hive Fleet equipment Toxin Sacs, Corsair Voidscarred strategic ploy Outcasts.`,
