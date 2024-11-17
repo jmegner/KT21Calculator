@@ -93,7 +93,7 @@ export default class Model {
   }
 
   public cancelsPerParry(): number {
-    return this.abilities.has(Ability.StormShield) ? 2 : 1;
+    return this.abilities.has(Ability.StormShield2021) ? 2 : 1;
   }
 
   public toAttackerDieProbs(): DieProbs {

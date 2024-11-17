@@ -35,22 +35,23 @@ const FightSection: React.FC = () => {
   const noteListItems: JSX.Element[] = [
     N.Reroll,
     N.Rending,
+    N.Severe,
     N.Brutal,
     N.StunMelee2021,
     N.NicheAbility,
     N.AutoNorms,
     N.AutoCrits,
-    N.CloseAssault,
-    N.Waaagh,
-    N.EliteModerate,
-    N.EliteExtreme,
+    N.CloseAssault2021,
+    N.Waaagh2021,
+    N.EliteModerate2021,
+    N.EliteExtreme2021,
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
 
   return (
     <Container style={{width: 'fit-content'}}>
       <Row>
-        Kill Team 2021 Edition, Fighting&nbsp;
-        <a href='https://www.warhammer-community.com/wp-content/uploads/2022/08/ekD0GG2pTHlYba0G.pdf'>[Lite Rules]</a>
+        Kill Team 2024 Edition, Fighting&nbsp;
+        <a href='https://assets.warhammer-community.com/killteam_keydownloads_literules_eng-jfhe9v0j7c-n0x6ozmgo9.pdf'>[Lite Rules]</a>
       </Row>
       <Row>
         <Col className={Util.centerHoriz + ' p-0 border'}>

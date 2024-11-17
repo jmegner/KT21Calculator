@@ -14,6 +14,7 @@ export const Reroll = new Note(
     + `  MostCommonFail rerolls most common fail result (ex: reroll 2s); it's called "ceaseless" in KT2024.`
     + `  CritFishRelentless rerolls non-crits.`
     + `  DoubleBalanced rerolls 2 dice.`
+    + `  Ones rerolls 1s ("ceaseless" in KT2021).`
     + `  BothOnesAndBalanced rerolls 1s and then rerolls 1 die that hasn't already been rerolled.`
     ,
 );
@@ -37,29 +38,29 @@ export const NormsToCrits = new Note(
   `NormsToCrits`,
   `How many normal successes can be modified to critical successes.`,
 );
-export const CloseAssault = new Note(
-  `CloseAssault`,
+export const CloseAssault2021 = new Note(
+  `CloseAssault2021`,
   `If you have two or more sucesses, promote a fail to a normal success.  Imperial Navy Breachers strategic ploy.`,
 );
-export const Waaagh = new Note(
-  `Waaagh`,
+export const Waaagh2021 = new Note(
+  `Waaagh2021`,
   `If you have two or more normal sucesses, promote a norm to a crit.  Kommandos strategic ploy.`,
 );
-export const EliteModerate = new Note(
-  `EliteModerate`,
+export const EliteModerate2021 = new Note(
+  `EliteModerate2021`,
   `In spending of Kasrkin Elite points, upgrade a fail to a norm or a norm to a crit.`,
 );
-export const EliteExtreme = new Note(
-  `EliteExtreme`,
+export const EliteExtreme2021 = new Note(
+  `EliteExtreme2021`,
   `In spending of Kasrkin Elite points, upgrade a fail to a crit.`,
 );
 export const Rending = new Note(
   `Rending`,
-  `If you roll >=1 crit, you can modify a norm to a crit.`,
+  `If you have >=1 crit, you can modify a norm to a crit.`,
 );
 export const Severe = new Note(
   `Severe`,
-  `If you roll no crits, you can modify a norm to a crit.`,
+  `If you have no crits, you can modify a norm to a crit.`,
 );
 export const FailToNormIfCrit = new Note(
   `Punishing/FailToNormIfCrit`,
@@ -73,8 +74,8 @@ export const CoverCritSaves = new Note(
   `CoverCritSaves`,
   `How many saves can be automatically retained as a critical success. High enough APx/Px can limit these auto-saves.`,
 );
-export const JustAScratch = new Note(
-  `JustAScratch`,
+export const JustAScratch2021 = new Note(
+  `JustAScratch2021`,
   `Kommandos Tactical Ploy to ignore damage from a chosen attack die.`,
 );
 export const InvulnSave = new Note(
@@ -85,8 +86,8 @@ export const HardyX = new Note(
   `HardyX`,
   `HardyX is like Lethal (changes what values give you a critical success), but for defense. Name comes from Intercession Squad chapter tactic Hardy.`,
 );
-export const Durable = new Note(
-  `Durable`,
+export const Durable2021 = new Note(
+  `Durable2021`,
   `Durable: in the Resolve Successful Hits step of a combat or shooting attack, one critical hit inflicts one less damage on this operative (to a minimum of 3).`,
 );
 export const FeelNoPain = new Note(
@@ -118,10 +119,10 @@ export const StunMelee2021 = new Note(
 );
 export const NicheAbility = new Note(
   `NicheAbility`,
-  `Dueller is Intercession Squad chapter tactic; each crit parry discards additional 1 norm success of opponent.`
-    + `  Hammerhand is Grey Knights psychic power; first strike deals +1 dmg.`
-    + `  Storm Shield is a Custodes ability; each parry discards two successes of opponent instead of 1.`
-    + `  Murderous Entrance is a Void Troupe tactical ploy to strike again after a crit strike.`
+  `Dueller2021 is Intercession Squad chapter tactic; each crit parry discards additional 1 norm success of opponent.`
+    + `  Hammerhand2021 is Grey Knights psychic power; first strike deals +1 dmg.`
+    + `  StormShield2021 is a Custodes ability; each parry discards two successes of opponent instead of 1.`
+    + `  MurderousEntrance2021 is a Void Troupe tactical ploy to strike again after a crit strike.`
 );
 export const Duelist = new Note(
   `Duelist/PreParry`,

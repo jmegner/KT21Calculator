@@ -20,7 +20,7 @@ export enum Ability {
     EliteModerate = "EliteModerate", // promote miss to norm or norm to crit
     EliteExtreme = "EliteExtreme", // promote miss to crit
     JustAScratch = "JustAScratch", // cancel one attack die just before damage; both shoot and fight
-    Durable = "Durable", // one crit hit does 1 less damage, to minimun of 3
+    Durable = "Durable2021", // one crit hit does 1 less damage, to minimun of 3
 
     // fight stuff relevant to 2024
     Brutal = "Brutal", // opponent can only parry with crit
@@ -28,12 +28,12 @@ export enum Ability {
 
     // fight stuff relevant to only 2021 or I have not checked for 2024
     Stun2021 = "Stun2021", // effect different between shoot and fight
-    StormShield = "StormShield", // each parry cancels two successes
-    Hammerhand = "Hammerhand", // first strike does one extra dmg
-    Dueller = "Dueller", // each crit parry cancels extra normal success
-    Duelist = "Duelist", // parry before usual dice resolution
-    NormToCritIfAtLeastTwoNorms = "Waaagh", // if at least two norms, promote norm to crit; from Kommandos Waaagh; fight only
-    MurderousEntrance = "MurderousEntrance", // after a crit strike, do another strike (tactical ploy, so just once)
+    StormShield2021 = "StormShield2021", // each parry cancels two successes
+    Hammerhand2021 = "Hammerhand2021", // first strike does one extra dmg
+    Dueller = "Dueller2021", // each crit parry cancels extra normal success
+    Duelist = "Duelist2021", // parry before usual dice resolution
+    NormToCritIfAtLeastTwoNorms = "Waaagh2021", // if at least two norms, promote norm to crit; from Kommandos Waaagh; fight only
+    MurderousEntrance2021 = "MurderousEntrance2021", // after a crit strike, do another strike (tactical ploy, so just once)
 
 };
 
@@ -51,16 +51,22 @@ export const mutuallyExclusiveFightAbilities = [
   Ability.None,
   Ability.FailToNormIfAtLeastTwoSuccesses,
   Ability.Dueller,
-  Ability.Hammerhand,
-  Ability.StormShield,
+  Ability.Hammerhand2021,
+  Ability.StormShield2021,
   Ability.NormToCritIfAtLeastTwoNorms,
-  Ability.MurderousEntrance,
+  Ability.MurderousEntrance2021,
 ];
 
 export const eliteAbilities = [
   Ability.None,
   Ability.EliteModerate,
   Ability.EliteExtreme,
+];
+
+export const rendingAndSevereAbilities = [
+  Ability.None,
+  Ability.Rending,
+  Ability.Severe,
 ];
 
 export function extractAbility(desiredAbility: Ability, abilities: Set<Ability>): Ability | null {

@@ -23,7 +23,8 @@ import {
 import Model from 'src/Model';
 import Ability, {
   eliteAbilities,
-  rerollAbilities as rerolls
+  rendingAndSevereAbilities,
+  rerollAbilities,
 } from 'src/Ability';
 import * as N from 'src/Notes';
 import { useCheckboxAndVariable } from 'src/hooks/useCheckboxAndVariable';
@@ -63,6 +64,7 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
   }
 
   const eliteAbility = extractFromSet(eliteAbilities, Ability.None, atk.abilities)!;
+  const rendingSevereAbility = extractFromSet(rendingAndSevereAbilities, Ability.None, atk.abilities)!;
 
   const basicParams: IncProps[] = [
     //           id/label,       selectedValue,         values,                valueChangeHandler
@@ -73,8 +75,8 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     new IncProps('Devastating/MWx',  atk.mwx,               xspan(1, 9),      numHandler('mwx')),
     new IncProps('Piercing/APx',     atk.apx,               xspan(1, 4),      numHandler('apx')),
     new IncProps('PiercingCrits/Px', atk.px,                xspan(1, 4),      numHandler('px')),
-    new IncProps(N.Reroll,       atk.reroll,            preX(rerolls),    textHandler('reroll')),
-    new IncProps(N.Rending,      toYN(Ability.Rending), xAndCheck,        singleHandler(Ability.Rending)),
+    new IncProps(N.Reroll,       atk.reroll,            preX(rerollAbilities),    textHandler('reroll')),
+    new IncProps('Rending/Severe*', rendingSevereAbility, rendingAndSevereAbilities, subsetHandler(rendingAndSevereAbilities)),
     new IncProps('Lethal',       atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),
   ];
   const advancedParams: IncProps[] = [
@@ -83,8 +85,8 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     new IncProps(N.FailsToNorms, atk.failsToNorms,      xspan(1, 9),      numHandler('failsToNorms')),
     new IncProps(N.NormsToCrits, atk.normsToCrits,      xspan(1, 9),      numHandler('normsToCrits')),
     new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit),            xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
-    new IncProps('ElitePoints*', eliteAbility,          eliteAbilities,   subsetHandler(eliteAbilities)),
-    new IncProps(N.CloseAssault, toYN(Ability.FailToNormIfAtLeastTwoSuccesses), xAndCheck, singleHandler(Ability.FailToNormIfAtLeastTwoSuccesses)),
+    new IncProps('ElitePoints2021*', eliteAbility,          eliteAbilities,   subsetHandler(eliteAbilities)),
+    new IncProps(N.CloseAssault2021, toYN(Ability.FailToNormIfAtLeastTwoSuccesses), xAndCheck, singleHandler(Ability.FailToNormIfAtLeastTwoSuccesses)),
     //new IncProps(N.NoCover,      atk.noCover,            noCoverChoices,        textHandler('noCover')),
   ];
 

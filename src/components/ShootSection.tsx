@@ -43,28 +43,29 @@ const ShootSection: React.FC = () => {
     N.AvgDamageUnbounded,
     N.Reroll,
     N.Rending,
+    N.Severe,
     N.FailToNormIfCrit,
-    N.CloseAssault,
+    N.CloseAssault2021,
     N.AutoNorms,
     N.AutoCrits,
     N.CoverNormSaves,
     N.CoverCritSaves,
     N.NormsToCrits,
     N.InvulnSave,
-    N.Durable,
+    N.Durable2021,
     N.HardyX,
     N.FeelNoPain,
-    N.EliteModerate,
-    N.EliteExtreme,
-    N.JustAScratch,
+    N.EliteModerate2021,
+    N.EliteExtreme2021,
+    N.JustAScratch2021,
     N.FireTeamRules,
   ].map(note => <li key={note.name}><b>{note.name}</b>: {note.description}</li>);
 
   return (
     <Container style={{width: 'fit-content'}}>
       <Row>
-        Kill Team 2021 Edition, Shooting&nbsp;
-        <a href='https://www.warhammer-community.com/wp-content/uploads/2022/08/ekD0GG2pTHlYba0G.pdf'>[Lite Rules]</a>
+        Kill Team 2024 Edition, Shooting&nbsp;
+        <a href='https://assets.warhammer-community.com/killteam_keydownloads_literules_eng-jfhe9v0j7c-n0x6ozmgo9.pdf'>[Lite Rules]</a>
       </Row>
       <Row>
         <Col className='border p-0'>

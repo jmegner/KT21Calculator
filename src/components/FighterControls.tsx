@@ -9,6 +9,7 @@ import {
 import Ability, {
   eliteAbilities,
   mutuallyExclusiveFightAbilities as nicheAbilities,
+  rendingAndSevereAbilities,
   rerollAbilities as rerolls
 } from 'src/Ability';
 import { MaxWounds } from 'src/KtMisc';
@@ -69,6 +70,7 @@ const FighterControls: React.FC<Props> = (props: Props) => {
 
   const nicheAbility = extractFromSet(nicheAbilities, Ability.None, atk.abilities)!;
   const eliteAbility = extractFromSet(eliteAbilities, Ability.None, atk.abilities)!;
+  const rendingSevereAbility = extractFromSet(rendingAndSevereAbilities, Ability.None, atk.abilities)!;
 
   const basicParams: IncProps[] = [
     //           id/label,           selectedValue,         values,           valueChangeHandler
@@ -79,7 +81,7 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps('Critical Dmg',     atk.critDmg,           span(1, 9),       numHandler('critDmg')),
     new IncProps(N.Reroll,           atk.reroll,            preX(rerolls),    textHandler('reroll')),
     new IncProps('Lethal',           atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),
-    new IncProps(N.Rending,          toYN(Ability.Rending), xAndCheck,        singleHandler(Ability.Rending)),
+    new IncProps('Rending/Severe*', rendingSevereAbility, rendingAndSevereAbilities, subsetHandler(rendingAndSevereAbilities)),
     new IncProps(N.Brutal,           toYN(Ability.Brutal),  xAndCheck,        singleHandler(Ability.Brutal)),
     new IncProps(N.StunMelee2021,        toYN(Ability.Stun2021),    xAndCheck,        singleHandler(Ability.Stun2021)),
   ];
@@ -90,10 +92,10 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps(N.NormsToCrits,     atk.normsToCrits,           xspan(1, 9),    numHandler('normsToCrits')),
     new IncProps(N.FailsToNorms,     atk.failsToNorms,           xspan(1, 9),    numHandler('failsToNorms')),
     new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit), xAndCheck,  singleHandler(Ability.FailToNormIfCrit)),
-    new IncProps('ElitePoints*',     eliteAbility,               eliteAbilities, subsetHandler(eliteAbilities)),
+    new IncProps('ElitePoints2021*',     eliteAbility,               eliteAbilities, subsetHandler(eliteAbilities)),
     new IncProps(N.Duelist,          toYN(Ability.Duelist),      xAndCheck,      singleHandler(Ability.Duelist)),
-    new IncProps(N.JustAScratch,     toYN(Ability.JustAScratch), xAndCheck,      singleHandler(Ability.JustAScratch)),
-    new IncProps(N.Durable,          toYN(Ability.Durable),      xAndCheck,      singleHandler(Ability.Durable)),
+    new IncProps(N.JustAScratch2021,     toYN(Ability.JustAScratch), xAndCheck,      singleHandler(Ability.JustAScratch)),
+    new IncProps(N.Durable2021,          toYN(Ability.Durable),      xAndCheck,      singleHandler(Ability.Durable)),
   ];
 
   const advancedParamsToShow

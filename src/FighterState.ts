@@ -56,7 +56,7 @@ export default class FighterState {
   ) {
     crits = crits || this.crits;
     norms = norms || this.norms;
-    return this.profile.abilities.has(Ability.Hammerhand)
+    return this.profile.abilities.has(Ability.Hammerhand2021)
       && !this.hasStruck
       && (crits > 0 || norms > 0)
       ? 1 : 0;
@@ -89,7 +89,7 @@ export default class FighterState {
     if (this.crits > 0) {
       dmg += this.nextCritDmgWithDurableAndWithoutHammerhand(enemy);
 
-      if (this.profile.has(Ability.MurderousEntrance) && !this.hasCritStruck) {
+      if (this.profile.has(Ability.MurderousEntrance2021) && !this.hasCritStruck) {
         dmg += this.profile.critDmg;
       }
     }

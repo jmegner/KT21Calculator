@@ -7,7 +7,6 @@ import FightStrategy from 'src/FightStrategy';
 import FighterState from "src/FighterState";
 import FightChoice from "src/FightChoice";
 import Ability from "src/Ability";
-import { MinCritDmgAfterDurable } from "./KtMisc";
 
 export const toWoundPairKey = (guy1Wounds: number, guy2Wounds: number): string => [guy1Wounds, guy2Wounds].toString();
 export const fromWoundPairKey = (woundsPairText: string): number[] => woundsPairText.split(',').map(x => parseInt(x));
@@ -204,7 +203,7 @@ export function resolveDieChoice(
     if(!chooser.hasStruck) {
       if(enemy.profile.abilities.has(Ability.JustAScratch)) {
         dmg = 0;
-      } else if(chooser.profile.abilities.has(Ability.Hammerhand)) {
+      } else if(chooser.profile.abilities.has(Ability.Hammerhand2021)) {
         dmg++;
       }
       chooser.hasStruck = true;
@@ -223,7 +222,7 @@ export function resolveDieChoice(
 
     if (
       chooser.successes()
-      && chooser.profile.has(Ability.MurderousEntrance)
+      && chooser.profile.has(Ability.MurderousEntrance2021)
       && !chooser.hasCritStruck
     ) {
       if(chooser.crits > 0) {

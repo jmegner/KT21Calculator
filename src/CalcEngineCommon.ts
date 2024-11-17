@@ -164,9 +164,23 @@ export function calcFinalDiceProb(
   norms += actualFailToNormPromotions;
   fails -= actualFailToNormPromotions;
 
+  if (abilities.has(Ability.Severe)) {
+    if (norms > 0 && crits === 0) {
+      crits++;
+      norms--;
+    }
+  }
+
   const actualNormToCritPromotions = Math.min(normsToCrits, norms);
   crits += actualNormToCritPromotions;
   norms -= actualNormToCritPromotions;
+
+  if (abilities.has(Ability.Rending)) {
+    if (crits > 0 && norms > 0) {
+      crits++;
+      norms--;
+    }
+  }
 
   if(abilities.has(Ability.EliteModerate)) {
     if(fails > 0) {
@@ -186,13 +200,6 @@ export function calcFinalDiceProb(
     else if(norms > 0) {
       norms--;
       crits++;
-    }
-  }
-
-  if (abilities.has(Ability.Rending)) {
-    if (crits > 0 && norms > 0) {
-      crits++;
-      norms--;
     }
   }
 

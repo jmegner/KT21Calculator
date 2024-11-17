@@ -65,8 +65,8 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
     new IncProps(N.HardyX,         def.hardyx + '+',         xspan(5, 2, '+'), numHandler('hardyx')),
     new IncProps(N.FeelNoPain,     def.fnp + '+',            xspan(6, 2, '+'), numHandler('fnp')),
     new IncProps(N.Reroll,         def.reroll,               preX(rerolls),    textHandler('reroll')),
-    new IncProps(N.JustAScratch,   toYN(Ability.JustAScratch), xAndCheck,      singleHandler(Ability.JustAScratch)),
-    new IncProps(N.Durable,        toYN(Ability.Durable),    xAndCheck,        singleHandler(Ability.Durable)),
+    new IncProps(N.JustAScratch2021,   toYN(Ability.JustAScratch), xAndCheck,      singleHandler(Ability.JustAScratch)),
+    new IncProps(N.Durable2021,        toYN(Ability.Durable),    xAndCheck,        singleHandler(Ability.Durable)),
   ];
 
   // we actually have 1 column when rendered, and order gets weird if we pretend we have 2
