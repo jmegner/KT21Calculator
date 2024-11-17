@@ -1,5 +1,5 @@
 # Kill Team 2021 Calculator ("ktcalc")
-Calculator for helping analyze shooting and fighting attacks in Kill Team (2021 edition). Heavily inspired by kt2.doit-cms.ru (now offline).
+Calculator for helping analyze shooting and fighting attacks in Kill Team (2024 edition and formerly 2021 edition). Heavily inspired by kt2.doit-cms.ru (now offline).
 
 Live at [jmegner.github.io/KT21Calculator](https://jmegner.github.io/KT21Calculator/).
 
@@ -55,6 +55,8 @@ Dev setup...
 My thanks to [Daniel Espinoza-Hernandez](https://github.com/daespinozah) for UI improvements, like Accordions and SwipableViews.
 
 My thanks to [Dave/veddermatic](https://github.com/veddermatic) for the nav bar and icons at top.
+
+My thanks to [Kevin/Sigma](https://github.com/DenamPavel) for some initial KT2024 support.
 
 My thanks to Redux maintainer
 [Mark Erikson](https://github.com/markerikson)
