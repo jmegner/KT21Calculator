@@ -9,8 +9,7 @@ import {
 import Ability, {
   eliteAbilities,
   mutuallyExclusiveFightAbilities as nicheAbilities,
-  rendingAndSevereAbilities,
-  rerollAbilities as rerolls
+  rerollAbilities as rerolls,
 } from 'src/Ability';
 import { MaxWounds } from 'src/KtMisc';
 import Model from 'src/Model';
@@ -70,7 +69,6 @@ const FighterControls: React.FC<Props> = (props: Props) => {
 
   const nicheAbility = extractFromSet(nicheAbilities, Ability.None, atk.abilities)!;
   const eliteAbility = extractFromSet(eliteAbilities, Ability.None, atk.abilities)!;
-  const rendingSevereAbility = extractFromSet(rendingAndSevereAbilities, Ability.None, atk.abilities)!;
 
   const basicParams: IncProps[] = [
     //           id/label,           selectedValue,         values,           valueChangeHandler
@@ -81,12 +79,13 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps('Critical Dmg',     atk.critDmg,           span(1, 9),       numHandler('critDmg')),
     new IncProps(N.Reroll,           atk.reroll,            preX(rerolls),    textHandler('reroll')),
     new IncProps('Lethal',           atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),
-    new IncProps('Rending/Severe*', rendingSevereAbility, rendingAndSevereAbilities, subsetHandler(rendingAndSevereAbilities)),
+    new IncProps(N.Rending,          toYN(Ability.Rending), xAndCheck,        singleHandler(Ability.Rending)),
+    new IncProps(N.Severe,            toYN(Ability.Severe), xAndCheck,        singleHandler(Ability.Severe)),
     new IncProps(N.Brutal,           toYN(Ability.Brutal),  xAndCheck,        singleHandler(Ability.Brutal)),
-    new IncProps(N.StunMelee2021,        toYN(Ability.Stun2021),    xAndCheck,        singleHandler(Ability.Stun2021)),
   ];
   const advancedParams: IncProps[] = [
     new IncProps(N.NicheAbility,     nicheAbility,               nicheAbilities, subsetHandler(nicheAbilities)),
+    new IncProps(N.StunMelee2021,        toYN(Ability.Stun2021),    xAndCheck,        singleHandler(Ability.Stun2021)),
     new IncProps(N.AutoNorms,        atk.autoNorms,              xspan(1, 9),    numHandler('autoNorms')),
     new IncProps(N.AutoCrits,        atk.autoCrits,              xspan(1, 9),    numHandler('autoCrits')),
     new IncProps(N.NormsToCrits,     atk.normsToCrits,           xspan(1, 9),    numHandler('normsToCrits')),

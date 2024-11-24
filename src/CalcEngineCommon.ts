@@ -168,6 +168,14 @@ export function calcFinalDiceProb(
     if (norms > 0 && crits === 0) {
       crits++;
       norms--;
+
+      // creation of first crit means another opportunity for FailToNormIfCrit
+      if (abilities.has(Ability.FailToNormIfCrit)) {
+        if (fails > 0) {
+          norms++;
+          fails--;
+        }
+      }
     }
   }
 

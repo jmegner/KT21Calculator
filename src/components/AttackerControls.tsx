@@ -23,8 +23,7 @@ import {
 import Model from 'src/Model';
 import Ability, {
   eliteAbilities,
-  rendingAndSevereAbilities,
-  rerollAbilities,
+  rerollAbilities as rerolls,
 } from 'src/Ability';
 import * as N from 'src/Notes';
 import { useCheckboxAndVariable } from 'src/hooks/useCheckboxAndVariable';
@@ -64,7 +63,6 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
   }
 
   const eliteAbility = extractFromSet(eliteAbilities, Ability.None, atk.abilities)!;
-  const rendingSevereAbility = extractFromSet(rendingAndSevereAbilities, Ability.None, atk.abilities)!;
 
   const basicParams: IncProps[] = [
     //           id/label,       selectedValue,         values,                valueChangeHandler
@@ -72,15 +70,16 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     new IncProps('BS',           atk.diceStat + '+',    rollSpan,         numHandler('diceStat')),
     new IncProps('Normal Dmg',   atk.normDmg,           span(0, 9),       numHandler('normDmg')),
     new IncProps('Crit Dmg',     atk.critDmg,           span(0, 10),      numHandler('critDmg')),
-    new IncProps('Devastating/MWx',  atk.mwx,               xspan(1, 9),      numHandler('mwx')),
-    new IncProps('Piercing/APx',     atk.apx,               xspan(1, 4),      numHandler('apx')),
-    new IncProps('PiercingCrits/Px', atk.px,                xspan(1, 4),      numHandler('px')),
-    new IncProps(N.Reroll,       atk.reroll,            preX(rerollAbilities),    textHandler('reroll')),
-    new IncProps('Rending/Severe*', rendingSevereAbility, rendingAndSevereAbilities, subsetHandler(rendingAndSevereAbilities)),
+    new IncProps('Devastating/MWx',  atk.mwx,           xspan(1, 9),      numHandler('mwx')),
+    new IncProps('Piercing/APx',     atk.apx,           xspan(1, 4),      numHandler('apx')),
+    new IncProps('PiercingCrits/Px', atk.px,            xspan(1, 4),      numHandler('px')),
+    new IncProps(N.Reroll,       atk.reroll,            preX(rerolls),    textHandler('reroll')),
     new IncProps('Lethal',       atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),
+    new IncProps(N.Rending,      toYN(Ability.Rending), xAndCheck,        singleHandler(Ability.Rending)),
+    new IncProps(N.Severe,        toYN(Ability.Severe), xAndCheck,        singleHandler(Ability.Severe)),
+    new IncProps(N.AutoNorms,    atk.autoNorms,         xspan(1, 9),      numHandler('autoNorms')),
   ];
   const advancedParams: IncProps[] = [
-    new IncProps(N.AutoNorms,    atk.autoNorms,         xspan(1, 9),      numHandler('autoNorms')),
     new IncProps(N.AutoCrits,    atk.autoCrits,         xspan(1, 9),      numHandler('autoCrits')),
     new IncProps(N.FailsToNorms, atk.failsToNorms,      xspan(1, 9),      numHandler('failsToNorms')),
     new IncProps(N.NormsToCrits, atk.normsToCrits,      xspan(1, 9),      numHandler('normsToCrits')),
