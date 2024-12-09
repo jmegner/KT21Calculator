@@ -80,10 +80,11 @@ const AttackerControls: React.FC<Props> = (props: Props) => {
     new IncProps(N.AutoNorms,    atk.autoNorms,         xspan(1, 9),      numHandler('autoNorms')),
   ];
   const advancedParams: IncProps[] = [
+    new IncProps(N.ObscuredTarget, toYN(Ability.ObscuredTarget),          xAndCheck, singleHandler(Ability.ObscuredTarget)),
     new IncProps(N.AutoCrits,    atk.autoCrits,         xspan(1, 9),      numHandler('autoCrits')),
     new IncProps(N.FailsToNorms, atk.failsToNorms,      xspan(1, 9),      numHandler('failsToNorms')),
     new IncProps(N.NormsToCrits, atk.normsToCrits,      xspan(1, 9),      numHandler('normsToCrits')),
-    new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit),            xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
+    new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit), xAndCheck, singleHandler(Ability.FailToNormIfCrit)),
     new IncProps('ElitePoints2021*', eliteAbility,          eliteAbilities,   subsetHandler(eliteAbilities)),
     new IncProps(N.CloseAssault2021, toYN(Ability.FailToNormIfAtLeastTwoSuccesses), xAndCheck, singleHandler(Ability.FailToNormIfAtLeastTwoSuccesses)),
     //new IncProps(N.NoCover,      atk.noCover,            noCoverChoices,        textHandler('noCover')),

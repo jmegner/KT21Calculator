@@ -139,7 +139,7 @@ export function calcFinalDiceProb(
   crits += additionalCrits;
   norms += additionalNorms;
 
-  if (abilities.has(Ability.FailToNormIfCrit)) {
+  if (abilities.has(Ability.FailToNormIfCrit) && !abilities.has(Ability.ObscuredTarget)) {
     if (crits > 0 && fails > 0) {
       norms++;
       fails--;
@@ -170,7 +170,7 @@ export function calcFinalDiceProb(
       norms--;
 
       // creation of first crit means another opportunity for FailToNormIfCrit
-      if (abilities.has(Ability.FailToNormIfCrit)) {
+      if (abilities.has(Ability.FailToNormIfCrit) && !abilities.has(Ability.ObscuredTarget)) {
         if (fails > 0) {
           norms++;
           fails--;
@@ -209,6 +209,12 @@ export function calcFinalDiceProb(
       norms--;
       crits++;
     }
+  }
+
+  if(abilities.has(Ability.ObscuredTarget)) {
+    // technically, the crits were always norms; also need to discard a success
+    norms = Math.max(0, norms + crits - 1);
+    crits = 0;
   }
 
   return new FinalDiceProb(prob, crits, norms);

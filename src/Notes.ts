@@ -22,6 +22,10 @@ export const NoCover = new Note(
   `NoCover`,
   `Defender can not use cover saves. Intercession Squad's Accurate chapter tactic triggers this only if a crit hit is retained.`,
 );
+export const ObscuredTarget = new Note(
+  `ObscuredTarget`,
+  `Attacker crits are retained as norms.  No crit-triggered abilities can trigger.  Discard an attacker success.`,
+);
 export const AutoNorms = new Note(
   `AutoNorms/Accurate`,
   `How many attack dice can be automatically retained as a normal success. Much like cover saves but for attack dice.`,
