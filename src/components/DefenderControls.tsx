@@ -51,7 +51,7 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
 
   const basicParams: IncProps[] = [
     //           id,               selectedValue,            values,           valueChangeHandler
-    new IncProps('Defense',        def.numDice,              span(0, 4),       numHandler('numDice')),
+    new IncProps('Defense',        def.numDice,              span(0, 9),       numHandler('numDice')),
     new IncProps('Save',           def.diceStat + '+',       withPlus(SaveRange), numHandler('diceStat')),
     new IncProps('Wounds',         def.wounds,               span(1, MaxWounds),      numHandler('wounds')),
     new IncProps(N.InvulnSave,     def.invulnSave + '+',     xrollSpan,        numHandler('invulnSave')),
