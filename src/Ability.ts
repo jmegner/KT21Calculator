@@ -22,6 +22,7 @@ export enum Ability {
     JustAScratch = "JustAScratch", // cancel one attack die just before damage; both shoot and fight
     Durable = "Durable2021", // one crit hit does 1 less damage, to minimun of 3
     ObscuredTarget = "ObscuredTarget", // all crits become norms; can't do crit-triggered abilities; discard a success at the end
+    PuritySeal = "PuritySeal", // 2024; if roll 2 fails, can discard one fail to change other fail to normal success; shooting and fighting only, not shooting defense
 
     // fight stuff relevant to 2024
     Brutal = "Brutal", // opponent can only parry with crit

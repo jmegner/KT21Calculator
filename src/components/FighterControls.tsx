@@ -80,21 +80,22 @@ const FighterControls: React.FC<Props> = (props: Props) => {
     new IncProps(N.Reroll,           atk.reroll,            preX(rerolls),    textHandler('reroll')),
     new IncProps('Lethal',           atk.lethal + '+',      xspan(5, 2, '+'), numHandler('lethal')),
     new IncProps(N.Rending,          toYN(Ability.Rending), xAndCheck,        singleHandler(Ability.Rending)),
-    new IncProps(N.Severe,            toYN(Ability.Severe), xAndCheck,        singleHandler(Ability.Severe)),
+    new IncProps(N.Severe,           toYN(Ability.Severe),  xAndCheck,        singleHandler(Ability.Severe)),
     new IncProps(N.Brutal,           toYN(Ability.Brutal),  xAndCheck,        singleHandler(Ability.Brutal)),
   ];
   const advancedParams: IncProps[] = [
     new IncProps(N.NicheAbility,     nicheAbility,               nicheAbilities, subsetHandler(nicheAbilities)),
-    new IncProps(N.StunMelee2021,        toYN(Ability.Stun2021),    xAndCheck,        singleHandler(Ability.Stun2021)),
+    new IncProps(N.StunMelee2021,    toYN(Ability.Stun2021),     xAndCheck,      singleHandler(Ability.Stun2021)),
     new IncProps(N.AutoNorms,        atk.autoNorms,              xspan(1, 9),    numHandler('autoNorms')),
     new IncProps(N.AutoCrits,        atk.autoCrits,              xspan(1, 9),    numHandler('autoCrits')),
     new IncProps(N.NormsToCrits,     atk.normsToCrits,           xspan(1, 9),    numHandler('normsToCrits')),
     new IncProps(N.FailsToNorms,     atk.failsToNorms,           xspan(1, 9),    numHandler('failsToNorms')),
     new IncProps(N.FailToNormIfCrit, toYN(Ability.FailToNormIfCrit), xAndCheck,  singleHandler(Ability.FailToNormIfCrit)),
-    new IncProps('ElitePoints2021*',     eliteAbility,               eliteAbilities, subsetHandler(eliteAbilities)),
+    new IncProps(N.PuritySeal,       toYN(Ability.PuritySeal),   xAndCheck,      singleHandler(Ability.PuritySeal)),
+    new IncProps('ElitePoints2021*', eliteAbility,               eliteAbilities, subsetHandler(eliteAbilities)),
     new IncProps(N.Duelist,          toYN(Ability.Duelist),      xAndCheck,      singleHandler(Ability.Duelist)),
-    new IncProps(N.JustAScratch2021,     toYN(Ability.JustAScratch), xAndCheck,      singleHandler(Ability.JustAScratch)),
-    new IncProps(N.Durable2021,          toYN(Ability.Durable),      xAndCheck,      singleHandler(Ability.Durable)),
+    new IncProps(N.JustAScratch2021, toYN(Ability.JustAScratch), xAndCheck,      singleHandler(Ability.JustAScratch)),
+    new IncProps(N.Durable2021,      toYN(Ability.Durable),      xAndCheck,      singleHandler(Ability.Durable)),
   ];
 
   const advancedParamsToShow

@@ -146,6 +146,13 @@ export function calcFinalDiceProb(
     }
   }
 
+  if (abilities.has(Ability.PuritySeal)) {
+    if (fails >= 2) {
+      norms++;
+      fails -= 2;
+    }
+  }
+
   if (abilities.has(Ability.FailToNormIfAtLeastTwoSuccesses)) {
     if (crits + norms >= 2 && fails > 0) {
       norms++;

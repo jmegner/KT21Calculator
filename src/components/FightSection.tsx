@@ -41,6 +41,7 @@ const FightSection: React.FC = () => {
     N.NicheAbility,
     N.AutoNorms,
     N.AutoCrits,
+    N.PuritySeal,
     N.CloseAssault2021,
     N.Waaagh2021,
     N.EliteModerate2021,
