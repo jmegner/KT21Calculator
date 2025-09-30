@@ -1,4 +1,4 @@
-# Kill Team 2021 Calculator ("ktcalc")
+# Kill Team 2024 Calculator ("ktcalc")
 Calculator for helping analyze shooting and fighting attacks in Kill Team (2024 edition and formerly 2021 edition). Heavily inspired by kt2.doit-cms.ru (now offline).
 
 Live at [jmegner.github.io/KT21Calculator](https://jmegner.github.io/KT21Calculator/).
