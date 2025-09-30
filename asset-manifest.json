@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/KT21Calculator/static/css/main.ca4a1b42.css",
+    "main.js": "/KT21Calculator/static/js/main.fe7ec5c7.js",
+    "static/media/dice_sim_bg.wasm": "/KT21Calculator/static/media/dice_sim_bg.b8ee6254a13d8805400c.wasm",
+    "static/media/KtFightIcon.svg": "/KT21Calculator/static/media/KtFightIcon.cf345748c4eaf783c4c9da1cdebde7cb.svg",
+    "static/media/KtShootIcon.svg": "/KT21Calculator/static/media/KtShootIcon.029260b328aae6d9b33518098a716d85.svg",
+    "static/media/WorldOfTanksIcon.svg": "/KT21Calculator/static/media/WorldOfTanksIcon.5e33493752ac5c1b60adb8a6200313d5.svg",
+    "index.html": "/KT21Calculator/index.html",
+    "main.ca4a1b42.css.map": "/KT21Calculator/static/css/main.ca4a1b42.css.map",
+    "main.fe7ec5c7.js.map": "/KT21Calculator/static/js/main.fe7ec5c7.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ca4a1b42.css",
+    "static/js/main.fe7ec5c7.js"
+  ]
+}
