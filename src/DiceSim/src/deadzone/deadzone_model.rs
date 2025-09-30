@@ -15,6 +15,8 @@ pub struct DeadzoneModel {
     pub num_shield_dice: i32,
     #[wasm_bindgen(js_name = toxicDmg)]
     pub toxic_dmg: i32, // additional dmg if any dmg goes through; "Dismantle" is basically toxic 1 against vehicles
+    #[wasm_bindgen(js_name = explodeStat)]
+    pub explode_stat: i32, // explode on this value or higher
 }
 
 #[wasm_bindgen]
@@ -25,6 +27,7 @@ impl DeadzoneModel {
             hp: 2,
             num_dice: 3,
             dice_stat: 5,
+            explode_stat: 8,
             num_rerolls: 0,
             ap: 0,
             armor: 0,

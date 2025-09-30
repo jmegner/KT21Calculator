@@ -102,6 +102,7 @@ fn make_success_probs(
             rng,
             model.num_dice,
             model.dice_stat,
+            model.explode_stat,
             model.num_rerolls,
             options.exploding_dice_max_levels,
         );
@@ -119,6 +120,7 @@ fn simulated_num_successes_from_multi_roll(
     rng: &mut ThreadRng,
     num_dice: i32,
     dice_stat: i32,
+    explode_stat: i32,
     num_rerolls: i32,
     exploding_dice_max_levels: i32,
 ) -> i32 {
@@ -129,6 +131,7 @@ fn simulated_num_successes_from_multi_roll(
             die_distribution,
             rng,
             dice_stat,
+            explode_stat,
             exploding_dice_max_levels,
         ));
     }
@@ -143,6 +146,7 @@ fn simulated_num_successes_from_multi_roll(
             rng,
             num_actual_rerolls,
             dice_stat,
+            explode_stat,
             0,
             exploding_dice_max_levels,
         )
@@ -154,6 +158,7 @@ fn simulated_sf_from_single_roll(
     die_distribution: &rand::distributions::Uniform<i32>,
     rng: &mut ThreadRng,
     dice_stat: i32,
+    explode_stat: i32,
     exploding_dice_max_levels: i32,
 ) -> Sf {
     let mut sf = Sf::new();
@@ -164,7 +169,7 @@ fn simulated_sf_from_single_roll(
         } else {
             sf.f += 1;
         }
-        if pip_outcome != PIP_HI || sf.total() > exploding_dice_max_levels {
+        if pip_outcome < explode_stat || sf.total() > exploding_dice_max_levels {
             break;
         }
     }

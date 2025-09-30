@@ -27,13 +27,14 @@ const ModelControls: React.FC<Props> = (props: Props) => {
   let params: IncProps[] = [
     //           id/label,            selectedValue,        values,               valueChangeHandler
     new IncProps('HP',                model.hp,             span(1,10),      numHandler('hp')),
-    new IncProps('Dice',              model.numDice,        diceSpan,             numHandler('numDice')),
+    new IncProps('Dice',              model.numDice,        diceSpan,        numHandler('numDice')),
     new IncProps('Stat(RA/FI/SV)',    model.diceStat + "+", span(1, 8, '+'), numHandler('diceStat')),
-    new IncProps('Rerolls',           model.numRerolls,     intSpan,              numHandler('numRerolls')),
-    new IncProps('Toxic/Dismantle',   model.toxicDmg,       intSpan,              numHandler('toxicDmg')),
-    new IncProps('AP',                model.ap,             intSpan,              numHandler('ap')),
-    new IncProps('Armor',             model.armor,          intSpan,              numHandler('armor')),
-    new IncProps('ShieldDice',        model.numShieldDice,  intSpan,              numHandler('numShieldDice')),
+    new IncProps('Rerolls',           model.numRerolls,     intSpan,         numHandler('numRerolls')),
+    new IncProps('Toxic/Dismantle',   model.toxicDmg,       intSpan,         numHandler('toxicDmg')),
+    new IncProps('AP',                model.ap,             intSpan,         numHandler('ap')),
+    new IncProps('Armor',             model.armor,          intSpan,         numHandler('armor')),
+    new IncProps('ShieldDice',        model.numShieldDice,  intSpan,         numHandler('numShieldDice')),
+    new IncProps('DiceExplodeOn',     model.explodeStat + "+",    span(2, 8, '+'), numHandler('explodeStat')),
   ];
 
   const paramElems = params.map(p =>
