@@ -66,6 +66,9 @@ const ShootSection: React.FC = () => {
   return (
     <Container style={{width: 'fit-content'}}>
       <Row>
+        Check out &nbsp;<a href='https://ktcalc.com'>ktcalc.com</a>&nbsp; for a more up-to-date fork of this calculator.
+      </Row>
+      <Row>
         Kill Team 2024 Edition, Shooting&nbsp;
         <a href='https://assets.warhammer-community.com/killteam_keydownloads_literules_eng-jfhe9v0j7c-n0x6ozmgo9.pdf'>[Lite Rules]</a>
       </Row>

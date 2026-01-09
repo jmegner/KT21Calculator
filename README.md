@@ -1,4 +1,5 @@
 # Kill Team 2024 Calculator ("ktcalc")
+
 Calculator for helping analyze shooting and fighting attacks in Kill Team (2024 edition and formerly 2021 edition). Heavily inspired by kt2.doit-cms.ru (now offline).
 
 Live at [jmegner.github.io/KT21Calculator](https://jmegner.github.io/KT21Calculator/).
@@ -8,20 +9,27 @@ and
 [follow-up thread for fight support](https://www.reddit.com/r/killteam/comments/s5gczq/kt21_calculator_now_supports_fightingmelee/).
 Check out [Kill Team Resources](https://github.com/jmegner/KillTeamResources) repo for other calculators/simulators and more.
 
+## ktcalc.com
+
+Please go check out [ktcalc.com](https://ktcalc.com), which is a fork of this calculator and will probably have more features and be more up to date.
+
 ## Future Work
 
 See [issues](https://github.com/jmegner/KT21Calculator/issues), but to comment on the big ones ...
+
 - I would love to do a [mass analysis tab](https://github.com/jmegner/KT21Calculator/issues/13), but it will take a lot of work.
 - [FNP for melee](https://github.com/jmegner/KT21Calculator/issues/3) is painful and I don't have any short term or medium term plans to do it.
-- Option for user to [select a relevant operative profile](https://github.com/jmegner/KT21Calculator/issues/14) (ex: Necron Immortal with Gauss Blaster) instead of individually selecting parameters.  Low priority because it is high effort and moderate benefit.
+- Option for user to [select a relevant operative profile](https://github.com/jmegner/KT21Calculator/issues/14) (ex: Necron Immortal with Gauss Blaster) instead of individually selecting parameters. Low priority because it is high effort and moderate benefit.
 
 ## Dev Stuff
+
 Basically, this is a React SPA web app mostly written in TypeScript.
 There is some Rust compiled down to wasm for some stuff where I needed more performance.
 I use GitHub Actions to test, build, and deploy the web app upon every git-push to main branch.
 I do my development in vscode.
 
 List of notable technologies/libs/whatever used...
+
 - [TypeScript](https://www.typescriptlang.org/) as the primary programming language.
 - [NodeJS and npm](https://nodejs.org/en/) for toolchain and package management.
 - [React](https://reactjs.org/) for UI framework.
@@ -37,6 +45,7 @@ List of notable technologies/libs/whatever used...
   - [wasm-bindgen](https://github.com/rustwasm/wasm-bindgen)
 
 Dev setup...
+
 - You'll need to install [NodeJS+npm](https://nodejs.org/en/) for building and running.
 - Install [rust](https://www.rust-lang.org/tools/install) and [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/) to build rust into wasm.
   - Might have to do `rustup target add wasm32-unknown-unknown` as well.
@@ -48,7 +57,6 @@ Dev setup...
   For debugging tests, you can just launch one of vscode's test-oriented debug profiles.
 - To run tests, do `npm test` for normal watch-mode testing that sticks around.
   Do `npm run testq` that does a single run of tests (like doing `test` and then hitting `q` to quit).
-
 
 ## Thanks
 
