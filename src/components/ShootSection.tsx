@@ -66,7 +66,10 @@ const ShootSection: React.FC = () => {
   return (
     <Container style={{width: 'fit-content'}}>
       <Row>
-        Check out &nbsp;<a href='https://ktcalc.com'>ktcalc.com</a>&nbsp; for a more up-to-date fork of this calculator.
+        Check out KTCalculator+ (
+        <a href='https://play.google.com/store/apps/details?id=com.sunnyckh.ktcalculator'>Android</a>,{' '}
+        <a href='https://apps.apple.com/us/app/ktcalculator/id6802795546'>iOS</a>) or
+        &nbsp;<a href='https://ktcalc.com'>ktcalc.com</a>&nbsp; for a more up-to-date fork of this calculator.
       </Row>
       <Row>
         Kill Team 2024 Edition, Shooting&nbsp;
