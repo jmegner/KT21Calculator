@@ -41,8 +41,22 @@ pub fn deadzone_calc_dmg_probs(
 ) -> js_sys::Map {
     let mut rng = rand::thread_rng();
     let die_distribution = rand::distributions::Uniform::new(PIP_LO, PIP_HI + 1);
-    let atk_success_probs = make_success_probs(&die_distribution, &mut rng, &attacker, &options);
-    let def_success_probs = make_success_probs(&die_distribution, &mut rng, &defender, &options);
+    let atk_success_probs = make_success_probs(
+        &die_distribution,
+        &mut rng,
+        attacker,
+        defender,
+        options,
+        true,
+    );
+    let def_success_probs = make_success_probs(
+        &die_distribution,
+        &mut rng,
+        defender,
+        attacker,
+        options,
+        false,
+    );
 
     damage_probs_from_successes(
         attacker,
@@ -172,21 +186,52 @@ fn resolve_halo_hits(
     (damage, remaining_shields)
 }
 
+// Halo Flashpoint only: derive effective values so toggling rules never mutates
+// the entered stats or accumulates bonuses across renders/repeated attacks.
+fn roll_parameters(
+    model: &DeadzoneModel,
+    opponent: &DeadzoneModel,
+    options: &DeadzoneOptions,
+    is_attacker: bool,
+) -> (i32, i32, i32) {
+    let mut dice = model.num_dice;
+    let mut explode = model.explode_stat;
+    let rerolls = model.num_rerolls;
+    if options.is_halo_flashpoint && is_attacker {
+        if model.optics {
+            dice += 1;
+            explode = 7;
+        }
+        if model.sniper_scope {
+            dice += 2;
+            explode = 7;
+        }
+        // Guarded overrides even Optics and Sniper Scope, only for the shooter.
+        if opponent.guarded {
+            explode = PIP_HI + 1;
+        }
+    }
+    (dice, explode, rerolls)
+}
+
 fn make_success_probs(
     die_distribution: &rand::distributions::Uniform<i32>,
     rng: &mut ThreadRng,
     model: &DeadzoneModel,
+    opponent: &DeadzoneModel,
     options: &DeadzoneOptions,
+    is_attacker: bool,
 ) -> HashMap<i32, f64> {
+    let (dice, explode, rerolls) = roll_parameters(model, opponent, options, is_attacker);
     let mut success_counts = HashMap::<i32, i32>::new();
     for _ in 0..options.num_simulations {
         let num_successes = simulated_num_successes_from_multi_roll(
             die_distribution,
             rng,
-            model.num_dice,
+            dice,
             model.dice_stat,
-            model.explode_stat,
-            model.num_rerolls,
+            explode,
+            rerolls,
             options.exploding_dice_max_levels,
         );
         add_to_map_value(&mut success_counts, &num_successes, 1);
@@ -262,6 +307,63 @@ fn simulated_sf_from_single_roll(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn halo_special_rules_apply_when_enabled_and_do_not_change_base_stats() {
+        let mut attacker = DeadzoneModel::new();
+        let mut defender = DeadzoneModel::new();
+        let mut options = DeadzoneOptions::new();
+        options.is_halo_flashpoint = true;
+        attacker.optics = true;
+        assert_eq!(
+            roll_parameters(&attacker, &defender, &options, true),
+            (4, 7, 0)
+        );
+        attacker.optics = false;
+        attacker.sniper_scope = true;
+        assert_eq!(
+            roll_parameters(&attacker, &defender, &options, true),
+            (5, 7, 0)
+        );
+        attacker.optics = true;
+        attacker.num_rerolls = 1;
+        assert_eq!(
+            roll_parameters(&attacker, &defender, &options, true),
+            (6, 7, 1)
+        );
+        defender.guarded = true;
+        assert_eq!(
+            roll_parameters(&attacker, &defender, &options, true),
+            (6, 9, 1)
+        );
+        assert_eq!(
+            roll_parameters(&defender, &attacker, &options, false),
+            (3, 8, 0)
+        );
+        attacker.optics = false;
+        attacker.sniper_scope = false;
+        defender.guarded = false;
+        assert_eq!(
+            roll_parameters(&attacker, &defender, &options, true),
+            (3, 8, 1)
+        );
+        options.is_halo_flashpoint = false;
+        attacker.optics = true;
+        attacker.sniper_scope = true;
+        defender.guarded = true;
+        assert_eq!(
+            roll_parameters(&attacker, &defender, &options, true),
+            (3, 8, 1)
+        );
+        assert_eq!(
+            (
+                attacker.num_dice,
+                attacker.explode_stat,
+                attacker.num_rerolls
+            ),
+            (3, 8, 1)
+        );
+    }
 
     #[test]
     fn halo_shields_esd_armor_and_lethal_resolve_in_order() {

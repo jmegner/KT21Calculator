@@ -23,6 +23,11 @@ pub struct DeadzoneModel {
     pub toxic_dmg: i32, // additional dmg if any dmg goes through; also Halo Flashpoint's Lethal (n)
     #[wasm_bindgen(js_name = explodeStat)]
     pub explode_stat: i32, // explode on this value or higher
+    // Halo Flashpoint only: enabled modifiers applied without changing base stats.
+    pub optics: bool,
+    #[wasm_bindgen(js_name = sniperScope)]
+    pub sniper_scope: bool,
+    pub guarded: bool,
 }
 
 #[wasm_bindgen]
@@ -41,6 +46,9 @@ impl DeadzoneModel {
             energy_shields: 0,
             shield_depleter: 0,
             toxic_dmg: 0,
+            optics: false,
+            sniper_scope: false,
+            guarded: false,
         }
     }
 }

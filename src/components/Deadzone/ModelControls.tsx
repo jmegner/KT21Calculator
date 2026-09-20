@@ -6,11 +6,15 @@ import Col from 'react-bootstrap/Col';
 import IncDecSelect, {Props as IncProps} from 'src/components/IncDecSelect';
 import {
   Accepter,
+  boolToCheckX,
+  makeBoolChangeHandler,
   makeNumChangeHandler,
   makeIncDecPropsFromLookup,
   span,
+  xAndCheck,
 } from 'src/Util';
 import { DeadzoneModel, } from "src/DiceSim/pkg/dice_sim";
+import { explainDeadzoneControls } from 'src/Deadzone/Notes';
 
 
 export interface Props {
@@ -23,6 +27,7 @@ export interface Props {
 const ModelControls: React.FC<Props> = (props: Props) => {
   const model = props.model;
   const numHandler = makeNumChangeHandler(model, props.changeHandler);
+  const boolHandler = makeBoolChangeHandler(model, props.changeHandler);
   const diceSpan = span(props.isAttacker ? 1 : 0, 9);
   const intSpan = span(0, 9);
 
@@ -46,7 +51,7 @@ const ModelControls: React.FC<Props> = (props: Props) => {
       ...(!props.isAttacker ? [new IncProps('Health', model.hp, span(1, 10), numHandler('hp'))] : []),
       new IncProps('Dice', model.numDice, span(0, 20), numHandler('numDice')),
       new IncProps(props.isAttacker ? 'Ranged/Fight' : 'Survive', model.diceStat + '+', span(8, 1, '+'), numHandler('diceStat')),
-      new IncProps('Rerolls', model.numRerolls, intSpan, numHandler('numRerolls')),
+      new IncProps('Rerolls/WeightOfFire', model.numRerolls, intSpan, numHandler('numRerolls')),
       ...(props.isAttacker ? [
         new IncProps('Lethal', model.toxicDmg, intSpan, numHandler('toxicDmg')),
         new IncProps('AP', model.ap, intSpan, numHandler('ap')),
@@ -58,9 +63,16 @@ const ModelControls: React.FC<Props> = (props: Props) => {
       makeIncDecPropsFromLookup('Headshots', model, props.changeHandler, 'explodeStat', new Map([
         [9, 'X'], [8, '8+'], [7, '7+'],
       ])),
+      ...(props.isAttacker ? [
+        new IncProps('Optics', boolToCheckX(model.optics), xAndCheck, boolHandler('optics')),
+        new IncProps('Sniper Scope', boolToCheckX(model.sniperScope), xAndCheck, boolHandler('sniperScope')),
+      ] : [
+        new IncProps('Guarded', boolToCheckX(model.guarded), xAndCheck, boolHandler('guarded')),
+      ]),
     ];
   }
 
+  explainDeadzoneControls(params, props.isHaloFlashpoint ?? false);
   const paramElems = params.map(p =>
     <Row key={p.id}><Col className='pr-0'><IncDecSelect {...p}/></Col></Row>);
 

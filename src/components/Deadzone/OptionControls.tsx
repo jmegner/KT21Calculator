@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row';
 
 import { Props as IncProps, propsToRows } from 'src/components/IncDecSelect';
 import { DeadzoneOptions } from "src/DiceSim/pkg/dice_sim";
+import { explainDeadzoneControls } from 'src/Deadzone/Notes';
 import {
   Accepter,
   boolToCheckX,
@@ -55,6 +56,7 @@ const OptionControls: React.FC<Props> = (props: Props) => {
     explodingDiceMaxLevelsIncProps,
   ];
 
+  explainDeadzoneControls(params, opts.isHaloFlashpoint);
   const [elemsCol0, elemsCol1] = requiredAndOptionalItemsToTwoCols(propsToRows(params));
 
   return (
