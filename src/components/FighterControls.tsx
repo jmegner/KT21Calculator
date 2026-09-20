@@ -32,19 +32,22 @@ import {
 } from 'src/Util';
 import { Props as IncProps, propsToRows } from 'src/components/IncDecSelect';
 import { useCheckboxAndVariable } from 'src/hooks/useCheckboxAndVariable';
+import { ClearButton } from './SectionActions';
 
 
 export interface Props {
   title: string;
   attacker: Model;
   changeHandler: Accepter<Model>;
+  advanced: boolean;
+  setAdvanced: Accepter<boolean>;
 }
 
 const FighterControls: React.FC<Props> = (props: Props) => {
   const atk = props.attacker;
   const textHandler = makeTextChangeHandler(atk, props.changeHandler);
   const numHandler = makeNumChangeHandler(atk, props.changeHandler);
-  const [advancedCheckbox, wantShowAdvanced] = useCheckboxAndVariable('Advanced');
+  const [advancedCheckbox, wantShowAdvanced] = useCheckboxAndVariable('Advanced', false, [props.advanced, props.setAdvanced]);
 
   function subsetHandler(subset: Iterable<Ability>) {
     return makeSetChangeHandler<Model,Ability>(
@@ -111,7 +114,7 @@ const FighterControls: React.FC<Props> = (props: Props) => {
   return (
     <Container style={{width: '310px'}}>
       <Row>
-        <Col>{props.title}</Col>
+        <Col>{props.title}<ClearButton onClear={() => {props.changeHandler(new Model()); props.setAdvanced(false);}}/></Col>
         <Col>{advancedCheckbox}</Col>
       </Row>
       <Row>

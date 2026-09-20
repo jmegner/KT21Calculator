@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useSearchParams } from 'react-router-dom';
@@ -11,6 +11,7 @@ import FightSection from 'src/components/FightSection';
 import ShootMassAnalysisSection from 'src/components/ShootMassAnalysisSection';
 import ShootSection from 'src/components/ShootSection';
 import WorldOfTanksSection from 'src/components/WorldOfTanks/WorldOfTanksSection';
+import { useStoredState } from 'src/hooks/useStoredState';
 
 const _viewToAdditionalTexts: Map<CalculatorViewChoice, string[]> = new Map([
   [CalculatorViewChoice.KtShoot, ['shoot']],
@@ -41,8 +42,16 @@ function fallbackRender({ error, resetErrorBoundary }: { error: Error, resetErro
 }
 
 const App = () => {
-  const [currentView, setCurrentView] = useState<CalculatorViewChoice>(CalculatorViewChoice.KtShoot);
-  const [urlParams, /*setUrlParams*/] = useSearchParams();
+  const [savedView, setCurrentView] = useStoredState<CalculatorViewChoice>('view', () => CalculatorViewChoice.KtShoot);
+  const currentView = _viewToAdditionalTexts.has(savedView) ? savedView : CalculatorViewChoice.KtShoot;
+  const [urlParams, setUrlParams] = useSearchParams();
+
+  function navigate(view: CalculatorViewChoice) {
+    setCurrentView(view);
+    const params = new URLSearchParams(urlParams);
+    params.set('view', view);
+    setUrlParams(params, {replace: true});
+  }
 
   useEffect( () => {
     const viewText = urlParams.get('view')
@@ -53,7 +62,7 @@ const App = () => {
       }
     }
   },
-  [urlParams]);
+  [urlParams, setCurrentView]);
 
   function sectionDiv(
     view: CalculatorViewChoice,
@@ -70,7 +79,7 @@ const App = () => {
 
   return (
     <>
-      <AppHeader navCallback={setCurrentView} currentView={currentView} />
+      <AppHeader navCallback={navigate} currentView={currentView} />
         <Container>
           <Row>
             <Col className={centerHoriz + ' p-0'} style={{fontSize: '11px'}}>

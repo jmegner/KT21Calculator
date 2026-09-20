@@ -14,11 +14,17 @@ import { calcRemainingWounds } from 'src/CalcEngineFight';
 import FightResultsDisplay from 'src/components/FightResultsDisplay';
 import FightOptions from 'src/FightOptions';
 import * as N from 'src/Notes';
+import { fieldSetter, useStoredState } from 'src/hooks/useStoredState';
+
+const newFightState = () => ({
+  fighterA: new Model(), fighterB: new Model(), options: new FightOptions(),
+  advancedA: false, advancedB: false,
+});
 
 const FightSection: React.FC = () => {
-  const [fighterA, setFighterA] = React.useState(new Model());
-  const [fighterB, setFighterB] = React.useState(new Model());
-  const [fightOptions, setFightOptions] = React.useState(new FightOptions());
+  const [state, setState] = useStoredState('fight', newFightState);
+  const {fighterA, fighterB, options: fightOptions} = state;
+  const change = fieldSetter(setState);
   const aFirst = fightOptions.firstFighter === 'A';
   const [fighter1WoundProbs, fighter2WoundProbs] = React.useMemo(
     () => calcRemainingWounds(
@@ -62,17 +68,19 @@ const FightSection: React.FC = () => {
       </Row>
       <Row>
         <Col className={Util.centerHoriz + ' p-0 border'}>
-          <FighterControls title="Fighter A" attacker={fighterA} changeHandler={setFighterA} />
+          <FighterControls title="Fighter A" attacker={fighterA} changeHandler={change('fighterA')}
+            advanced={state.advancedA} setAdvanced={change('advancedA')}/>
         </Col>
         <Col className={Util.centerHoriz + ' p-0 border'}>
-          <FighterControls title="Fighter B" attacker={fighterB} changeHandler={setFighterB} />
+          <FighterControls title="Fighter B" attacker={fighterB} changeHandler={change('fighterB')}
+            advanced={state.advancedB} setAdvanced={change('advancedB')}/>
         </Col>
       </Row>
       <Row className='border'>
         <Col className={Util.centerHoriz + ' p-0 border'}>
           <FightOptionControls
             fightOptions={fightOptions}
-            changeHandler={setFightOptions}
+            changeHandler={change('options')}
           />
         </Col>
       </Row>

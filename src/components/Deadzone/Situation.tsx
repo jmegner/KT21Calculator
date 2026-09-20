@@ -1,7 +1,6 @@
 import {
   FC,
   useMemo,
-  useState,
 } from 'react';
 import {
   Col,
@@ -15,15 +14,22 @@ import ModelControls from './ModelControls';
 import ResultsDisplay from './ResultsDisplay';
 import OptionControls from './OptionControls';
 import { DeadzoneModel, DeadzoneOptions, } from "src/DiceSim/pkg/dice_sim";
+import { Accepter } from 'src/Util';
 
-export const Situation: FC<{isHaloFlashpoint?: boolean}> = ({isHaloFlashpoint = false}) => {
-  const [attacker, setAttacker] = useState(new DeadzoneModel());
-  const [defender, setDefender] = useState(new DeadzoneModel());
-  const [options, setOptions] = useState(() => {
-    const initialOptions = new DeadzoneOptions();
-    initialOptions.isHaloFlashpoint = isHaloFlashpoint;
-    return initialOptions;
-  });
+export function newDeadzoneSituation(isHaloFlashpoint: boolean) {
+  const options = new DeadzoneOptions();
+  options.isHaloFlashpoint = isHaloFlashpoint;
+  return {attacker: new DeadzoneModel(), defender: new DeadzoneModel(), options};
+}
+
+export type DeadzoneSituationState = ReturnType<typeof newDeadzoneSituation>;
+
+export const Situation: FC<{state: DeadzoneSituationState; onChange: Accepter<DeadzoneSituationState>}> = ({state, onChange}) => {
+  const {attacker, defender, options} = state;
+  const isHaloFlashpoint = options.isHaloFlashpoint;
+  const setAttacker = (value: DeadzoneModel) => onChange({...state, attacker: value});
+  const setDefender = (value: DeadzoneModel) => onChange({...state, defender: value});
+  const setOptions = (value: DeadzoneOptions) => onChange({...state, options: value});
 
   const dmgToProb = useMemo(
     () => calcDmgProbs(attacker, defender, options),

@@ -16,20 +16,28 @@ import { calcDmgProbs } from 'src/CalcEngineShoot';
 import { SaveRange } from 'src/KtMisc';
 import ShootResultsDisplay from './ShootResultsDisplay';
 import { combineDmgProbs } from 'src/CalcEngineCommon';
+import { fieldSetter, useStoredState } from 'src/hooks/useStoredState';
+import { copyChoices } from 'src/ChoiceStorage';
+import { SituationActions } from './SectionActions';
+
+const newShootSituation = () => ({
+  attacker: new Model(), defender: Model.basicDefender(), options: new ShootOptions(),
+  attackerAdvanced: false, defenderAdvanced: false,
+});
 
 const ShootSection: React.FC = () => {
-  const [attacker1, setAttacker1] = React.useState(new Model());
-  const [defender1, setDefender1] = React.useState(Model.basicDefender());
-  const [shootOptions1, setShootOptions1] = React.useState(new ShootOptions());
+  const [situation1, setSituation1] = useStoredState('shoot.s1', newShootSituation);
+  const {attacker: attacker1, defender: defender1, options: shootOptions1} = situation1;
+  const change1 = fieldSetter(setSituation1);
 
   const saveToDmgToProb1 = React.useMemo(
     () => new Map<number,Map<number,number>>(SaveRange.map(save =>
       [save, calcDmgProbs(attacker1, defender1.withProp('diceStat', save), shootOptions1)])),
     [attacker1, defender1, shootOptions1]);
 
-  const [attacker2, setAttacker2] = React.useState(new Model());
-  const [defender2, setDefender2] = React.useState(Model.basicDefender());
-  const [shootOptions2, setShootOptions2] = React.useState(new ShootOptions());
+  const [situation2, setSituation2] = useStoredState('shoot.s2', newShootSituation);
+  const {attacker: attacker2, defender: defender2, options: shootOptions2} = situation2;
+  const change2 = fieldSetter(setSituation2);
 
   const saveToDmgToProb2 = React.useMemo(
     () => new Map<number,Map<number,number>>(SaveRange.map(save =>
@@ -77,26 +85,34 @@ const ShootSection: React.FC = () => {
       </Row>
       <Row>
         <Col className='border p-0'>
-          Situation1
+          <SituationActions number={1} onCopy={() => setSituation1(copyChoices(situation2, newShootSituation))} onClear={() => setSituation1(newShootSituation())}/>
           <ShootSituation
             attacker={attacker1}
-            setAttacker={setAttacker1}
+            setAttacker={change1('attacker')}
             defender={defender1}
-            setDefender={setDefender1}
+            setDefender={change1('defender')}
             shootOptions={shootOptions1}
-            setShootOptions={setShootOptions1}
+            setShootOptions={change1('options')}
+            attackerAdvanced={situation1.attackerAdvanced}
+            defenderAdvanced={situation1.defenderAdvanced}
+            setAttackerAdvanced={change1('attackerAdvanced')}
+            setDefenderAdvanced={change1('defenderAdvanced')}
             saveToDmgToProb={saveToDmgToProb1}
             />
         </Col>
         <Col className='border p-0'>
-          Situation2
+          <SituationActions number={2} onCopy={() => setSituation2(copyChoices(situation1, newShootSituation))} onClear={() => setSituation2(newShootSituation())}/>
           <ShootSituation
             attacker={attacker2}
-            setAttacker={setAttacker2}
+            setAttacker={change2('attacker')}
             defender={defender2}
-            setDefender={setDefender2}
+            setDefender={change2('defender')}
             shootOptions={shootOptions2}
-            setShootOptions={setShootOptions2}
+            setShootOptions={change2('options')}
+            attackerAdvanced={situation2.attackerAdvanced}
+            defenderAdvanced={situation2.defenderAdvanced}
+            setAttackerAdvanced={change2('attackerAdvanced')}
+            setDefenderAdvanced={change2('defenderAdvanced')}
             saveToDmgToProb={saveToDmgToProb2}
             />
         </Col>

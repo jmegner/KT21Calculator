@@ -27,6 +27,8 @@ import { useCheckboxAndVariable } from 'src/hooks/useCheckboxAndVariable';
 export interface Props {
   defender: Model;
   changeHandler: Accepter<Model>;
+  advanced: boolean;
+  setAdvanced: Accepter<boolean>;
 }
 
 
@@ -34,7 +36,7 @@ const DefenderControls: React.FC<Props> = (props: Props) => {
   const def = props.defender;
   const textHandler = makeTextChangeHandler(props.defender, props.changeHandler);
   const numHandler = makeNumChangeHandler(props.defender, props.changeHandler);
-  const [advancedCheckbox, wantShowAdvanced] = useCheckboxAndVariable('Advanced');
+  const [advancedCheckbox, wantShowAdvanced] = useCheckboxAndVariable('Advanced', false, [props.advanced, props.setAdvanced]);
 
   function singleHandler(ability: Ability) {
     return makeSetChangeHandlerForSingle<Model,Ability>(

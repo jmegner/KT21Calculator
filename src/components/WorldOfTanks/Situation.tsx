@@ -12,10 +12,14 @@ import { calcDmgAndCritProbs } from 'src/WorldOfTanks/CalcEngineWorldOfTanks';
 import TankControls from 'src/components/WorldOfTanks/TankControls';
 import ResultsDisplay from 'src/components/WorldOfTanks/ResultsDisplay';
 
-const Situation: React.FC = () => {
-  const [attacker, setAttacker] = React.useState(new Tank());
-  const [defender, setDefender] = React.useState(new Tank());
-  const [numRounds, setNumRounds] = React.useState(1);
+export const newTankSituation = () => ({attacker: new Tank(), defender: new Tank(), numRounds: 1});
+export type TankSituationState = ReturnType<typeof newTankSituation>;
+
+const Situation: React.FC<{state: TankSituationState; onChange: Util.Accepter<TankSituationState>}> = ({state, onChange}) => {
+  const {attacker, defender, numRounds} = state;
+  const setAttacker = (value: Tank) => onChange({...state, attacker: value});
+  const setDefender = (value: Tank) => onChange({...state, defender: value});
+  const setNumRounds = (value: number) => onChange({...state, numRounds: value});
 
   const [dmgToProb, critsToProb] = React.useMemo(
     () => calcDmgAndCritProbs(attacker, defender, numRounds),

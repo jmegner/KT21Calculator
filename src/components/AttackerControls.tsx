@@ -32,13 +32,15 @@ import { useCheckboxAndVariable } from 'src/hooks/useCheckboxAndVariable';
 export interface Props {
   attacker: Model;
   changeHandler: Accepter<Model>;
+  advanced: boolean;
+  setAdvanced: Accepter<boolean>;
 }
 
 const AttackerControls: React.FC<Props> = (props: Props) => {
   const atk = props.attacker;
   const textHandler = makeTextChangeHandler(atk, props.changeHandler);
   const numHandler = makeNumChangeHandler(atk, props.changeHandler);
-  const [advancedCheckbox, wantShowAdvanced] = useCheckboxAndVariable('Advanced');
+  const [advancedCheckbox, wantShowAdvanced] = useCheckboxAndVariable('Advanced', false, [props.advanced, props.setAdvanced]);
   //const noCoverChoices = Object.values(NoCoverType);
 
   function subsetHandler(subset: Iterable<Ability>) {

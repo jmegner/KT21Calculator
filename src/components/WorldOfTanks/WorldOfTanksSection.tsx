@@ -8,10 +8,15 @@ import {
 import Credits from 'src/components/Credits';
 
 import * as Util from "src/Util";
-import Situation from './Situation';
+import Situation, {newTankSituation} from './Situation';
 import * as N from 'src/Notes';
+import { useStoredState } from 'src/hooks/useStoredState';
+import { copyChoices } from 'src/ChoiceStorage';
+import { SituationActions } from 'src/components/SectionActions';
 
 const WorldOfTanksSection: React.FC = () => {
+  const [situation1, setSituation1] = useStoredState('wot.s1', newTankSituation);
+  const [situation2, setSituation2] = useStoredState('wot.s2', newTankSituation);
   const noteListItems: JSX.Element[] = [
     N.Deadeye,
     N.HighExplosive,
@@ -26,12 +31,12 @@ const WorldOfTanksSection: React.FC = () => {
       </Row>
       <Row>
         <Col className='border'>
-          Situation1
-          <Situation/>
+          <SituationActions number={1} onCopy={() => setSituation1(copyChoices(situation2, newTankSituation))} onClear={() => setSituation1(newTankSituation())}/>
+          <Situation state={situation1} onChange={setSituation1}/>
         </Col>
         <Col className='border'>
-          Situation2
-          <Situation/>
+          <SituationActions number={2} onCopy={() => setSituation2(copyChoices(situation1, newTankSituation))} onClear={() => setSituation2(newTankSituation())}/>
+          <Situation state={situation2} onChange={setSituation2}/>
         </Col>
       </Row>
       <Row>

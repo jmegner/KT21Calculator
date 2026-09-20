@@ -11,10 +11,17 @@ import Credits from 'src/components/Credits';
 
 import * as Util from "src/Util";
 import * as N from 'src/Notes';
-import {Situation} from './Situation';
+import {Situation, newDeadzoneSituation} from './Situation';
 import { deadzoneNotes } from 'src/Deadzone/Notes';
+import { useStoredState } from 'src/hooks/useStoredState';
+import { copyChoices } from 'src/ChoiceStorage';
+import { SituationActions } from 'src/components/SectionActions';
 
 export const DeadzoneSection: FC<{isHaloFlashpoint?: boolean}> = ({isHaloFlashpoint = false}) => {
+  const defaults = () => newDeadzoneSituation(isHaloFlashpoint);
+  const key = isHaloFlashpoint ? 'halo' : 'deadzone';
+  const [situation1, setSituation1] = useStoredState(key + '.s1', defaults);
+  const [situation2, setSituation2] = useStoredState(key + '.s2', defaults);
   const noteListItems: JSX.Element[] = [
     N.AvgDamageUnbounded,
     ...deadzoneNotes(isHaloFlashpoint),
@@ -33,12 +40,12 @@ export const DeadzoneSection: FC<{isHaloFlashpoint?: boolean}> = ({isHaloFlashpo
       </Row>
       <Row >
         <Col className='border p-0'>
-          Situation1
-          <Situation isHaloFlashpoint={isHaloFlashpoint}/>
+          <SituationActions number={1} onCopy={() => setSituation1(copyChoices(situation2, defaults))} onClear={() => setSituation1(defaults())}/>
+          <Situation state={situation1} onChange={setSituation1}/>
         </Col>
         <Col className='border p-0'>
-          Situation2
-          <Situation isHaloFlashpoint={isHaloFlashpoint}/>
+          <SituationActions number={2} onCopy={() => setSituation2(copyChoices(situation1, defaults))} onClear={() => setSituation2(defaults())}/>
+          <Situation state={situation2} onChange={setSituation2}/>
         </Col>
       </Row>
       <Row>

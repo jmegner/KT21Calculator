@@ -22,6 +22,10 @@ export interface Props {
   shootOptions: ShootOptions;
   setShootOptions: Util.Accepter<ShootOptions>;
   saveToDmgToProb: Map<number,Map<number,number>>;
+  attackerAdvanced: boolean;
+  defenderAdvanced: boolean;
+  setAttackerAdvanced: Util.Accepter<boolean>;
+  setDefenderAdvanced: Util.Accepter<boolean>;
 }
 
 export const ShootSituation: React.FC<Props> = (props: Props) => {
@@ -31,7 +35,8 @@ export const ShootSituation: React.FC<Props> = (props: Props) => {
         <Col className={Util.centerHoriz + ' p-0'} xs='auto'>
           <Container>
             <Row className='border'>
-              <AttackerControls attacker={props.attacker} changeHandler={props.setAttacker} />
+              <AttackerControls attacker={props.attacker} changeHandler={props.setAttacker}
+                advanced={props.attackerAdvanced} setAdvanced={props.setAttackerAdvanced}/>
             </Row>
             <Row className='border'>
               <ShootOptionControls shootOptions={props.shootOptions} changeHandler={props.setShootOptions} />
@@ -39,7 +44,8 @@ export const ShootSituation: React.FC<Props> = (props: Props) => {
           </Container>
         </Col>
         <Col className={Util.centerHoriz + ' border' } xs='auto'>
-          <DefenderControls defender={props.defender} changeHandler={props.setDefender} />
+          <DefenderControls defender={props.defender} changeHandler={props.setDefender}
+            advanced={props.defenderAdvanced} setAdvanced={props.setDefenderAdvanced}/>
         </Col>
       </Row>
       <Row className='border'>
