@@ -30,13 +30,13 @@ const ModelControls: React.FC<Props> = (props: Props) => {
     //           id/label,            selectedValue,        values,               valueChangeHandler
     new IncProps('HP',                model.hp,             span(1,10),      numHandler('hp')),
     new IncProps('Dice',              model.numDice,        diceSpan,        numHandler('numDice')),
-    new IncProps('Stat(RA/FI/SV)',    model.diceStat + "+", span(1, 8, '+'), numHandler('diceStat')),
+    new IncProps('Stat(RA/FI/SV)',    model.diceStat + "+", span(8, 1, '+'), numHandler('diceStat')),
     new IncProps('Rerolls',           model.numRerolls,     intSpan,         numHandler('numRerolls')),
     new IncProps('Toxic/Dismantle',   model.toxicDmg,       intSpan,         numHandler('toxicDmg')),
     new IncProps('AP',                model.ap,             intSpan,         numHandler('ap')),
     new IncProps('Armor',             model.armor,          intSpan,         numHandler('armor')),
     new IncProps('ShieldDice',        model.numShieldDice,  intSpan,         numHandler('numShieldDice')),
-    new IncProps('DiceExplodeOn',     model.explodeStat + "+",    span(2, 8, '+'), numHandler('explodeStat')),
+    new IncProps('DiceExplodeOn',     model.explodeStat + "+",    span(8, 2, '+'), numHandler('explodeStat')),
   ];
 
   if (props.isHaloFlashpoint) {
@@ -45,7 +45,7 @@ const ModelControls: React.FC<Props> = (props: Props) => {
     params = [
       ...(!props.isAttacker ? [new IncProps('Health', model.hp, span(1, 10), numHandler('hp'))] : []),
       new IncProps('Dice', model.numDice, span(0, 20), numHandler('numDice')),
-      new IncProps(props.isAttacker ? 'Ranged/Fight' : 'Survive', model.diceStat + '+', span(1, 8, '+'), numHandler('diceStat')),
+      new IncProps(props.isAttacker ? 'Ranged/Fight' : 'Survive', model.diceStat + '+', span(8, 1, '+'), numHandler('diceStat')),
       new IncProps('Rerolls', model.numRerolls, intSpan, numHandler('numRerolls')),
       ...(props.isAttacker ? [
         new IncProps('Lethal', model.toxicDmg, intSpan, numHandler('toxicDmg')),
@@ -56,7 +56,7 @@ const ModelControls: React.FC<Props> = (props: Props) => {
         new IncProps('Energy Shields', model.energyShields, span(0, 20), numHandler('energyShields')),
       ]),
       makeIncDecPropsFromLookup('Headshots', model, props.changeHandler, 'explodeStat', new Map([
-        [8, '8+'], [7, '7+'], [9, 'X'],
+        [9, 'X'], [8, '8+'], [7, '7+'],
       ])),
     ];
   }

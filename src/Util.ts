@@ -59,7 +59,8 @@ export function withPlus(elems: any[]) : string[] {
   return elems.map(elem => elem.toString() + '+');
 }
 
-export const rollSpan = span(2, 6, '+');
+// Ordered from weakest to strongest so the + button improves the success chance.
+export const rollSpan = span(6, 2, '+');
 export const xrollSpan = preX(rollSpan);
 
 export function preX(vals: string[]) : string[] {
