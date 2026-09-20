@@ -7,6 +7,7 @@ import ktShootIcon from 'src/images/KtShootIcon.svg';
 //import ktShootMassAnalysisIcon from 'src/images/ShootMultipleTargetsIcon.svg';
 import wotIcon from 'src/images/WorldOfTanksIcon.svg';
 import dzIcon from 'src/images/dz.png';
+import haloIcon from 'src/images/HaloIcon.svg';
 
 type AppHeaderProps = {
   currentView: CalculatorViewChoice;
@@ -56,6 +57,12 @@ const AppHeader = (props: AppHeaderProps) => {
       'Deadzone Calculator',
       dzIcon,
       'Deadzone logo',
+    )}
+    {makeButton(
+      CalculatorViewChoice.HaloFlashpoint,
+      'Halo Flashpoint Calculator',
+      haloIcon,
+      'Halo',
     )}
     {/*makeButton(
       CalculatorViewChoice.KtShootMassAnalysis,

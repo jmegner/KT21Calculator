@@ -18,6 +18,7 @@ const _viewToAdditionalTexts: Map<CalculatorViewChoice, string[]> = new Map([
   [CalculatorViewChoice.KtShootMassAnalysis, ['mass']],
   [CalculatorViewChoice.WorldOfTanks, ['wot']],
   [CalculatorViewChoice.Deadzone, ['dz']],
+  [CalculatorViewChoice.HaloFlashpoint, ['halo', 'flashpoint']],
 ]);
 
 const _textToView = new Map<string,CalculatorViewChoice>();
@@ -83,6 +84,7 @@ const App = () => {
               {sectionDiv(CalculatorViewChoice.KtShootMassAnalysis, <ShootMassAnalysisSection/>)}
               {sectionDiv(CalculatorViewChoice.WorldOfTanks, <WorldOfTanksSection/>)}
               {sectionDiv(CalculatorViewChoice.Deadzone, <DeadzoneSection/>)}
+              {sectionDiv(CalculatorViewChoice.HaloFlashpoint, <DeadzoneSection isHaloFlashpoint/>)}
             </Col>
           </Row>
         </Container>

@@ -13,8 +13,14 @@ pub struct DeadzoneModel {
     pub armor: i32,
     #[wasm_bindgen(js_name = numShieldDice)]
     pub num_shield_dice: i32,
+    // Halo Flashpoint only: charged shields absorb hits automatically and deplete.
+    #[wasm_bindgen(js_name = energyShields)]
+    pub energy_shields: i32,
+    // Halo Flashpoint only: ESD depletes shields before the incoming hits are blocked.
+    #[wasm_bindgen(js_name = shieldDepleter)]
+    pub shield_depleter: i32,
     #[wasm_bindgen(js_name = toxicDmg)]
-    pub toxic_dmg: i32, // additional dmg if any dmg goes through; "Dismantle" is basically toxic 1 against vehicles
+    pub toxic_dmg: i32, // additional dmg if any dmg goes through; also Halo Flashpoint's Lethal (n)
     #[wasm_bindgen(js_name = explodeStat)]
     pub explode_stat: i32, // explode on this value or higher
 }
@@ -32,6 +38,8 @@ impl DeadzoneModel {
             ap: 0,
             armor: 0,
             num_shield_dice: 0,
+            energy_shields: 0,
+            shield_depleter: 0,
             toxic_dmg: 0,
         }
     }

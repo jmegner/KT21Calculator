@@ -42,15 +42,16 @@ const OptionControls: React.FC<Props> = (props: Props) => {
     [2, '2'],
     [3, '3'],
   ]);
-  const explodingDiceMaxLevelsIncProps = makeIncDecPropsFromLookup('ExplodingDiceLevels', opts, props.changeHandler, 'explodingDiceMaxLevels', explodingDiceMaxLevelsToDisplayTexts);
+  const explodingDiceMaxLevelsIncProps = makeIncDecPropsFromLookup(opts.isHaloFlashpoint ? 'HeadshotLevels' : 'ExplodingDiceLevels', opts, props.changeHandler, 'explodingDiceMaxLevels', explodingDiceMaxLevelsToDisplayTexts);
 
   const fightBackVal = boolToCheckX(opts.attackerCanBeDamaged);
 
   const params: IncProps[] = [
     //           id,              selectedValue,          values,      valueChangeHandler
-    new IncProps('FightBack?',    fightBackVal,           xAndCheck,   boolHandler('attackerCanBeDamaged')),
+    // Halo Flashpoint Assault is Fight vs Survive, never a reciprocal Fight test.
+    ...(!opts.isHaloFlashpoint ? [new IncProps('FightBack?', fightBackVal, xAndCheck, boolHandler('attackerCanBeDamaged'))] : []),
     simCountIncProps,
-    new IncProps('Rounds',        opts.numRounds,         span(1, 9),  numHandler('numRounds')),
+    new IncProps(opts.isHaloFlashpoint ? 'Attacks' : 'Rounds', opts.numRounds, span(1, 9), numHandler('numRounds')),
     explodingDiceMaxLevelsIncProps,
   ];
 
